@@ -60,7 +60,18 @@ Build and push the docker image:
 ./build.sh
 ```
 
+### Setup
+
+```
+./create-certs.sh
+## Manual step required: fill in the caBundle in the newrelic-metadata-injection.yaml file.
+
+kubectl create -f newrelic-metadata-injection.yaml
+```
+
 ### TODO
 
 - Currently the caBundle for the MutatingAdmissionWebhook has to be created by a script (`./create-certs.sh`)
 - Istio has a fully automated way: they calculate the caBundle in the service and register it with the K8s api (this requires a Service Account)
+
+*Important note:* this is just a prototype and not production ready! We need readinesschecks, healthchecks and a lot of testing since this will run in the Pod deployment flow on the Kubernetes cluster!
