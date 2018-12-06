@@ -1,0 +1,68 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: newrelic-metadata-injection-deployment
+  labels:
+    app: newrelic-metadata-injection
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: newrelic-metadata-injection
+    spec:
+      containers:
+      - name: metadata-injector
+        image: docker.coscale.com:5000/fryckbosch/newrelic-k8s-metadata-injector:v1
+        imagePullPolicy: Always
+        args:
+        - -tlsCertFile=/etc/webhook/certs/cert.pem
+        - -tlsKeyFile=/etc/webhook/certs/key.pem
+        - -alsologtostderr
+        - -v=4
+        - 2>&1
+        volumeMounts:
+        - name: webhook-certs
+          mountPath: /etc/webhook/certs
+          readOnly: true
+      volumes:
+        - name: webhook-certs
+          secret:
+            secretName: newrelic-metadata-injection-certs
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: newrelic-metadata-injection-svc
+  labels:
+    app: newrelic-metadata-injection
+spec:
+  ports:
+  - port: 443
+    targetPort: 443
+  selector:
+    app: newrelic-metadata-injection
+---
+apiVersion: admissionregistration.k8s.io/v1beta1
+kind: MutatingWebhookConfiguration
+metadata:
+  name: newrelic-metadata-injection-cfg
+  labels:
+    app: newrelic-metadata-injection
+webhooks:
+- name: metadata-injection.newrelic.com
+  clientConfig:
+    service:
+      name: newrelic-metadata-injection-svc
+      namespace: default
+      path: "/mutate"
+    caBundle: "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUN5RENDQWJDZ0F3SUJBZ0lCQURBTkJna3Foa2lHOXcwQkFRc0ZBREFWTVJNd0VRWURWUVFERXdwcmRXSmwKY201bGRHVnpNQjRYRFRFNE1URXdPVEE0TkRJeU1Gb1hEVEk0TVRFd05qQTROREl5TUZvd0ZURVRNQkVHQTFVRQpBeE1LYTNWaVpYSnVaWFJsY3pDQ0FTSXdEUVlKS29aSWh2Y05BUUVCQlFBRGdnRVBBRENDQVFvQ2dnRUJBTjYxCnR2YTJhQ1RWVGI0Q2xLajdvYXFNU3VTWnBFZmtMd2ZDUGxHak4yQ2I3RXlHMjlBWjA0UVR6M04wNTM3azRIVU4KUFhRZzhvdjd5TkRuZW0yWnVQeDFzSXpXWFhkZ0RNamo4MGVkMEtVRFoxcHdPbFlycGM3VmtlcmJxanZyZUFUUgphbXRITXlFVEZnRkFYTElQYlMvR3AwZG9zMzZUcmF1MTZXZElUUUl1ekJSMlVPSkdoOWJubDIwWWJ1UDZPNStjCisveXE4SGNCSks4aTcvaEJtVW9yZisxeXIwUkk1MVF0a0JjQmxXalVLaGFidGhIY1VlT0UwcmpKWFUxQVN2RVoKMm1IMTVPN1BxWGk4MXRwN0MyWWErRjVSOHR3VnNnYk1Cd3UvWGRzV2c2NktuekNSaHVmL2hoTTF1Sm9CRXJ1RwptTC9vZDhqREY2d0NmSEgwSjQwQ0F3RUFBYU1qTUNFd0RnWURWUjBQQVFIL0JBUURBZ0trTUE4R0ExVWRFd0VCCi93UUZNQU1CQWY4d0RRWUpLb1pJaHZjTkFRRUxCUUFEZ2dFQkFMVlpVdUdDa3JBQldRSVEwYm00NVhFbWVBT3UKWldsUnd4d2pKNlprWE55bEFEZUUxZVJpOGhEM0xmcG9ETWtWZWswbDd6L2NUaHY0MXpKQ04ycjNlUldnQTJ3TQp6K0d0L045a2RzMlEzeS82bUxqd2tDVFBkckxYZFNCOTk2L0p4WVgvRHEwYzVSQTZBT1JXRVpLdzZnd2ZKUUpMCjNlaUJFcW5yVW52MHJRZ3dvaE9IMytCRzhMaEREdmpvbTU4M1orVzQvQnd3MVh4SFBHYStLelBObElsQ3hLcUIKSWpGaEp6NzZ4cjhuY0hFNG5JcE1GR04wMGQrM0J5QWNoZWxnVnZteVlUMDBwRzR2Z2JtWUdsblM2ck1EVWY2Ygp0d2FyZnNDM3RjYUY2R29yNEpWcjAyWEFwNGU1dTBtVzlvN1FveFpsM2hvQ3hWQzRCNEFMQkhkM0tlND0KLS0tLS1FTkQgQ0VSVElGSUNBVEUtLS0tLQo="
+  rules:
+  - operations: [ "CREATE" ]
+    apiGroups: [""]
+    apiVersions: ["v1"]
+    resources: ["pods"]
+  namespaceSelector:
+    matchLabels:
+      newrelic-metadata-injection: enabled
+  failurePolicy: Ignore

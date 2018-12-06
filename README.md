@@ -31,9 +31,8 @@ $ kubectl apply -f newrelic-metadata-injection.yaml
 ```
 
 Executing this
-- creates a namespace `newrelic`,
-- creates a service `newrelic-metadata-injector` in namespace `newrelic`,
-- registers the `newrelic-metadata-injector` service as a MutatingAdmissionWebhook with the Kubernetes api
+- creates `newrelic-metadata-injection-deployment` and `newrelic-metadata-injection-svc`,
+- registers the `newrelic-metadata-injection-svc` service as a MutatingAdmissionWebhook with the Kubernetes api
 
 ### 3) Enable the automatic Kubernetes metadata injection on your namespaces
 
@@ -42,3 +41,26 @@ The injection is only applied to namespaces that have the `newrelic-metadata-inj
 ```
 $ kubectl label namespace <namespace> newrelic-metadata-injection=enabled
 ```
+
+## Prototype
+
+This repo contains a prototype based on https://github.com/morvencao/kube-mutating-webhook-tutorial/.
+
+### Build
+
+The prototype uses dep as the dependency management tool:
+
+```
+go get -u github.com/golang/dep/cmd/dep
+```
+
+Build and push the docker image:
+
+```
+./build.sh
+```
+
+### TODO
+
+- Currently the caBundle for the MutatingAdmissionWebhook has to be created by a script (`./create-certs.sh`)
+- Istio has a fully automated way: they calculate the caBundle in the service and register it with the K8s api (this requires a Service Account)
