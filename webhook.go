@@ -1,3 +1,5 @@
+// Based on https://github.com/morvencao/kube-mutating-webhook-tutorial/
+
 package main
 
 import (
@@ -36,7 +38,8 @@ func createEnvVarFromString(envVarName, envVarValue string) (corev1.EnvVar) {
 	return corev1.EnvVar{Name: envVarName, Value: envVarValue}
 }
 
-func (whsvr *WebhookServer) getEnVarsToInject(pod *corev1.Pod, container *corev1.Container) ([]corev1.EnvVar) {
+// getEnvVarsToInject returns the environment variables to inject in the given container
+func (whsvr *WebhookServer) getEnvVarsToInject(pod *corev1.Pod, container *corev1.Container) ([]corev1.EnvVar) {
 	vars := []corev1.EnvVar{
 		createEnvVarFromString("K8S_CLUSTER_NAME", whsvr.clusterName),
 		createEnvVarFromFieldPath("K8S_NODE_NAME", "spec.nodeName"),
@@ -99,7 +102,7 @@ func (whsvr *WebhookServer) updateContainer(pod *corev1.Pod, index int, containe
 	var value interface{}
 	basePath := fmt.Sprintf("/spec/containers/%d/env", index)
 
-	for _, inject := range whsvr.getEnVarsToInject(pod, container) {
+	for _, inject := range whsvr.getEnvVarsToInject(pod, container) {
 		if _, present := envVarMap[inject.Name]; !present {
 			value = inject
 			path := basePath
@@ -226,7 +229,7 @@ func (whsvr *WebhookServer) serve(w http.ResponseWriter, r *http.Request) {
 		glog.Errorf("Can't encode response: %v", err)
 		http.Error(w, fmt.Sprintf("could not encode response: %v", err), http.StatusInternalServerError)
 	}
-	glog.Infof("Ready to write reponse ...")
+	glog.Infof("Writing reponse")
 	if _, err := w.Write(resp); err != nil {
 		glog.Errorf("Can't write response: %v", err)
 		http.Error(w, fmt.Sprintf("could not write response: %v", err), http.StatusInternalServerError)

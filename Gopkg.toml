@@ -45,3 +45,8 @@
 [[override]]
   name = "github.com/docker/distribution"
   branch = "master"
+
+# https://github.com/kubernetes/client-go#compatibility-matrix
+[[override]]
+  name = "k8s.io/client-go"
+  branch = "release-6.0" # kubernetes-1.9

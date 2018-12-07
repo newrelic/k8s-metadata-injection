@@ -1,3 +1,4 @@
 FROM alpine:latest
-ADD k8s-env-inject /k8s-env-inject
-ENTRYPOINT ["/k8s-env-inject"]
+RUN apk add --update openssl
+COPY entrypoint.sh create-certs.sh k8s-env-inject /
+CMD ["/entrypoint.sh"]

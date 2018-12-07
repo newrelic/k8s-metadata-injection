@@ -19,6 +19,9 @@ type WhSvrParameters struct {
 	certFile string          // path to the x509 certificate for https
 	keyFile string           // path to the x509 private key matching `CertFile`
 	clusterName string		 // name of the cluster
+	webhookConfigName string // name of the webhook config
+	webhookName string       // name of the webhook
+	caBundle string			 // caBundle
 }
 
 func main() {
@@ -29,6 +32,9 @@ func main() {
 	flag.StringVar(&parameters.certFile, "tlsCertFile", "/etc/webhook/certs/cert.pem", "File containing the x509 Certificate for HTTPS.")
 	flag.StringVar(&parameters.keyFile, "tlsKeyFile", "/etc/webhook/certs/key.pem", "File containing the x509 private key to --tlsCertFile.")
 	flag.StringVar(&parameters.clusterName, "clusterName", "cluster", "The name of the Kubernetes cluster")
+	flag.StringVar(&parameters.webhookConfigName, "webhookConfigName", "newrelic-metadata-injection-cfg", "Optional name of the MutatingAdmissionWebhook to push webhook caBundle")
+	flag.StringVar(&parameters.webhookName, "webhookName", "metadata-injection.newrelic.com", "Optional name of the webhook to push to webhook caBundle")
+	flag.StringVar(&parameters.caBundle, "caBundle", "", "Optional caBundle to push to the Kubernetes API")
 	flag.Parse()
 	
 	pair, err := tls.LoadX509KeyPair(parameters.certFile, parameters.keyFile)
@@ -54,9 +60,20 @@ func main() {
 	// start webhook server in new rountine
 	go func() {
 		if err := whsvr.server.ListenAndServeTLS("", ""); err != nil {
-			glog.Errorf("Filed to listen and serve webhook server: %v", err)
+			glog.Errorf("Failed to listen and serve webhook server: %v", err)
 		}
 	}()
+
+	// push the caBundle to the Kubernetes API if provided
+	if parameters.caBundle != "" {
+		go func() {
+			if err := UpdateCaBundle(parameters.webhookConfigName, parameters.webhookName, parameters.caBundle); err != nil {
+				glog.Errorf("Failed to update caBundle on the MutatingAdmissionWebhook %s: %v", parameters.webhookConfigName, err)
+			} else {
+				glog.Infof("Successfully updated caBundle on MutatingAdmissionWebhook %s", parameters.webhookConfigName)
+			}
+		}()
+	}
 
 	// listening OS shutdown signal
 	signalChan := make(chan os.Signal, 1)

@@ -45,6 +45,8 @@ $ kubectl label namespace <namespace> newrelic-metadata-injection=enabled
 ## Prototype
 
 This repo contains a prototype based on https://github.com/morvencao/kube-mutating-webhook-tutorial/.
+*Important note:* this is just a prototype and not production ready!
+We need readinesschecks, healthchecks and a lot of testing since this will run in the Pod deployment flow on the Kubernetes cluster.
 
 ### Build
 
@@ -54,24 +56,25 @@ The prototype uses dep as the dependency management tool:
 go get -u github.com/golang/dep/cmd/dep
 ```
 
-Build and push the docker image:
+Build and push the docker image, this currently pushes to an AWS machine from fryckbosch (which is not in the DNS - so it will fail):
 
 ```
 ./build.sh
 ```
 
-### Setup
+### Certificates
+
+To make the deployment as easy as possible, the certificates for the webhook are generated inside the container.
+The webhook container then uses the kubernetes api to update the caBundle on the MutatingAdmissionWebhook.
+
+This is more-or-less how Istio does things. It does mean that we need to have a service account that can update MutatingAdmissionWebhook.
+This also means that only 1 replica of the webhook service can be running.
+
+Customers that don't want this automatic approach, can create certificates themselves:
 
 ```
 ./create-certs.sh
-## Manual step required: fill in the caBundle in the newrelic-metadata-injection.yaml file.
-
-kubectl create -f newrelic-metadata-injection.yaml
+kubectl create -f newrelic-metadata-injection-manual-cert.yaml
 ```
 
-### TODO
-
-- Currently the caBundle for the MutatingAdmissionWebhook has to be created by a script (`./create-certs.sh`)
-- Istio has a fully automated way: they calculate the caBundle in the service and register it with the K8s api (this requires a Service Account)
-
-*Important note:* this is just a prototype and not production ready! We need readinesschecks, healthchecks and a lot of testing since this will run in the Pod deployment flow on the Kubernetes cluster!
+The command above requires the following files from this repo: `create-certs.sh`, `newrelic-metadata-injection-manual-nocert.yaml`.
