@@ -41,11 +41,11 @@ func createEnvVarFromString(envVarName, envVarValue string) (corev1.EnvVar) {
 // getEnvVarsToInject returns the environment variables to inject in the given container
 func (whsvr *WebhookServer) getEnvVarsToInject(pod *corev1.Pod, container *corev1.Container) ([]corev1.EnvVar) {
 	vars := []corev1.EnvVar{
-		createEnvVarFromString("K8S_CLUSTER_NAME", whsvr.clusterName),
-		createEnvVarFromFieldPath("K8S_NODE_NAME", "spec.nodeName"),
-		createEnvVarFromFieldPath("K8S_NAMESPACE_NAME", "metadata.namespace"),
-		createEnvVarFromFieldPath("K8S_POD_NAME", "metadata.name"),
-		createEnvVarFromString("K8S_CONTAINER_NAME", container.Name),
+		createEnvVarFromString("NEW_RELIC_METADATA_KUBERNETES_CLUSTER_NAME", whsvr.clusterName),
+		createEnvVarFromFieldPath("NEW_RELIC_METADATA_KUBERNETES_NODE_NAME", "spec.nodeName"),
+		createEnvVarFromFieldPath("NEW_RELIC_METADATA_KUBERNETES_NAMESPACE_NAME", "metadata.namespace"),
+		createEnvVarFromFieldPath("NEW_RELIC_METADATA_KUBERNETES_POD_NAME", "metadata.name"),
+		createEnvVarFromString("NEW_RELIC_METADATA_KUBERNETES_CONTAINER_NAME", container.Name),
 	}
 
 	// Guess the name of the deployment. We check whether the Pod is Owned by a ReplicaSet and confirms with the
@@ -54,7 +54,7 @@ func (whsvr *WebhookServer) getEnvVarsToInject(pod *corev1.Pod, container *corev
 		podParts := strings.Split(pod.GenerateName, "-")
 		if len(podParts) >= 3 {
 			deployment := strings.Join(podParts[:len(podParts)-2], "-")
-			vars = append(vars, createEnvVarFromString("K8S_DEPLOYMENT_NAME", deployment))
+			vars = append(vars, createEnvVarFromString("NEW_RELIC_METADATA_KUBERNETES_DEPLOYMENT_NAME", deployment))
 		}
 	}
 
@@ -182,7 +182,7 @@ func (whsvr *WebhookServer) mutate(ar *v1beta1.AdmissionReview) *v1beta1.Admissi
 }
 
 // Serve method for webhook server
-func (whsvr *WebhookServer) serve(w http.ResponseWriter, r *http.Request) {
+func (whsvr *WebhookServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	var body []byte
 	if r.Body != nil {
 		if data, err := ioutil.ReadAll(r.Body); err == nil {
