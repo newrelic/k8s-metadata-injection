@@ -78,3 +78,7 @@ kubectl create -f newrelic-metadata-injection-manual-cert.yaml
 ```
 
 The command above requires the following files from this repo: `create-certs.sh`, `newrelic-metadata-injection-manual-nocert.yaml`.
+
+### Performance
+
+Please refer to [docs/performance.md](docs/performance.md).
