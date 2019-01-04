@@ -3,12 +3,12 @@
 ## How does it work ?
 
 New Relic requires the following environment variables to identify Kubernetes objects in the APM agents:
-- `K8S_CLUSTER_NAME`
-- `K8S_NODE_NAME`
-- `K8S_NAMESPACE_NAME`
-- `K8S_DEPLOYMENT_NAME`
-- `K8S_POD_NAME`
-- `K8S_CONTAINER_NAME`
+- `NEW_RELIC_METADATA_KUBERNETES_CLUSTER_NAME`
+- `NEW_RELIC_METADATA_KUBERNETES_NODE_NAME`
+- `NEW_RELIC_METADATA_KUBERNETES_NAMESPACE_NAME`
+- `NEW_RELIC_METADATA_KUBERNETES_DEPLOYMENT_NAME`
+- `NEW_RELIC_METADATA_KUBERNETES_POD_NAME`
+- `NEW_RELIC_METADATA_KUBERNETES_CONTAINER_NAME`
 
 These environment variables can be set manually by the customer, or they can be automatically injected using a MutatingAdmissionWebhook.
 New Relic provides an easy method for deploying this automatic approach.
