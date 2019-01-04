@@ -2,7 +2,6 @@ package main
 
 import (
 	"bytes"
-	"fmt"
 	"k8s.io/api/admission/v1beta1"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -49,7 +48,7 @@ func makeTestData(t testing.TB, skip bool) []byte {
 	}
 
 	if skip {
-		fmt.Println("skipped!")
+		t.Log("Skipped test data generated.")
 		return []byte{}
 	}
 
