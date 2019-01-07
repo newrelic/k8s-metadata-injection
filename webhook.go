@@ -182,7 +182,7 @@ func (whsvr *WebhookServer) mutate(ar *v1beta1.AdmissionReview) *v1beta1.Admissi
 }
 
 // Serve method for webhook server
-func (whsvr *WebhookServer) serve(w http.ResponseWriter, r *http.Request) {
+func (whsvr *WebhookServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	var body []byte
 	if r.Body != nil {
 		if data, err := ioutil.ReadAll(r.Body); err == nil {

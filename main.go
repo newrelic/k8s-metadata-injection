@@ -9,7 +9,7 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
-	
+
 	"github.com/golang/glog"
 )
 
@@ -36,12 +36,12 @@ func main() {
 	flag.StringVar(&parameters.webhookName, "webhookName", "metadata-injection.newrelic.com", "Optional name of the webhook to push to webhook caBundle")
 	flag.StringVar(&parameters.caBundle, "caBundle", "", "Optional caBundle to push to the Kubernetes API")
 	flag.Parse()
-	
+
 	pair, err := tls.LoadX509KeyPair(parameters.certFile, parameters.keyFile)
 	if err != nil {
 		glog.Errorf("Filed to load key pair: %v", err)
 	}
-	
+
 	whsvr := &WebhookServer {
 		clusterName: parameters.clusterName,
 		server: &http.Server {
@@ -49,12 +49,12 @@ func main() {
 			TLSConfig:   &tls.Config{Certificates: []tls.Certificate{pair}},
 		},
 	}
-	
+
 	// define http server and server handler
 	glog.Infof("Starting the webhook server")
 
 	mux := http.NewServeMux()
-	mux.HandleFunc("/mutate", whsvr.serve)
+	mux.HandleFunc("/mutate", whsvr.ServeHTTP)
 	whsvr.server.Handler = mux
 
 	// start webhook server in new rountine
@@ -79,7 +79,7 @@ func main() {
 	signalChan := make(chan os.Signal, 1)
 	signal.Notify(signalChan, syscall.SIGINT, syscall.SIGTERM)
 	<-signalChan
-	
+
 	glog.Infof("Got OS shutdown signal, shutting down wenhook server gracefully...")
 	whsvr.server.Shutdown(context.Background())
 }
