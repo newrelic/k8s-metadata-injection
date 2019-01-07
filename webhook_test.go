@@ -13,7 +13,7 @@ import (
 )
 
 func Benchmark_WebhookPerformance(b *testing.B) {
-	body := makeTestData(b, false)
+	body := makeTestData(b)
 
 	whsvr := &WebhookServer {
 		clusterName: "foobar",
@@ -31,7 +31,7 @@ func Benchmark_WebhookPerformance(b *testing.B) {
 	}
 }
 
-func makeTestData(t testing.TB, skip bool) []byte {
+func makeTestData(t testing.TB) []byte {
 	t.Helper()
 
 	pod := corev1.Pod{
@@ -45,11 +45,6 @@ func makeTestData(t testing.TB, skip bool) []byte {
 			Containers:       []corev1.Container{{Name: "c1"}},
 			ImagePullSecrets: []corev1.LocalObjectReference{{Name: "p0"}},
 		},
-	}
-
-	if skip {
-		t.Log("Skipped test data generated.")
-		return []byte{}
 	}
 
 	raw, err := json.Marshal(&pod)
