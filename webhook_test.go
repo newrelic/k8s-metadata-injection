@@ -2,22 +2,144 @@ package main
 
 import (
 	"bytes"
+	json_encoding "encoding/json"
+	"fmt"
+	"io/ioutil"
+	"net/http"
+	"net/http/httptest"
+	"testing"
+
+	"github.com/stretchr/testify/assert"
 	"k8s.io/api/admission/v1beta1"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/apimachinery/pkg/util/json"
-	"net/http"
-	"net/http/httptest"
-	"testing"
 )
 
-func Benchmark_WebhookPerformance(b *testing.B) {
-	body := makeTestData(b)
+func TestServeHTTP(t *testing.T) {
+	patchForValidBody, err := ioutil.ReadFile("testdata/expectedAdmissionReviewPatch.json")
+	if err != nil {
+		t.Fatalf("cannot read testdata file: %v", err)
+	}
+	var expectedPatchForValidBody bytes.Buffer
+	if len(patchForValidBody) > 0 {
+		if err := json_encoding.Compact(&expectedPatchForValidBody, patchForValidBody); err != nil {
+			t.Fatalf(err.Error())
+		}
+	}
 
-	whsvr := &WebhookServer {
+	patchTypeForValidBody := v1beta1.PatchTypeJSONPatch
+	resultForInvalidBody := metav1.Status{
+		Message: "yaml: control characters are not allowed",
+	}
+
+	cases := []struct {
+		name                      string
+		requestBody               []byte
+		contentType               string
+		expectedStatusCode        int
+		expectedBodyWhenHTTPError string
+		expectedAdmissionReview   v1beta1.AdmissionReview
+	}{
+		{
+			name:               "mutation applied - valid body",
+			requestBody:        makeTestData(t, "default"),
+			contentType:        "application/json",
+			expectedStatusCode: http.StatusOK,
+			expectedAdmissionReview: v1beta1.AdmissionReview{
+				Response: &v1beta1.AdmissionResponse{
+					UID:       types.UID(1),
+					Allowed:   true,
+					Result:    nil,
+					Patch:     expectedPatchForValidBody.Bytes(),
+					PatchType: &patchTypeForValidBody,
+				},
+			},
+		},
+		{
+			name:               "mutation not applied - valid body for ignored namespaces",
+			requestBody:        makeTestData(t, "kube-system"),
+			contentType:        "application/json",
+			expectedStatusCode: http.StatusOK,
+			expectedAdmissionReview: v1beta1.AdmissionReview{
+				Response: &v1beta1.AdmissionResponse{
+					UID:       types.UID(1),
+					Allowed:   true,
+					Result:    nil,
+					Patch:     nil,
+					PatchType: nil,
+				},
+			},
+		},
+		{
+			name:                      "empty body",
+			contentType:               "application/json",
+			expectedStatusCode:        http.StatusBadRequest,
+			expectedBodyWhenHTTPError: "empty body" + "\n",
+		},
+		{
+			name:                      "wrong content-type",
+			requestBody:               makeTestData(t, "default"),
+			contentType:               "application/yaml",
+			expectedStatusCode:        http.StatusUnsupportedMediaType,
+			expectedBodyWhenHTTPError: "invalid Content-Type, expect `application/json`" + "\n",
+		},
+		{
+			name:               "invalid body",
+			requestBody:        []byte{0, 1, 2},
+			contentType:        "application/json",
+			expectedStatusCode: http.StatusOK,
+			expectedAdmissionReview: v1beta1.AdmissionReview{
+				Response: &v1beta1.AdmissionResponse{
+					UID:       "",
+					Allowed:   false,
+					Result:    &resultForInvalidBody,
+					Patch:     nil,
+					PatchType: nil,
+				},
+			},
+		},
+	}
+
+	whsvr := &WebhookServer{
 		clusterName: "foobar",
-		server: &http.Server {
+		server:      &http.Server{},
+	}
+
+	server := httptest.NewServer(whsvr)
+	defer server.Close()
+
+	for i, c := range cases {
+		t.Run(fmt.Sprintf("[%d] %s", i, c.name), func(t *testing.T) {
+
+			resp, err := http.Post(server.URL, c.contentType, bytes.NewReader(c.requestBody))
+			assert.NoError(t, err)
+			assert.Equal(t, c.expectedStatusCode, resp.StatusCode)
+
+			gotBody, err := ioutil.ReadAll(resp.Body)
+			if err != nil {
+				t.Fatalf("could not read body: %v", err)
+			}
+			var gotReview v1beta1.AdmissionReview
+			if err := json.Unmarshal(gotBody, &gotReview); err != nil {
+				assert.Equal(t, c.expectedBodyWhenHTTPError, string(gotBody))
+				return
+			}
+
+			assert.Equal(t, c.expectedAdmissionReview, gotReview)
+		})
+	}
+
+}
+
+func Benchmark_WebhookPerformance(b *testing.B) {
+	body := makeTestData(b, "default")
+
+	whsvr := &WebhookServer{
+		clusterName: "foobar",
+		server: &http.Server{
 			Addr: ":8080",
 		},
 	}
@@ -31,18 +153,21 @@ func Benchmark_WebhookPerformance(b *testing.B) {
 	}
 }
 
-func makeTestData(t testing.TB) []byte {
+func makeTestData(t testing.TB, namespace string) []byte {
 	t.Helper()
 
 	pod := corev1.Pod{
 		ObjectMeta: metav1.ObjectMeta{
-			Name:        "test",
-			Annotations: make(map[string]string),
+			Name:            "test-123-123",
+			GenerateName:    "test-123-123", // required for creating metadata for deployment
+			Annotations:     map[string]string{},
+			Namespace:       namespace,
+			OwnerReferences: []metav1.OwnerReference{{Kind: "ReplicaSet"}}, // required for populating metadata for deployment
 		},
 		Spec: corev1.PodSpec{
 			Volumes:          []corev1.Volume{{Name: "v0"}},
 			InitContainers:   []corev1.Container{{Name: "c0"}},
-			Containers:       []corev1.Container{{Name: "c1"}},
+			Containers:       []corev1.Container{{Name: "c1"}, {Name: "c2"}},
 			ImagePullSecrets: []corev1.LocalObjectReference{{Name: "p0"}},
 		},
 	}
@@ -59,6 +184,7 @@ func makeTestData(t testing.TB) []byte {
 				Raw: raw,
 			},
 			Operation: v1beta1.Create,
+			UID:       types.UID(1),
 		},
 	}
 	reviewJSON, err := json.Marshal(review)
@@ -67,4 +193,3 @@ func makeTestData(t testing.TB) []byte {
 	}
 	return reviewJSON
 }
-
