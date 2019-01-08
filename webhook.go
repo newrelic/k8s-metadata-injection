@@ -61,6 +61,7 @@ func (whsvr *WebhookServer) getEnvVarsToInject(pod *corev1.Pod, container *corev
 	return vars
 }
 
+// WebhookServer is a webhook server that can accept requests from the Apiserver
 type WebhookServer struct {
 	clusterName string
 	server      *http.Server

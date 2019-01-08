@@ -13,7 +13,7 @@ import (
 	"github.com/golang/glog"
 )
 
-// Webhook Server parameters
+// WhSvrParameters are configuration parameters for Webhook Server
 type WhSvrParameters struct {
 	port              int    // webhook server port
 	certFile          string // path to the x509 certificate for https
@@ -81,5 +81,5 @@ func main() {
 	<-signalChan
 
 	glog.Infof("Got OS shutdown signal, shutting down wenhook server gracefully...")
-	whsvr.server.Shutdown(context.Background())
+	whsvr.server.Shutdown(context.Background()) //nolint: errcheck
 }

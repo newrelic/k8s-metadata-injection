@@ -17,6 +17,7 @@ import (
 	"k8s.io/client-go/rest"
 )
 
+// UpdateCaBundle updates provided caBundle on the MutatingAdmissionWebhook
 func UpdateCaBundle(webhookConfigName, webhookName, caBundle string) error {
 	// Create the in-cluster config
 	config, err := rest.InClusterConfig()
