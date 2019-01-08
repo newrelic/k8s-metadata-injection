@@ -2,7 +2,6 @@ package main
 
 import (
 	"bytes"
-	json_encoding "encoding/json"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -19,75 +18,86 @@ import (
 )
 
 func TestServeHTTP(t *testing.T) {
-	patch, err := ioutil.ReadFile("testdata/expectedAdmissionReviewPatch.json")
+	patchForValidBody, err := ioutil.ReadFile("testdata/expectedAdmissionReviewPatch")
 	if err != nil {
 		t.Fatalf("cannot read testdata file: %v", err)
 	}
+	patchTypeForValidBody := v1beta1.PatchTypeJSONPatch
+	resultForInvalidBody := metav1.Status{
+		Message: "yaml: control characters are not allowed",
+	}
 
 	cases := []struct {
-		name               string
-		body               []byte
-		contentType        string
-		expectedAllowed    bool
-		expectedStatusCode int
-		expectedPatch      []byte
-		expectedUID        types.UID
-		expectedHTTPError  string
+		name                      string
+		requestBody               []byte
+		contentType               string
+		expectedStatusCode        int
+		expectedBodyWhenHTTPError string
+		expectedAdmissionReview   v1beta1.AdmissionReview
 	}{
 		{
 			name:               "mutation applied - valid body",
-			body:               makeTestData(t, "default"),
+			requestBody:        makeTestData(t, "default"),
 			contentType:        "application/json",
 			expectedStatusCode: http.StatusOK,
-			expectedAllowed:    true,
-			expectedPatch:      patch,
-			expectedUID:        types.UID(1),
+			expectedAdmissionReview: v1beta1.AdmissionReview{
+				Response: &v1beta1.AdmissionResponse{
+					UID:       types.UID(1),
+					Allowed:   true,
+					Result:    nil,
+					Patch:     patchForValidBody,
+					PatchType: &patchTypeForValidBody,
+				},
+			},
 		},
 		{
 			name:               "mutation not applied - valid body for ignored namespaces",
-			body:               makeTestData(t, "kube-system"),
+			requestBody:        makeTestData(t, "kube-system"),
 			contentType:        "application/json",
 			expectedStatusCode: http.StatusOK,
-			expectedAllowed:    true,
-			expectedPatch:      nil,
-			expectedUID:        types.UID(1),
+			expectedAdmissionReview: v1beta1.AdmissionReview{
+				Response: &v1beta1.AdmissionResponse{
+					UID:       types.UID(1),
+					Allowed:   true,
+					Result:    nil,
+					Patch:     nil,
+					PatchType: nil,
+				},
+			},
 		},
 		{
-			name:               "empty body",
-			contentType:        "application/json",
-			expectedStatusCode: http.StatusBadRequest,
-			expectedHTTPError:  fmt.Sprintln("empty body"),
-			expectedAllowed:    false,
-			expectedPatch:      nil,
-			expectedUID:        "",
+			name:                      "empty body",
+			contentType:               "application/json",
+			expectedStatusCode:        http.StatusBadRequest,
+			expectedBodyWhenHTTPError: "empty body" + "\n",
 		},
 		{
-			name:               "wrong content-type",
-			body:               makeTestData(t, "default"),
-			contentType:        "application/yaml",
-			expectedStatusCode: http.StatusUnsupportedMediaType,
-			expectedHTTPError:  fmt.Sprintln("invalid Content-Type, expect `application/json`"),
-			expectedAllowed:    false,
-			expectedPatch:      nil,
-			expectedUID:        "",
+			name:                      "wrong content-type",
+			requestBody:               makeTestData(t, "default"),
+			contentType:               "application/yaml",
+			expectedStatusCode:        http.StatusUnsupportedMediaType,
+			expectedBodyWhenHTTPError: "invalid Content-Type, expect `application/json`" + "\n",
 		},
 		{
 			name:               "invalid body",
-			body:               []byte{0, 1, 2},
+			requestBody:        []byte{0, 1, 2},
 			contentType:        "application/json",
 			expectedStatusCode: http.StatusOK,
-			expectedHTTPError:  "",
-			expectedAllowed:    false,
-			expectedPatch:      nil,
-			expectedUID:        "",
+			expectedAdmissionReview: v1beta1.AdmissionReview{
+				Response: &v1beta1.AdmissionResponse{
+					UID:       "",
+					Allowed:   false,
+					Result:    &resultForInvalidBody,
+					Patch:     nil,
+					PatchType: nil,
+				},
+			},
 		},
 	}
 
 	whsvr := &WebhookServer{
 		clusterName: "foobar",
-		server: &http.Server{
-			Addr: ":8080",
-		},
+		server:      &http.Server{},
 	}
 
 	server := httptest.NewServer(whsvr)
@@ -96,7 +106,7 @@ func TestServeHTTP(t *testing.T) {
 	for i, c := range cases {
 		t.Run(fmt.Sprintf("[%d] %s", i, c.name), func(t *testing.T) {
 
-			resp, err := http.Post(server.URL, c.contentType, bytes.NewReader(c.body))
+			resp, err := http.Post(server.URL, c.contentType, bytes.NewReader(c.requestBody))
 			assert.NoError(t, err)
 			assert.Equal(t, c.expectedStatusCode, resp.StatusCode)
 
@@ -106,24 +116,11 @@ func TestServeHTTP(t *testing.T) {
 			}
 			var gotReview v1beta1.AdmissionReview
 			if err := json.Unmarshal(gotBody, &gotReview); err != nil {
-				assert.Equal(t, c.expectedHTTPError, string(gotBody))
+				assert.Equal(t, c.expectedBodyWhenHTTPError, string(gotBody))
 				return
 			}
-			assert.Equal(t, c.expectedAllowed, gotReview.Response.Allowed)
 
-			var gotPatch bytes.Buffer
-			if len(gotReview.Response.Patch) > 0 {
-				if err := json_encoding.Compact(&gotPatch, gotReview.Response.Patch); err != nil {
-					t.Fatalf(err.Error())
-				}
-			}
-			var expectedPatch bytes.Buffer
-			if len(c.expectedPatch) > 0 {
-				if err := json_encoding.Compact(&expectedPatch, c.expectedPatch); err != nil {
-					t.Fatalf(err.Error())
-				}
-			}
-			assert.Equal(t, expectedPatch.Bytes(), gotPatch.Bytes())
+			assert.Equal(t, c.expectedAdmissionReview, gotReview)
 		})
 	}
 
