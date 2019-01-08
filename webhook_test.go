@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	json_encoding "encoding/json"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -18,10 +19,17 @@ import (
 )
 
 func TestServeHTTP(t *testing.T) {
-	patchForValidBody, err := ioutil.ReadFile("testdata/expectedAdmissionReviewPatch")
+	patchForValidBody, err := ioutil.ReadFile("testdata/expectedAdmissionReviewPatch.json")
 	if err != nil {
 		t.Fatalf("cannot read testdata file: %v", err)
 	}
+	var expectedPatchForValidBody bytes.Buffer
+	if len(patchForValidBody) > 0 {
+		if err := json_encoding.Compact(&expectedPatchForValidBody, patchForValidBody); err != nil {
+			t.Fatalf(err.Error())
+		}
+	}
+
 	patchTypeForValidBody := v1beta1.PatchTypeJSONPatch
 	resultForInvalidBody := metav1.Status{
 		Message: "yaml: control characters are not allowed",
@@ -45,7 +53,7 @@ func TestServeHTTP(t *testing.T) {
 					UID:       types.UID(1),
 					Allowed:   true,
 					Result:    nil,
-					Patch:     patchForValidBody,
+					Patch:     expectedPatchForValidBody.Bytes(),
 					PatchType: &patchTypeForValidBody,
 				},
 			},
