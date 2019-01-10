@@ -1,0 +1,9 @@
+apiVersion: skaffold/v1beta2
+kind: Config
+build:
+  artifacts:
+  - image: quay.io/newrelic/k8s-metadata-injector
+deploy:
+  kubectl:
+    manifests:
+    - deploy/local.yaml
