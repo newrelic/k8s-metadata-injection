@@ -1,0 +1,122 @@
+openapi: 3.0.0
+info:
+  description: >-
+    The injection of New Relic APM Metadata is implemented as a webhook using
+    Kubernetes MutatingAdmissionWebhook.
+  title: New Relic Kubernetes Metadata Injection MutatingAdmissionWebhook
+  version: 1.0.0
+servers:
+  - url: 'https://newrelic-metadata-injection-svc.default.svc/'
+paths:
+  /mutate:
+    post:
+      parameters:
+        - description: >-
+            The expected timeout. This value is the timeout that the Kubernetes
+            API client uses when calling the webhook. This is provided in order
+            to cancel the operation in case it reaches such timeout since
+            Kubernetes will discard it anyway.
+          in: query
+          name: timeout
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdmissionReviewResponse'
+          description: >-
+            The request was succes. Note that in case the status field is
+            present, the mutation was not executed.
+        '400':
+          description: Bad request.
+        '500':
+          description: Internal server error.
+      description: >-
+        The injection of New Relic APM Metadata is implemented as a webhook
+        using Kubernetes MutatingAdmissionWebhook. This is the entry point of
+        such Webhook.
+      operationId: mutate
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdmissionReviewRequest'
+        description: >-
+          `AdmissionReview` with Request object. It contains the info about the
+          object to be mutated.
+        required: true
+      summary: Mutate pod. Inject New Relic Agent env vars.
+components:
+  schemas:
+    AdmissionRequest:
+      properties:
+        uid:
+          description: >-
+            Identifier for the individual request/response. This should be
+            copied over from the corresponding AdmissionRequest
+          type: string
+      type: object
+    AdmissionResponse:
+      properties:
+        allowed:
+          default: false
+          description: >-
+            Indicates whether or not the admission request was permitted. If
+            false, the creation of the related workload will fail no matters the
+            chosen failurePolicy
+          type: boolean
+        patch:
+          description: >-
+            The patch body. Currently there is only support "JSONPatch" which
+            implements RFC 6902
+          example: >-
+            W3sib3AiOiJhZGQiLCJwYXRoIjoiL3NwZWMvY29udGFpbmVycy8wL2VudiIsInZhbHVlIjpbeyJuYW1lIjoiTkVXX1JFTElDX01FVEFEQVRBX0tVQkVSTkVURVNfQ0xVU1RFUl9OQU1FIiwidmFsdWUiOiJmb29iYXIifV19LHsib3AiOiJhZGQiLCJwYXRoIjoiL3NwZWMvY29udGFpbmVycy8wL2Vudi8tIiwidmFsdWUiOnsibmFtZSI6Ik5FV19SRUxJQ19NRVRBREFUQV9LVUJFUk5FVEVTX05PREVfTkFNRSIsInZhbHVlRnJvbSI6eyJmaWVsZFJlZiI6eyJmaWVsZFBhdGgiOiJzcGVjLm5vZGVOYW1lIn19fX0seyJvcCI6ImFkZCIsInBhdGgiOiIvc3BlYy9jb250YWluZXJzLzAvZW52Ly0iLCJ2YWx1ZSI6eyJuYW1lIjoiTkVXX1JFTElDX01FVEFEQVRBX0tVQkVSTkVURVNfTkFNRVNQQUNFX05BTUUiLCJ2YWx1ZUZyb20iOnsiZmllbGRSZWYiOnsiZmllbGRQYXRoIjoibWV0YWRhdGEubmFtZXNwYWNlIn19fX0seyJvcCI6ImFkZCIsInBhdGgiOiIvc3BlYy9jb250YWluZXJzLzAvZW52Ly0iLCJ2YWx1ZSI6eyJuYW1lIjoiTkVXX1JFTElDX01FVEFEQVRBX0tVQkVSTkVURVNfUE9EX05BTUUiLCJ2YWx1ZUZyb20iOnsiZmllbGRSZWYiOnsiZmllbGRQYXRoIjoibWV0YWRhdGEubmFtZSJ9fX19LHsib3AiOiJhZGQiLCJwYXRoIjoiL3NwZWMvY29udGFpbmVycy8wL2Vudi8tIiwidmFsdWUiOnsibmFtZSI6Ik5FV19SRUxJQ19NRVRBREFUQV9LVUJFUk5FVEVTX0NPTlRBSU5FUl9OQU1FIiwidmFsdWUiOiJjMSJ9fSx7Im9wIjoiYWRkIiwicGF0aCI6Ii9zcGVjL2NvbnRhaW5lcnMvMC9lbnYvLSIsInZhbHVlIjp7Im5hbWUiOiJORVdfUkVMSUNfTUVUQURBVEFfS1VCRVJORVRFU19ERVBMT1lNRU5UX05BTUUiLCJ2YWx1ZSI6InRlc3QifX0seyJvcCI6ImFkZCIsInBhdGgiOiIvc3BlYy9jb250YWluZXJzLzEvZW52IiwidmFsdWUiOlt7Im5hbWUiOiJORVdfUkVMSUNfTUVUQURBVEFfS1VCRVJORVRFU19DTFVTVEVSX05BTUUiLCJ2YWx1ZSI6ImZvb2JhciJ9XX0seyJvcCI6ImFkZCIsInBhdGgiOiIvc3BlYy9jb250YWluZXJzLzEvZW52Ly0iLCJ2YWx1ZSI6eyJuYW1lIjoiTkVXX1JFTElDX01FVEFEQVRBX0tVQkVSTkVURVNfTk9ERV9OQU1FIiwidmFsdWVGcm9tIjp7ImZpZWxkUmVmIjp7ImZpZWxkUGF0aCI6InNwZWMubm9kZU5hbWUifX19fSx7Im9wIjoiYWRkIiwicGF0aCI6Ii9zcGVjL2NvbnRhaW5lcnMvMS9lbnYvLSIsInZhbHVlIjp7Im5hbWUiOiJORVdfUkVMSUNfTUVUQURBVEFfS1VCRVJORVRFU19OQU1FU1BBQ0VfTkFNRSIsInZhbHVlRnJvbSI6eyJmaWVsZFJlZiI6eyJmaWVsZFBhdGgiOiJtZXRhZGF0YS5uYW1lc3BhY2UifX19fSx7Im9wIjoiYWRkIiwicGF0aCI6Ii9zcGVjL2NvbnRhaW5lcnMvMS9lbnYvLSIsInZhbHVlIjp7Im5hbWUiOiJORVdfUkVMSUNfTUVUQURBVEFfS1VCRVJORVRFU19QT0RfTkFNRSIsInZhbHVlRnJvbSI6eyJmaWVsZFJlZiI6eyJmaWVsZFBhdGgiOiJtZXRhZGF0YS5uYW1lIn19fX0seyJvcCI6ImFkZCIsInBhdGgiOiIvc3BlYy9jb250YWluZXJzLzEvZW52Ly0iLCJ2YWx1ZSI6eyJuYW1lIjoiTkVXX1JFTElDX01FVEFEQVRBX0tVQkVSTkVURVNfQ09OVEFJTkVSX05BTUUiLCJ2YWx1ZSI6ImMyIn19LHsib3AiOiJhZGQiLCJwYXRoIjoiL3NwZWMvY29udGFpbmVycy8xL2Vudi8tIiwidmFsdWUiOnsibmFtZSI6Ik5FV19SRUxJQ19NRVRBREFUQV9LVUJFUk5FVEVTX0RFUExPWU1FTlRfTkFNRSIsInZhbHVlIjoidGVzdCJ9fV0=
+          type: string
+        patchType:
+          description: The type of Patch. Currently only "JSONPatch" is allowed
+          enum:
+            - JSONPatch
+          example: JSONPatch
+          type: string
+        status:
+          $ref: '#/components/schemas/AdmissionResponseStatus'
+        uid:
+          description: >-
+            Identifier for the individual request/response. This should be
+            copied over from the corresponding AdmissionRequest
+          type: string
+      type: object
+    AdmissionResponseStatus:
+      description: Status is present in case the mutation was not executed.
+      properties:
+        message:
+          description: >-
+            A human-readable description of of why this operation is in the
+            "Failure" status or was not "allowed".
+          type: string
+        reason:
+          description: >-
+            A machine-readable description of why this operation is in the
+            "Failure" status or was not "allowed". If "message" is set then this
+            value is not used.
+          type: string
+      type: object
+    AdmissionReviewRequest:
+      properties:
+        request:
+          $ref: '#/components/schemas/AdmissionRequest'
+      required:
+        - request
+      type: object
+    AdmissionReviewResponse:
+      properties:
+        response:
+          $ref: '#/components/schemas/AdmissionResponse'
+      required:
+        - response
+      type: object
+externalDocs:
+  description: k8s-metadata-injection repository
+  url: 'https://github.com/newrelic/k8s-metadata-injection'
