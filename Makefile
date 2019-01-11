@@ -14,7 +14,7 @@ export GO111MODULE=on
 all: build
 
 .PHONY: build
-build: clean lint test compile # TODO: add license-check
+build: clean lint test compile
 
 .PHONY: clean
 clean:
@@ -28,11 +28,6 @@ $(TOOLS_DIR)/golangci-lint: $(TOOLS_DIR)
 	@echo "[tools] Downloading 'golangci-lint'"
 	@wget -O - -q https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | BINDIR=$(@D) sh -s v$(GOLANGCILINT_VERSION) &> /dev/null
 
-# $(TOOLS_DIR)/papers-go: $(TOOLS_DIR)
-# 	@echo "[tools] Downloading 'papers-go'"
-# 	@go get go.datanerd.us/p/ohai/papers-go/...
-# 	@cp $(GOPATH)/bin/papers-go $(TOOLS_DIR)/papers-go
-
 .PHONY: lint
 lint: $(TOOLS_DIR)/golangci-lint
 	@echo "[validate] Validating source code running golangci-lint"
@@ -42,11 +37,6 @@ lint: $(TOOLS_DIR)/golangci-lint
 lint-all: $(TOOLS_DIR)/golangci-lint
 	@echo "[validate] Validating source code running golangci-lint"
 	@$(TOOLS_DIR)/golangci-lint run --enable=interfacer --enable=gosimple
-
-# .PHONY: license-check
-# license-check: $(TOOLS_DIR)/papers-go
-# 	@echo "[validate] Validating licenses of package dependencies required by the project"
-# 	@$(TOOLS_DIR)/papers-go validate
 
 .PHONY: compile
 compile:
