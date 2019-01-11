@@ -42,27 +42,7 @@ The injection is only applied to namespaces that have the `newrelic-metadata-inj
 $ kubectl label namespace <namespace> newrelic-metadata-injection=enabled
 ```
 
-## Prototype
-
-This repo contains a prototype based on https://github.com/morvencao/kube-mutating-webhook-tutorial/.
-*Important note:* this is just a prototype and not production ready!
-We need readinesschecks, healthchecks and a lot of testing since this will run in the Pod deployment flow on the Kubernetes cluster.
-
-### Build
-
-The prototype uses dep as the dependency management tool:
-
-```
-go get -u github.com/golang/dep/cmd/dep
-```
-
-Build and push the docker image, this currently pushes to an AWS machine from fryckbosch (which is not in the DNS - so it will fail):
-
-```
-./build.sh
-```
-
-### Certificates
+### 4) Certificates
 
 To make the deployment as easy as possible, the certificates for the webhook are generated inside the container.
 The webhook container then uses the kubernetes api to update the caBundle on the MutatingAdmissionWebhook.
@@ -78,6 +58,44 @@ kubectl create -f newrelic-metadata-injection-manual-cert.yaml
 ```
 
 The command above requires the following files from this repo: `create-certs.sh`, `newrelic-metadata-injection-manual-nocert.yaml`.
+
+
+
+## Development
+
+### Prerequisites
+For development process [Minikube](https://kubernetes.io/docs/getting-started-guides/minikube) and [Skaffold](https://github.com/GoogleCloudPlatform/skaffold) tools are used.
+* [Install Minikube](https://kubernetes.io/docs/tasks/tools/install-minikube/).
+* [Install Skaffold](https://github.com/GoogleCloudPlatform/skaffold#installation).
+
+### Configuration
+
+* Copy the deployment file `deploy/newrelic-metadata-injection` to `deploy/local.yaml`.
+* Edit the file and set the following value as container image: `quay.io/newrelic/k8s-metadata-injector-dev`.
+* Make sure that `imagePullPolicy: Always` is not present in the file (otherwise, the image won't be pulled).
+
+### Run
+
+Run `make deploy-dev`. This will compile your binary with compatibility for the container OS architecture, build a temporary docker image and finally deploy it to your Minikube.
+
+### Tests
+
+For running unit tests, use
+
+```bash
+make test
+```
+
+For running benchmark tests, use:
+
+```bash
+make benchmark-test
+```
+
+### Dependency management
+
+[Go modules](https://github.com/golang/go/wiki/Modules) are used for managing dependency.
+Currently for K8s libraries it used version 1.13.1. Only couple of libraries are direct dependency, the rest is indirect. You need to point all of them to the same K8s version to make sure that everything works as expected. For the moment this process is manual.
 
 ### Performance
 
