@@ -13,15 +13,15 @@ import (
 	"github.com/golang/glog"
 )
 
-// Webhook Server parameters
+// WhSvrParameters are configuration parameters for Webhook Server
 type WhSvrParameters struct {
-	port int                 // webhook server port
-	certFile string          // path to the x509 certificate for https
-	keyFile string           // path to the x509 private key matching `CertFile`
-	clusterName string		 // name of the cluster
+	port              int    // webhook server port
+	certFile          string // path to the x509 certificate for https
+	keyFile           string // path to the x509 private key matching `CertFile`
+	clusterName       string // name of the cluster
 	webhookConfigName string // name of the webhook config
-	webhookName string       // name of the webhook
-	caBundle string			 // caBundle
+	webhookName       string // name of the webhook
+	caBundle          string // caBundle
 }
 
 func main() {
@@ -42,11 +42,11 @@ func main() {
 		glog.Errorf("Filed to load key pair: %v", err)
 	}
 
-	whsvr := &WebhookServer {
+	whsvr := &WebhookServer{
 		clusterName: parameters.clusterName,
-		server: &http.Server {
-			Addr:        fmt.Sprintf(":%v", parameters.port),
-			TLSConfig:   &tls.Config{Certificates: []tls.Certificate{pair}},
+		server: &http.Server{
+			Addr:      fmt.Sprintf(":%v", parameters.port),
+			TLSConfig: &tls.Config{Certificates: []tls.Certificate{pair}},
 		},
 	}
 
@@ -81,5 +81,5 @@ func main() {
 	<-signalChan
 
 	glog.Infof("Got OS shutdown signal, shutting down wenhook server gracefully...")
-	whsvr.server.Shutdown(context.Background())
+	whsvr.server.Shutdown(context.Background()) //nolint: errcheck
 }

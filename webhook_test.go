@@ -149,7 +149,7 @@ func Benchmark_WebhookPerformance(b *testing.B) {
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		http.Post(server.URL, "application/json", bytes.NewReader(body))
+		http.Post(server.URL, "application/json", bytes.NewReader(body)) //nolint: errcheck
 	}
 }
 

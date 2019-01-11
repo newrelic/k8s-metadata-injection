@@ -20,4 +20,4 @@ if [ ! -e ${CERTS_DIR}/cert.pem ]; then
     rm *.pem
 fi
 
-exec /k8s-env-inject ${CA_OPTS} -tlsCertFile=${CERTS_DIR}/cert.pem -tlsKeyFile=${CERTS_DIR}/key.pem -alsologtostderr -v=4 2>&1
+exec /k8s-metadata-injection ${CA_OPTS} -tlsCertFile=${CERTS_DIR}/cert.pem -tlsKeyFile=${CERTS_DIR}/key.pem -alsologtostderr -v=4 2>&1
