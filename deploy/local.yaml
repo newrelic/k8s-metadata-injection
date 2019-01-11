@@ -47,7 +47,7 @@ spec:
       serviceAccountName: newrelic-metadata-injection-service-account
       containers:
       - name: metadata-injector
-        image: quay.io/newrelic/k8s-metadata-injector
+        image: quay.io/newrelic/k8s-metadata-injector-dev
         # imagePullPolicy: Always
 ---
 apiVersion: v1
