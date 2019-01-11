@@ -18,7 +18,7 @@ build: clean lint test compile # TODO: add license-check
 
 .PHONY: clean
 clean:
-	@echo "[clean] Removing integration binaries"
+	@echo "[clean] Removing binaries"
 	@rm -rf $(BIN_DIR)/$(BINARY_NAME)
 
 $(TOOLS_DIR):
