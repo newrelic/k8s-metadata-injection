@@ -2,7 +2,7 @@
 
 Kubernetes API serves as the foundation for the declarative configuration schema for the system, among others. Kubernetes itself is decomposed into multiple components, which interact through its API.
 
-Any request made to K8s API is affected by a timeout; by default ** 60 seconds** (see [source code](https://github.com/kubernetes/apiserver/blob/b8915a5609e4d7553d92f0d431ba04ecf9b52777/pkg/server/config.go#L262)). 
+Any request made to K8s API is affected by a timeout; by default **60 seconds** (see [source code](https://github.com/kubernetes/apiserver/blob/b8915a5609e4d7553d92f0d431ba04ecf9b52777/pkg/server/config.go#L262)). 
 
 ## Mutating Webhook
 
