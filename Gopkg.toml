@@ -24,6 +24,9 @@
 #   go-tests = true
 #   unused-packages = true
 
+[[constraint]]
+    name = "github.com/howeyc/fsnotify"
+    version = "v0.9.0"
 
 [[constraint]]
   branch = "master"

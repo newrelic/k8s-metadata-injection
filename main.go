@@ -5,23 +5,21 @@ import (
 	"crypto/tls"
 	"flag"
 	"fmt"
+	"github.com/golang/glog"
+	"github.com/howeyc/fsnotify"
 	"net/http"
 	"os"
 	"os/signal"
+	"path/filepath"
 	"syscall"
-
-	"github.com/golang/glog"
 )
 
 // Webhook Server parameters
 type WhSvrParameters struct {
-	port int                 // webhook server port
-	certFile string          // path to the x509 certificate for https
-	keyFile string           // path to the x509 private key matching `CertFile`
-	clusterName string		 // name of the cluster
-	webhookConfigName string // name of the webhook config
-	webhookName string       // name of the webhook
-	caBundle string			 // caBundle
+	port        int    // webhook server port
+	certFile    string // path to the x509 certificate for https
+	keyFile     string // path to the x509 private key matching `CertFile`
+	clusterName string // name of the cluster
 }
 
 func main() {
@@ -29,26 +27,38 @@ func main() {
 
 	// get command line parameters
 	flag.IntVar(&parameters.port, "port", 443, "Webhook server port.")
-	flag.StringVar(&parameters.certFile, "tlsCertFile", "/etc/webhook/certs/cert.pem", "File containing the x509 Certificate for HTTPS.")
-	flag.StringVar(&parameters.keyFile, "tlsKeyFile", "/etc/webhook/certs/key.pem", "File containing the x509 private key to --tlsCertFile.")
+	flag.StringVar(&parameters.certFile, "tlsCertFile", "/etc/tls-key-cert-pair/tls.crt", "File containing the x509 Certificate for HTTPS.")
+	flag.StringVar(&parameters.keyFile, "tlsKeyFile", "/etc/tls-key-cert-pair/tls.key", "File containing the x509 private key to --tlsCertFile.")
 	flag.StringVar(&parameters.clusterName, "clusterName", "cluster", "The name of the Kubernetes cluster")
-	flag.StringVar(&parameters.webhookConfigName, "webhookConfigName", "newrelic-metadata-injection-cfg", "Optional name of the MutatingAdmissionWebhook to push webhook caBundle")
-	flag.StringVar(&parameters.webhookName, "webhookName", "metadata-injection.newrelic.com", "Optional name of the webhook to push to webhook caBundle")
-	flag.StringVar(&parameters.caBundle, "caBundle", "", "Optional caBundle to push to the Kubernetes API")
 	flag.Parse()
 
 	pair, err := tls.LoadX509KeyPair(parameters.certFile, parameters.keyFile)
 	if err != nil {
-		glog.Errorf("Filed to load key pair: %v", err)
+		glog.Errorf("Failed to load key pair: %v", err)
 	}
 
-	whsvr := &WebhookServer {
+	watcher, _ := fsnotify.NewWatcher()
+	// watch the parent directory of the target files so we can catch
+	// symlink updates of k8s ConfigMaps volumes.
+	for _, file := range []string{parameters.certFile, parameters.keyFile} {
+		watchDir, _ := filepath.Split(file)
+		if err := watcher.Watch(watchDir); err != nil {
+			glog.Errorf("could not watch %v: %v", file, err)
+		}
+	}
+	defer func() { _ = watcher.Close() }()
+
+	whsvr := &WebhookServer{
+		keyFile:     parameters.keyFile,
+		certFile:    parameters.certFile,
+		cert:        &pair,
 		clusterName: parameters.clusterName,
-		server: &http.Server {
-			Addr:        fmt.Sprintf(":%v", parameters.port),
-			TLSConfig:   &tls.Config{Certificates: []tls.Certificate{pair}},
+		certWatcher: watcher,
+		server: &http.Server{
+			Addr: fmt.Sprintf(":%v", parameters.port),
 		},
 	}
+	whsvr.server.TLSConfig = &tls.Config{GetCertificate: whsvr.getCert}
 
 	// define http server and server handler
 	glog.Infof("Starting the webhook server")
@@ -64,22 +74,28 @@ func main() {
 		}
 	}()
 
-	// push the caBundle to the Kubernetes API if provided
-	if parameters.caBundle != "" {
-		go func() {
-			if err := UpdateCaBundle(parameters.webhookConfigName, parameters.webhookName, parameters.caBundle); err != nil {
-				glog.Errorf("Failed to update caBundle on the MutatingAdmissionWebhook %s: %v", parameters.webhookConfigName, err)
-			} else {
-				glog.Infof("Successfully updated caBundle on MutatingAdmissionWebhook %s", parameters.webhookConfigName)
-			}
-		}()
-	}
-
 	// listening OS shutdown signal
 	signalChan := make(chan os.Signal, 1)
 	signal.Notify(signalChan, syscall.SIGINT, syscall.SIGTERM)
-	<-signalChan
 
-	glog.Infof("Got OS shutdown signal, shutting down wenhook server gracefully...")
-	whsvr.server.Shutdown(context.Background())
+	for {
+		select {
+		case event := <-whsvr.certWatcher.Event:
+			// use a timer to debounce configuration updates
+			if event.IsModify() || event.IsCreate() {
+				pair, err := tls.LoadX509KeyPair(whsvr.certFile, whsvr.keyFile)
+				if err != nil {
+					glog.Errorf("reload cert error: %v", err)
+					break
+				}
+				whsvr.mu.Lock()
+				whsvr.cert = &pair
+				whsvr.mu.Unlock()
+				glog.Info("Cert/key pair reloaded!")
+			}
+		case <-signalChan:
+			glog.Infof("Got OS shutdown signal, shutting down wenhook server gracefully...")
+			_ = whsvr.server.Shutdown(context.Background())
+		}
+	}
 }
