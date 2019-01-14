@@ -19,7 +19,7 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/serializer"
-	"k8s.io/kubernetes/pkg/apis/core/v1"
+	v1 "k8s.io/kubernetes/pkg/apis/core/v1"
 )
 
 var (
@@ -64,6 +64,7 @@ func (whsvr *WebhookServer) getEnvVarsToInject(pod *corev1.Pod, container *corev
 	return vars
 }
 
+// WebhookServer is a webhook server that can accept requests from the Apiserver
 type WebhookServer struct {
 	certFile    string
 	keyFile     string

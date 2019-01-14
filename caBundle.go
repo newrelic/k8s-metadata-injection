@@ -1,9 +1,9 @@
 package main
 
 import (
+	b64 "encoding/base64"
 	"encoding/json"
 	"fmt"
-	b64 "encoding/base64"
 
 	"github.com/golang/glog"
 
@@ -13,11 +13,12 @@ import (
 	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/apimachinery/pkg/util/strategicpatch"
 	"k8s.io/client-go/kubernetes"
-	"k8s.io/client-go/rest"
 	admissionregistrationv1beta1client "k8s.io/client-go/kubernetes/typed/admissionregistration/v1beta1"
+	"k8s.io/client-go/rest"
 )
 
-func UpdateCaBundle(webhookConfigName, webhookName, caBundle string) (error) {
+// UpdateCaBundle updates provided caBundle on the MutatingAdmissionWebhook
+func UpdateCaBundle(webhookConfigName, webhookName, caBundle string) error {
 	// Create the in-cluster config
 	config, err := rest.InClusterConfig()
 	if err != nil {
@@ -38,7 +39,7 @@ func UpdateCaBundle(webhookConfigName, webhookName, caBundle string) (error) {
 
 	// Patch the MutatingWebhookConfig
 	return PatchMutatingWebhookConfig(client.AdmissionregistrationV1beta1().MutatingWebhookConfigurations(),
-		                              webhookConfigName, webhookName, caDecoded)
+		webhookConfigName, webhookName, caDecoded)
 }
 
 // PatchMutatingWebhookConfig patches a CA bundle into the specified webhook config.

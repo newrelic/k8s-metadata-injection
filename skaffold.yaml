@@ -1,17 +1,13 @@
-apiVersion: skaffold/v1alpha5
+apiVersion: skaffold/v1beta2
 kind: Config
 build:
   artifacts:
-    # When you're using minikube context, this image will be pushed to your local
-    # docker daemon. If you're using a non-minikube context, the image will be
-    # pushed to a private quay.io repository.
-    - image: quay.io/newrelic/k8s-metadata-injector-dev
-      context: .
-    - image: douglas/alpine-kubectl-openssl
-      context: alpine-kubectl-openssl
-  local: {}
+  - image: quay.io/newrelic/k8s-metadata-injector-dev
+    context: .
+  - image: douglas/alpine-kubectl-openssl
+    context: alpine-kubectl-openssl
 deploy:
   kubectl:
     manifests:
-      - job.yaml
-      - newrelic-metadata-injection.yaml
+    - deploy/job.yaml
+    - deploy/local.yaml

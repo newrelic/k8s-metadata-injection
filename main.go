@@ -14,7 +14,7 @@ import (
 	"syscall"
 )
 
-// Webhook Server parameters
+// WhSvrParameters are configuration parameters for Webhook Server
 type WhSvrParameters struct {
 	port        int    // webhook server port
 	certFile    string // path to the x509 certificate for https
