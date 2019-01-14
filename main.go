@@ -5,13 +5,14 @@ import (
 	"crypto/tls"
 	"flag"
 	"fmt"
-	"github.com/golang/glog"
-	"github.com/howeyc/fsnotify"
 	"net/http"
 	"os"
 	"os/signal"
 	"path/filepath"
 	"syscall"
+
+	"github.com/golang/glog"
+	"github.com/howeyc/fsnotify"
 )
 
 // WhSvrParameters are configuration parameters for Webhook Server
