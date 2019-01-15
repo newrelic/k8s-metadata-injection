@@ -3,6 +3,7 @@
 ## How does it work ?
 
 New Relic requires the following environment variables to identify Kubernetes objects in the APM agents:
+
 - `NEW_RELIC_METADATA_KUBERNETES_CLUSTER_NAME`
 - `NEW_RELIC_METADATA_KUBERNETES_NODE_NAME`
 - `NEW_RELIC_METADATA_KUBERNETES_NAMESPACE_NAME`
@@ -52,6 +53,7 @@ This also means that only 1 replica of the webhook service can be running.
 
 Customers that don't want this automatic approach, can create certificates themselves:
 
+
 ```
 ./create-certs.sh
 kubectl create -f newrelic-metadata-injection-manual-cert.yaml
@@ -59,14 +61,16 @@ kubectl create -f newrelic-metadata-injection-manual-cert.yaml
 
 The command above requires the following files from this repo: `create-certs.sh`, `newrelic-metadata-injection-manual-nocert.yaml`.
 
-
-
 ## Development
 
 ### Prerequisites
+
 For development process [Minikube](https://kubernetes.io/docs/getting-started-guides/minikube) and [Skaffold](https://github.com/GoogleCloudPlatform/skaffold) tools are used.
+
 * [Install Minikube](https://kubernetes.io/docs/tasks/tools/install-minikube/).
 * [Install Skaffold](https://github.com/GoogleCloudPlatform/skaffold#installation).
+
+Minikube is well known and wil provide a development Kubernetes cluster with easy setup. Skaffold, when started in dev mode, is constantly monitoring the project for changes and whenever one is detected it redeploys everything to the development cluster.
 
 ### Configuration
 
@@ -77,6 +81,8 @@ For development process [Minikube](https://kubernetes.io/docs/getting-started-gu
 ### Run
 
 Run `make deploy-dev`. This will compile your binary with compatibility for the container OS architecture, build a temporary docker image and finally deploy it to your Minikube.
+
+If you would like to enable automatic redeploy on changes to the repository, you can run `skaffold dev`.
 
 ### Tests
 
