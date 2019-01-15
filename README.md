@@ -72,6 +72,12 @@ For development process [Minikube](https://kubernetes.io/docs/getting-started-gu
 
 Minikube is well known and wil provide a development Kubernetes cluster with easy setup. Skaffold, when started in dev mode, is constantly monitoring the project for changes and whenever one is detected it redeploys everything to the development cluster.
 
+### Dependency management
+
+[Go modules](https://github.com/golang/go/wiki/Modules) are used for managing dependency. This project does not need to be in your GOROOT, if you wish so.
+
+Currently for K8s libraries it used version 1.13.1. Only couple of libraries are direct dependency, the rest is indirect. You need to point all of them to the same K8s version to make sure that everything works as expected. For the moment this process is manual.
+
 ### Configuration
 
 * Copy the deployment file `deploy/newrelic-metadata-injection` to `deploy/local.yaml`.
@@ -98,10 +104,9 @@ For running benchmark tests, use:
 make benchmark-test
 ```
 
-### Dependency management
+### Documentation
 
-[Go modules](https://github.com/golang/go/wiki/Modules) are used for managing dependency.
-Currently for K8s libraries it used version 1.13.1. Only couple of libraries are direct dependency, the rest is indirect. You need to point all of them to the same K8s version to make sure that everything works as expected. For the moment this process is manual.
+Aside from the code documentation, this project has its API documentation in the `openapi.yaml` file. You can go to editor.swagger.io and paste its contents there to see a rendered version.
 
 ### Performance
 

@@ -36,7 +36,7 @@ lint: $(TOOLS_DIR)/golangci-lint
 .PHONY: lint-all
 lint-all: $(TOOLS_DIR)/golangci-lint
 	@echo "[validate] Validating source code running golangci-lint"
-	@$(TOOLS_DIR)/golangci-lint run --enable=interfacer --enable=gosimple
+	@$(TOOLS_DIR)/golangci-lint run
 
 .PHONY: compile
 compile:
@@ -45,7 +45,7 @@ compile:
 
 .PHONY: compile-dev
 compile-dev:
-	@echo "[compile-dev] Building $(BINARY_NAME) for development environment"
+	@echo "[compile-dev] Building $(BINARY_NAME) for development environment (in k8s)"
 	@GOOS=linux GOARCH=amd64 go build -o $(BIN_DIR)/$(BINARY_NAME)
 
 .PHONY: deploy-dev
