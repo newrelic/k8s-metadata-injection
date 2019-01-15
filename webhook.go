@@ -127,7 +127,7 @@ func (whsvr *WebhookServer) updateContainer(pod *corev1.Pod, index int, containe
 	return patch
 }
 
-// create mutation patch for resoures
+// create mutation patch for resources
 func (whsvr *WebhookServer) createPatch(pod *corev1.Pod) ([]byte, error) {
 	var patch []patchOperation
 
