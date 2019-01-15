@@ -4,8 +4,8 @@ build:
   artifacts:
   - image: quay.io/newrelic/k8s-metadata-injector-dev
     context: .
-  - image: douglas/alpine-kubectl-openssl
-    context: alpine-kubectl-openssl
+  - image: douglas/k8s-cert-signer
+    context: k8s-cert-signer
 deploy:
   kubectl:
     manifests:
