@@ -65,12 +65,13 @@ The command above requires the following files from this repo: `create-certs.sh`
 
 ### Prerequisites
 
-For development process [Minikube](https://kubernetes.io/docs/getting-started-guides/minikube) and [Skaffold](https://github.com/GoogleCloudPlatform/skaffold) tools are used.
+For development the process [Minikube](https://kubernetes.io/docs/getting-started-guides/minikube) and [Skaffold](https://github.com/GoogleCloudPlatform/skaffold) tools are used.
 
-* [Install Minikube](https://kubernetes.io/docs/tasks/tools/install-minikube/).
+
+* [Install Minikube](https://kubernetes.io/docs/tasks/tools/install-minikube/);
 * [Install Skaffold](https://github.com/GoogleCloudPlatform/skaffold#installation).
 
-Minikube is well known and wil provide a development Kubernetes cluster with easy setup. Skaffold, when started in dev mode, is constantly monitoring the project for changes and whenever one is detected it redeploys everything to the development cluster.
+Currently the project compiles with **Go 1.11.4**.
 
 ### Dependency management
 
