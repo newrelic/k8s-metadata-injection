@@ -1,6 +1,6 @@
 # Kubernetes Metadata injection for New Relic APM agents
 
-## How does it work ?
+## How does it work?
 
 New Relic requires the following environment variables to identify Kubernetes objects in the APM agents:
 
@@ -106,7 +106,9 @@ make benchmark-test
 
 ### Documentation
 
-Aside from the code documentation, this project has its API documentation in the `openapi.yaml` file. You can go to editor.swagger.io and paste its contents there to see a rendered version.
+Aside from the code documentation, this project has its API documentation in the `openapi.yaml` file. Note that this means the schema of the requests the webhook server is supposed to receive. It depends on the currently supported Kubernetes versions.
+
+You can go to editor.swagger.io and paste its contents there to see a rendered version.
 
 ### Performance
 
