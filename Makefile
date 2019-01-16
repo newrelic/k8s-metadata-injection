@@ -4,7 +4,6 @@ BIN_DIR = ./bin
 TOOLS_DIR := $(BIN_DIR)/dev-tools
 BINARY_NAME = k8s-metadata-injection
 
-GOVENDOR_VERSION = 1.0.8
 GOLANGCILINT_VERSION = 1.12
 
 # required for enabling Go modules
