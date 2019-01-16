@@ -2,6 +2,7 @@
 
 [ -z ${CERTS_DIR} ] && CERTS_DIR=/etc/webhook/certs
 
+<<<<<<< Updated upstream
 if [ ! -e ${CERTS_DIR}/cert.pem ]; then
     echo "Certificate ${CERTS_DIR}/cert.pem is missing, auto-generating certs..."
     echo
@@ -21,3 +22,6 @@ if [ ! -e ${CERTS_DIR}/cert.pem ]; then
 fi
 
 exec /k8s-metadata-injection ${CA_OPTS} -tlsCertFile=${CERTS_DIR}/cert.pem -tlsKeyFile=${CERTS_DIR}/key.pem -alsologtostderr -v=4 2>&1
+=======
+exec //k8s-metadata-injection ${CA_OPTS} -tlsCertFile=${CERTS_DIR}/tls.crt -tlsKeyFile=${CERTS_DIR}/tls.key 2>&1
+>>>>>>> Stashed changes
