@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/golang/glog"
+	"go.uber.org/zap"
 
 	"k8s.io/api/admissionregistration/v1beta1"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
@@ -18,7 +18,7 @@ import (
 )
 
 // UpdateCaBundle updates provided caBundle on the MutatingAdmissionWebhook
-func UpdateCaBundle(webhookConfigName, webhookName, caBundle string) error {
+func UpdateCaBundle(webhookConfigName, webhookName, caBundle string, logger *zap.SugaredLogger) error {
 	// Create the in-cluster config
 	config, err := rest.InClusterConfig()
 	if err != nil {
@@ -39,17 +39,16 @@ func UpdateCaBundle(webhookConfigName, webhookName, caBundle string) error {
 
 	// Patch the MutatingWebhookConfig
 	return PatchMutatingWebhookConfig(client.AdmissionregistrationV1beta1().MutatingWebhookConfigurations(),
-		webhookConfigName, webhookName, caDecoded)
+		webhookConfigName, webhookName, caDecoded, logger)
 }
 
 // PatchMutatingWebhookConfig patches a CA bundle into the specified webhook config.
 // Taken from istio: https://github.com/istio/istio/blob/master/pkg/util/webhookpatch.go
 func PatchMutatingWebhookConfig(client admissionregistrationv1beta1client.MutatingWebhookConfigurationInterface,
-	webhookConfigName, webhookName string, caBundle []byte) error {
+	webhookConfigName, webhookName string, caBundle []byte, logger *zap.SugaredLogger) error {
 
 	config, err := client.Get(webhookConfigName, metav1.GetOptions{})
 	if err != nil {
-		fmt.Print("Error on client get")
 		return err
 	}
 	prev, err := json.Marshal(config)
@@ -78,7 +77,7 @@ func PatchMutatingWebhookConfig(client admissionregistrationv1beta1client.Mutati
 	}
 
 	if string(patch) != "{}" {
-		glog.Infof("Performing WebhookConfiguration patch: %s", string(patch))
+		logger.Infow("performing WebhookConfiguration patch", "path", string(patch))
 		_, err = client.Patch(webhookConfigName, types.StrategicMergePatchType, patch)
 	}
 	return err

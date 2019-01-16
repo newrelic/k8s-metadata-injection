@@ -9,14 +9,14 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/golang/glog"
+	"github.com/uber-go/zap"
 	"k8s.io/api/admission/v1beta1"
 	admissionregistrationv1beta1 "k8s.io/api/admissionregistration/v1beta1"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/serializer"
-	v1 "k8s.io/kubernetes/pkg/apis/core/v1"
+	"k8s.io/kubernetes/pkg/apis/core/v1"
 )
 
 var (
@@ -64,6 +64,7 @@ func (whsvr *WebhookServer) getEnvVarsToInject(pod *corev1.Pod, container *corev
 // WebhookServer is a webhook server that can accept requests from the Apiserver
 type WebhookServer struct {
 	clusterName string
+	logger      *zap.SugaredLogger
 	server      *http.Server
 }
 
@@ -84,7 +85,6 @@ func mutationRequired(ignoredList []string, metadata *metav1.ObjectMeta) bool {
 	// skip special kubernete system namespaces
 	for _, namespace := range ignoredList {
 		if metadata.Namespace == namespace {
-			glog.Infof("Skip mutation for %v for it' in special namespace:%v", metadata.Name, metadata.Namespace)
 			return false
 		}
 	}
@@ -143,7 +143,7 @@ func (whsvr *WebhookServer) mutate(ar *v1beta1.AdmissionReview) *v1beta1.Admissi
 	req := ar.Request
 	var pod corev1.Pod
 	if err := json.Unmarshal(req.Object.Raw, &pod); err != nil {
-		glog.Errorf("Could not unmarshal raw object: %v", err)
+		whsvr.logger.Errorw("could not unmarshal raw object", "err", err, "object", string(req.Object.Raw))
 		return &v1beta1.AdmissionResponse{
 			Result: &metav1.Status{
 				Message: err.Error(),
@@ -151,12 +151,13 @@ func (whsvr *WebhookServer) mutate(ar *v1beta1.AdmissionReview) *v1beta1.Admissi
 		}
 	}
 
-	glog.Infof("AdmissionReview for Kind=%v, Namespace=%v Name=%v (%v) UID=%v patchOperation=%v UserInfo=%v",
-		req.Kind, req.Namespace, req.Name, pod.Name, req.UID, req.Operation, req.UserInfo)
+	whsvr.logger.Infow("received admission review", "kind", req.Kind, "namespace", req.Namespace, "name",
+		req.Name, "pod", pod.Name, "UID", req.UID, "operation", req.Operation, "userinfo", req.UserInfo)
 
 	// determine whether to perform mutation
 	if !mutationRequired(ignoredNamespaces, &pod.ObjectMeta) {
-		glog.Infof("Skipping mutation for %s/%s due to policy check", pod.Namespace, pod.Name)
+		// whsvr.logger.Infow("Skipping mutation for %s/%s due to policy check", pod.Namespace, pod.Name)
+		whsvr.logger.Infow("skipped mutation", "namespace", pod.Namespace, "pod", pod.Name, "reason", "policy check (special namespaces)")
 		return &v1beta1.AdmissionResponse{
 			Allowed: true,
 		}
@@ -171,7 +172,7 @@ func (whsvr *WebhookServer) mutate(ar *v1beta1.AdmissionReview) *v1beta1.Admissi
 		}
 	}
 
-	glog.Infof("AdmissionResponse: patch=%v\n", string(patchBytes))
+	whsvr.logger.Infow("admission response created", "response", string(patchBytes))
 	return &v1beta1.AdmissionResponse{
 		Allowed: true,
 		Patch:   patchBytes,
@@ -191,7 +192,7 @@ func (whsvr *WebhookServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 	if len(body) == 0 {
-		glog.Error("empty body")
+		whsvr.logger.Error("empty body")
 		http.Error(w, "empty body", http.StatusBadRequest)
 		return
 	}
@@ -199,7 +200,7 @@ func (whsvr *WebhookServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	// verify the content type is accurate
 	contentType := r.Header.Get("Content-Type")
 	if contentType != "application/json" {
-		glog.Errorf("Content-Type=%s, expect application/json", contentType)
+		whsvr.logger.Errorw("invalid content type", "expected", "application/json", "context type", contentType)
 		http.Error(w, "invalid Content-Type, expect `application/json`", http.StatusUnsupportedMediaType)
 		return
 	}
@@ -207,7 +208,7 @@ func (whsvr *WebhookServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	var admissionResponse *v1beta1.AdmissionResponse
 	ar := v1beta1.AdmissionReview{}
 	if _, _, err := deserializer.Decode(body, nil, &ar); err != nil {
-		glog.Errorf("Can't decode body: %v", err)
+		whsvr.logger.Errorw("can't decode body", "err", err, "body", body)
 		admissionResponse = &v1beta1.AdmissionResponse{
 			Result: &metav1.Status{
 				Message: err.Error(),
@@ -227,12 +228,12 @@ func (whsvr *WebhookServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	resp, err := json.Marshal(admissionReview)
 	if err != nil {
-		glog.Errorf("Can't encode response: %v", err)
+		whsvr.logger.Errorw("can't decode response", "err", err)
 		http.Error(w, fmt.Sprintf("could not encode response: %v", err), http.StatusInternalServerError)
 	}
-	glog.Infof("Writing reponse")
+	whsvr.logger.Info("writing reponse")
 	if _, err := w.Write(resp); err != nil {
-		glog.Errorf("Can't write response: %v", err)
+		whsvr.logger.Errorw("can't write response", "err", err)
 		http.Error(w, fmt.Sprintf("could not write response: %v", err), http.StatusInternalServerError)
 	}
 }
