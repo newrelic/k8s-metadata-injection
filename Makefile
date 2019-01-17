@@ -1,10 +1,7 @@
-OSFLAG := $(shell uname -s | tr A-Z a-z)
-OSFLAG := $(OSFLAG)_amd64
 BIN_DIR = ./bin
 TOOLS_DIR := $(BIN_DIR)/dev-tools
 BINARY_NAME = k8s-metadata-injection
 
-GOVENDOR_VERSION = 1.0.8
 GOLANGCILINT_VERSION = 1.12
 
 # required for enabling Go modules
@@ -30,11 +27,6 @@ $(TOOLS_DIR)/golangci-lint: $(TOOLS_DIR)
 
 .PHONY: lint
 lint: $(TOOLS_DIR)/golangci-lint
-	@echo "[validate] Validating source code running golangci-lint"
-	@$(TOOLS_DIR)/golangci-lint run
-
-.PHONY: lint-all
-lint-all: $(TOOLS_DIR)/golangci-lint
 	@echo "[validate] Validating source code running golangci-lint"
 	@$(TOOLS_DIR)/golangci-lint run
 
