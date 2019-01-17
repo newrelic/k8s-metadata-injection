@@ -82,7 +82,7 @@ func main() {
 	for {
 		select {
 		case event := <-whsvr.certWatcher.Event:
-			// use a timer to debounce configuration updates
+			// TODO: use a timer to debounce configuration updates
 			if event.IsModify() || event.IsCreate() {
 				pair, err := tls.LoadX509KeyPair(whsvr.certFile, whsvr.keyFile)
 				if err != nil {
