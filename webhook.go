@@ -6,11 +6,12 @@ import (
 	"crypto/tls"
 	"encoding/json"
 	"fmt"
-	"github.com/howeyc/fsnotify"
 	"io/ioutil"
 	"net/http"
 	"strings"
 	"sync"
+
+	"github.com/howeyc/fsnotify"
 
 	"github.com/golang/glog"
 	"k8s.io/api/admission/v1beta1"
@@ -75,10 +76,10 @@ type WebhookServer struct {
 	certWatcher *fsnotify.Watcher
 }
 
-func (wh *WebhookServer) getCert(*tls.ClientHelloInfo) (*tls.Certificate, error) {
-	wh.mu.Lock()
-	defer wh.mu.Unlock()
-	return wh.cert, nil
+func (whsvr *WebhookServer) getCert(*tls.ClientHelloInfo) (*tls.Certificate, error) {
+	whsvr.mu.Lock()
+	defer whsvr.mu.Unlock()
+	return whsvr.cert, nil
 }
 
 type patchOperation struct {
