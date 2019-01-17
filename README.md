@@ -26,13 +26,31 @@ admissionregistration.k8s.io/v1beta1
 
 ### 2) Install the injection
 
-```
+```bash
 $ kubectl apply -f newrelic-metadata-injection.yaml
 ```
 
 Executing this
-- creates `newrelic-metadata-injection-deployment` and `newrelic-metadata-injection-svc`,
-- registers the `newrelic-metadata-injection-svc` service as a MutatingAdmissionWebhook with the Kubernetes api
+- creates `newrelic-metadata-injection-deployment` and `newrelic-metadata-injection-svc`;
+- registers the `newrelic-metadata-injection-svc` service as a MutatingAdmissionWebhook with the Kubernetes API.
+
+Then, if you wish to let the certificate management be automatic using the Kubernetes extension API server (recommended, but optional):
+
+```bash
+$ kubectl apply -f deploy/job.yaml
+```
+
+Otherwise, if you are managing the certificate manually you will have to create the TLS secret with the signed certificate/key pair:
+
+```bash
+kubectl create secret tls newrelic-metadata-injection-secret \
+      --key=server-key.pem \
+      --cert=signed-server-cert.pem \
+      --dry-run -o yaml |
+  kubectl -n default apply -f -
+```
+
+Either certificate management choice made, the important thing is to have the secret created with the correct name and namespace. As long as this is done the webhook server will be able to pick it up.
 
 ### 3) Enable the automatic Kubernetes metadata injection on your namespaces
 
@@ -61,23 +79,6 @@ Build and push the docker image, this currently pushes to an AWS machine from fr
 ```
 ./build.sh
 ```
-
-### Certificates
-
-To make the deployment as easy as possible, the certificates for the webhook are generated inside the container.
-The webhook container then uses the kubernetes api to update the caBundle on the MutatingAdmissionWebhook.
-
-This is more-or-less how Istio does things. It does mean that we need to have a service account that can update MutatingAdmissionWebhook.
-This also means that only 1 replica of the webhook service can be running.
-
-Customers that don't want this automatic approach, can create certificates themselves:
-
-```
-./create-certs.sh
-kubectl create -f newrelic-metadata-injection-manual-cert.yaml
-```
-
-The command above requires the following files from this repo: `create-certs.sh`, `newrelic-metadata-injection-manual-nocert.yaml`.
 
 ### Performance
 
