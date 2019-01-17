@@ -10,7 +10,6 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"go.uber.org/zap"
 	"k8s.io/api/admission/v1beta1"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -107,7 +106,6 @@ func TestServeHTTP(t *testing.T) {
 	whsvr := &WebhookServer{
 		clusterName: "foobar",
 		server:      &http.Server{},
-		logger:      zap.NewNop().Sugar(),
 	}
 
 	server := httptest.NewServer(whsvr)
