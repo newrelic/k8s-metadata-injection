@@ -11,7 +11,7 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/uber-go/zap"
+	"go.uber.org/zap"
 )
 
 // WhSvrParameters are configuration parameters for Webhook Server
