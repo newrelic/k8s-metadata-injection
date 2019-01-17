@@ -40,14 +40,17 @@ Then, if you wish to let the certificate management be automatic using the Kuber
 $ kubectl apply -f deploy/job.yaml
 ```
 
-Otherwise, if you are managing the certificate manually you will have to create the TLS secret with the signed certificate/key pair:
+Otherwise, if you are managing the certificate manually you will have to create the TLS secret with the signed certificate/key pair and patch the webhook's CA bundle:
 
 ```bash
-kubectl create secret tls newrelic-metadata-injection-secret \
+$ kubectl create secret tls newrelic-metadata-injection-secret \
       --key=server-key.pem \
       --cert=signed-server-cert.pem \
       --dry-run -o yaml |
   kubectl -n default apply -f -
+
+$ caBundle=$(cat caBundle.pem | base64 | td -d '\n')
+$ kubectl patch mutatingwebhookconfiguration newrelic-metadata-injection-cfg --type='json' -p "[{'op': 'replace', 'path': '/webhooks/0/clientConfig/caBundle', 'value':'${caBundle}'}]"
 ```
 
 Either certificate management choice made, the important thing is to have the secret created with the correct name and namespace. As long as this is done the webhook server will be able to pick it up.
