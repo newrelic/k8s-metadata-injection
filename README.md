@@ -14,7 +14,7 @@ New Relic requires the following environment variables to identify Kubernetes ob
 These environment variables can be set manually by the customer, or they can be automatically injected using a MutatingAdmissionWebhook.
 New Relic provides an easy method for deploying this automatic approach.
 
-## Automatic environment variable injection
+## Setup
 
 ### 1) Check if MutatingAdmissionWebhook is enabled on your cluster
 
@@ -31,15 +31,37 @@ admissionregistration.k8s.io/v1beta1
 $ kubectl apply -f newrelic-metadata-injection.yaml
 ```
 
-Executing this
-- creates `newrelic-metadata-injection-deployment` and `newrelic-metadata-injection-svc`;
+Executing this:
+
+- creates `newrelic-metadata-injection-deployment` and `newrelic-metadata-injection-svc`.
 - registers the `newrelic-metadata-injection-svc` service as a MutatingAdmissionWebhook with the Kubernetes API.
 
-Then, if you wish to let the certificate management be automatic using the Kubernetes extension API server (recommended, but optional):
+### 3) Install the certificates
+
+This webhook needs to be authenticated by the Kubernetes extension API server, so it will need to have a signed certificate from a CA trusted by the extension API server. The certificate management is isolated from the webhook server and a secret is used to mount them. 
+
+Important: the webhook server has a file watcher pointed at the secret's folder that will trigger a certificate reload whenever anything is created or modified inside the secret. This allows certificate rotation to be transparent and cause no downtime.
+
+#### Automatic management
+
+The certificate management can be automatic, using the Kubernetes extension API server (recommended, but optional):
 
 ```bash
 $ kubectl apply -f deploy/job.yaml
 ```
+
+This job will execute the shell script [k8s-cert-signer/generate_certificate.sh](./k8s-cert-signer/generate_certificate.sh) to setup everything. This script will:
+
+1. Generate a server key.
+2. If there is any previous CSR (certificate signing request) for this key, it is deleted.
+3. Generate a CSR for such key.
+4. The signature of the key is then approved.
+5. The server's certificate is fetched from the CSR and then encoded.
+6. A secret of type `tls` is created with the server certificate and key.
+7. The api server's CA bundle is fetched.
+8. The admission webhook registration for the webhook server is patched with the api server's CA bundle from the previous step.
+
+#### Manual management
 
 Otherwise, if you are managing the certificate manually you will have to create the TLS secret with the signed certificate/key pair and patch the webhook's CA bundle:
 
@@ -64,30 +86,11 @@ The injection is only applied to namespaces that have the `newrelic-metadata-inj
 $ kubectl label namespace <namespace> newrelic-metadata-injection=enabled
 ```
 
-### 4) Certificates
-
-To make the deployment as easy as possible, the certificates for the webhook are generated inside the container.
-The webhook container then uses the kubernetes api to update the caBundle on the MutatingAdmissionWebhook.
-
-This is more-or-less how Istio does things. It does mean that we need to have a service account that can update MutatingAdmissionWebhook.
-This also means that only 1 replica of the webhook service can be running.
-
-Customers that don't want this automatic approach, can create certificates themselves:
-
-
-```
-./create-certs.sh
-kubectl create -f newrelic-metadata-injection-manual-cert.yaml
-```
-
-The command above requires the following files from this repo: `create-certs.sh`, `newrelic-metadata-injection-manual-nocert.yaml`.
-
 ## Development
 
 ### Prerequisites
 
 For the development process [Minikube](https://kubernetes.io/docs/getting-started-guides/minikube) and [Skaffold](https://github.com/GoogleCloudPlatform/skaffold) tools are used.
-
 
 * [Install Minikube](https://kubernetes.io/docs/tasks/tools/install-minikube/).
 * [Install Skaffold](https://github.com/GoogleCloudPlatform/skaffold#installation).
@@ -108,7 +111,7 @@ Currently for K8s libraries it uses version 1.13.1. Only couple of libraries are
 
 ### Run
 
-Run `make deploy-dev`. This will compile your binary with compatibility for the container OS architecture, build a temporary docker image and finally deploy it to your Minikube.
+Run `make deploy-dev`. This will compile your binary with compatibility for the container OS architecture, build a temporary docker image, and finally deploy the webhook server to your Minikube and use the Kubernetes API server to sign its TLS certificate ([see section about certificates](#3-install-the-certificates)).
 
 If you would like to enable automatic redeploy on changes to the repository, you can run `skaffold dev`.
 
@@ -130,7 +133,7 @@ make benchmark-test
 
 Please use the [Open Api 3.0 spec file](openapi.yaml) as documentation reference. Note that it describes the schema of the requests the webhook server replies to. This schema depends on the currently supported Kubernetes versions.
 
-You can go to editor.swagger.io and paste its contents there to see a rendered version.
+You can go to [editor.swagger.io](editor.swagger.io) and paste its contents there to see a rendered version.
 
 ### Performance
 
