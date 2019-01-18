@@ -5,14 +5,15 @@ import (
 	"crypto/tls"
 	"flag"
 	"fmt"
+	"log"
 	"net/http"
 	"os"
 	"os/signal"
 	"path/filepath"
 	"syscall"
 
-	"github.com/golang/glog"
 	"github.com/howeyc/fsnotify"
+	"go.uber.org/zap"
 )
 
 // WhSvrParameters are configuration parameters for Webhook Server
@@ -33,9 +34,12 @@ func main() {
 	flag.StringVar(&parameters.clusterName, "clusterName", "cluster", "The name of the Kubernetes cluster")
 	flag.Parse()
 
+	logger := setupLogger()
+	defer func() { _ = logger.Sync() }()
+
 	pair, err := tls.LoadX509KeyPair(parameters.certFile, parameters.keyFile)
 	if err != nil {
-		glog.Errorf("Failed to load key pair: %v", err)
+		logger.Errorw("failed to load key pair", "err", err)
 	}
 
 	watcher, _ := fsnotify.NewWatcher()
@@ -58,26 +62,23 @@ func main() {
 		server: &http.Server{
 			Addr: fmt.Sprintf(":%v", parameters.port),
 		},
+		logger: logger,
 	}
 	whsvr.server.TLSConfig = &tls.Config{GetCertificate: whsvr.getCert}
 
 	// define http server and server handler
-	glog.Infof("Starting the webhook server")
+	logger.Info("starting the webhook server")
 
 	mux := http.NewServeMux()
-	mux.HandleFunc("/mutate", whsvr.ServeHTTP)
+	mux.Handle("/mutate", whsvr)
 	whsvr.server.Handler = mux
 
 	// start webhook server in new rountine
 	go func() {
 		if err := whsvr.server.ListenAndServeTLS("", ""); err != nil {
-			glog.Errorf("Failed to listen and serve webhook server: %v", err)
+			logger.Errorw("failed to start webhook server", "err", err)
 		}
 	}()
-
-	// listening OS shutdown signal
-	signalChan := make(chan os.Signal, 1)
-	signal.Notify(signalChan, syscall.SIGINT, syscall.SIGTERM)
 
 	for {
 		select {
@@ -99,4 +100,14 @@ func main() {
 			_ = whsvr.server.Shutdown(context.Background())
 		}
 	}
+}
+
+func setupLogger() *zap.SugaredLogger {
+	config := zap.NewProductionConfig()
+	config.OutputPaths = []string{"stdout"}
+	zapLogger, err := config.Build()
+	if err != nil {
+		log.Fatalf("can't initialize zap logger: %v", err)
+	}
+	return zapLogger.Sugar()
 }

@@ -1,5 +1,3 @@
-OSFLAG := $(shell uname -s | tr A-Z a-z)
-OSFLAG := $(OSFLAG)_amd64
 BIN_DIR = ./bin
 TOOLS_DIR := $(BIN_DIR)/dev-tools
 BINARY_NAME = k8s-metadata-injection
@@ -32,11 +30,6 @@ lint: $(TOOLS_DIR)/golangci-lint
 	@echo "[validate] Validating source code running golangci-lint"
 	@$(TOOLS_DIR)/golangci-lint run
 
-.PHONY: lint-all
-lint-all: $(TOOLS_DIR)/golangci-lint
-	@echo "[validate] Validating source code running golangci-lint"
-	@$(TOOLS_DIR)/golangci-lint run --enable=interfacer --enable=gosimple
-
 .PHONY: compile
 compile:
 	@echo "[compile] Building $(BINARY_NAME)"
@@ -44,7 +37,7 @@ compile:
 
 .PHONY: compile-dev
 compile-dev:
-	@echo "[compile-dev] Building $(BINARY_NAME) for development environment"
+	@echo "[compile-dev] Building $(BINARY_NAME) for development environment (in k8s)"
 	@GOOS=linux GOARCH=amd64 go build -o $(BIN_DIR)/$(BINARY_NAME)
 
 .PHONY: deploy-dev
