@@ -88,7 +88,7 @@ func main() {
 			select {
 			case event := <-whsvr.certWatcher.Events:
 				// TODO: use a timer to debounce configuration updates
-				if event.Op == fsnotify.Write || event.Op == fsnotify.Create {
+				if event.Op&fsnotify.Write == fsnotify.Write || event.Op&fsnotify.Create == fsnotify.Create {
 					pair, err := tls.LoadX509KeyPair(whsvr.certFile, whsvr.keyFile)
 					if err != nil {
 						logger.Errorw("reload cert error", "err", err)
