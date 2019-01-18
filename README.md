@@ -81,7 +81,7 @@ Currently for K8s libraries it uses version 1.13.1. Only couple of libraries are
 
 ### Configuration
 
-* Copy the deployment file `deploy/newrelic-metadata-injection` to `deploy/local.yaml`.
+* Copy the deployment file `deploy/newrelic-metadata-injection.yaml` to `deploy/local.yaml`.
 * Edit the file and set the following value as container image: `internal/k8s-metadata-injector`.
 * Make sure that `imagePullPolicy: Always` is not present in the file (otherwise, the image won't be pulled).
 
