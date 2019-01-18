@@ -5,12 +5,13 @@ import (
 	"crypto/tls"
 	"flag"
 	"fmt"
+	"log"
 	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
 
-	"github.com/golang/glog"
+	"go.uber.org/zap"
 )
 
 // WhSvrParameters are configuration parameters for Webhook Server
@@ -37,9 +38,12 @@ func main() {
 	flag.StringVar(&parameters.caBundle, "caBundle", "", "Optional caBundle to push to the Kubernetes API")
 	flag.Parse()
 
+	logger := setupLogger()
+	defer func() { _ = logger.Sync() }()
+
 	pair, err := tls.LoadX509KeyPair(parameters.certFile, parameters.keyFile)
 	if err != nil {
-		glog.Errorf("Filed to load key pair: %v", err)
+		logger.Errorw("failed to load key pair", "err", err)
 	}
 
 	whsvr := &WebhookServer{
@@ -48,29 +52,30 @@ func main() {
 			Addr:      fmt.Sprintf(":%v", parameters.port),
 			TLSConfig: &tls.Config{Certificates: []tls.Certificate{pair}},
 		},
+		logger: logger,
 	}
 
 	// define http server and server handler
-	glog.Infof("Starting the webhook server")
+	logger.Info("starting the webhook server")
 
 	mux := http.NewServeMux()
-	mux.HandleFunc("/mutate", whsvr.ServeHTTP)
+	mux.Handle("/mutate", whsvr)
 	whsvr.server.Handler = mux
 
 	// start webhook server in new rountine
 	go func() {
 		if err := whsvr.server.ListenAndServeTLS("", ""); err != nil {
-			glog.Errorf("Failed to listen and serve webhook server: %v", err)
+			logger.Errorw("failed to start webhook server", "err", err)
 		}
 	}()
 
 	// push the caBundle to the Kubernetes API if provided
 	if parameters.caBundle != "" {
 		go func() {
-			if err := UpdateCaBundle(parameters.webhookConfigName, parameters.webhookName, parameters.caBundle); err != nil {
-				glog.Errorf("Failed to update caBundle on the MutatingAdmissionWebhook %s: %v", parameters.webhookConfigName, err)
+			if err := UpdateCaBundle(parameters.webhookConfigName, parameters.webhookName, parameters.caBundle, logger); err != nil {
+				logger.Errorw("failed to update caBundle on the MutatingAdmissionWebhook", "name", parameters.webhookConfigName, "err", err)
 			} else {
-				glog.Infof("Successfully updated caBundle on MutatingAdmissionWebhook %s", parameters.webhookConfigName)
+				logger.Infof("successfully updated caBundle on MutatingAdmissionWebhook %s", parameters.webhookConfigName)
 			}
 		}()
 	}
@@ -80,6 +85,16 @@ func main() {
 	signal.Notify(signalChan, syscall.SIGINT, syscall.SIGTERM)
 	<-signalChan
 
-	glog.Infof("Got OS shutdown signal, shutting down wenhook server gracefully...")
+	logger.Info("got OS shutdown signal, shutting down webhook server gracefully...")
 	whsvr.server.Shutdown(context.Background()) //nolint: errcheck
+}
+
+func setupLogger() *zap.SugaredLogger {
+	config := zap.NewProductionConfig()
+	config.OutputPaths = []string{"stdout"}
+	zapLogger, err := config.Build()
+	if err != nil {
+		log.Fatalf("can't initialize zap logger: %v", err)
+	}
+	return zapLogger.Sugar()
 }

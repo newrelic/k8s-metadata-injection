@@ -45,71 +45,71 @@ $ go test -bench .
                                   
 goos: darwin
 goarch: amd64
-pkg: go.datanerd.us/p/fryckbosch/k8s-env-inject
+pkg: github.com/newrelic/k8s-metadata-injection
 Benchmark_WebhookPerformance-8   	    3000	    434999 ns/op
 PASS
-ok  	go.datanerd.us/p/fryckbosch/k8s-env-inject	1.420s
+ok  	github.com/newrelic/k8s-metadata-injection	1.420s
 
 $ go test -bench .                                                                                                                                                                                               
 goos: darwin
 goarch: amd64
-pkg: go.datanerd.us/p/fryckbosch/k8s-env-inject
+pkg: github.com/newrelic/k8s-metadata-injection
 Benchmark_WebhookPerformance-8   	    2000	    604123 ns/op
 PASS
-ok  	go.datanerd.us/p/fryckbosch/k8s-env-inject	1.342s
+ok  	github.com/newrelic/k8s-metadata-injection	1.342s
 
 $ go test -bench .                                                                                                                                                                                               
 goos: darwin
 goarch: amd64
-pkg: go.datanerd.us/p/fryckbosch/k8s-env-inject
+pkg: github.com/newrelic/k8s-metadata-injection
 Benchmark_WebhookPerformance-8   	    3000	    505401 ns/op
 PASS
-ok  	go.datanerd.us/p/fryckbosch/k8s-env-inject	1.647s
+ok  	github.com/newrelic/k8s-metadata-injection	1.647s
 
 $ go test -bench .                                                                                                                                                                                               
 goos: darwin
 goarch: amd64
-pkg: go.datanerd.us/p/fryckbosch/k8s-env-inject
+pkg: github.com/newrelic/k8s-metadata-injection
 Benchmark_WebhookPerformance-8   	    2000	    642582 ns/op
 PASS
-ok  	go.datanerd.us/p/fryckbosch/k8s-env-inject	1.433s
+ok  	github.com/newrelic/k8s-metadata-injection	1.433s
 
 $ go test -bench .                                                                                                                                                                                               
 goos: darwin
 goarch: amd64
-pkg: go.datanerd.us/p/fryckbosch/k8s-env-inject
+pkg: github.com/newrelic/k8s-metadata-injection
 Benchmark_WebhookPerformance-8   	    2000	    747675 ns/op
 PASS
-ok  	go.datanerd.us/p/fryckbosch/k8s-env-inject	1.662s
+ok  	github.com/newrelic/k8s-metadata-injection	1.662s
 
 $ go test -bench .                                                                                                                                                                                               
 goos: darwin
 goarch: amd64
-pkg: go.datanerd.us/p/fryckbosch/k8s-env-inject
+pkg: github.com/newrelic/k8s-metadata-injection
 Benchmark_WebhookPerformance-8   	    2000	    837064 ns/op
 PASS
-ok  	go.datanerd.us/p/fryckbosch/k8s-env-inject	1.847s
+ok  	github.com/newrelic/k8s-metadata-injection	1.847s
 
 $ go test -bench .                                                                                                                                                                                               
 goos: darwin
 goarch: amd64
-pkg: go.datanerd.us/p/fryckbosch/k8s-env-inject
+pkg: github.com/newrelic/k8s-metadata-injection
 Benchmark_WebhookPerformance-8   	    1000	   1005508 ns/op
 PASS
-ok  	go.datanerd.us/p/fryckbosch/k8s-env-inject	1.183s
+ok  	github.com/newrelic/k8s-metadata-injection	1.183s
 
 $ go test -bench .                                                                                                                                                                                               
 goos: darwin
 goarch: amd64
-pkg: go.datanerd.us/p/fryckbosch/k8s-env-inject
+pkg: github.com/newrelic/k8s-metadata-injection
 Benchmark_WebhookPerformance-8   	    3000	    447884 ns/op
 PASS
-ok  	go.datanerd.us/p/fryckbosch/k8s-env-inject	1.461s
+ok  	github.com/newrelic/k8s-metadata-injection	1.461s
 ```
 
 ## Benchmark having the Mutating Webhook in place
 
 After running the code benchmark we realized that running benchmarks in real clusters are not important. As the service is simple and extremely fast, it should have a close to **zero** perceptive impact in pod creation in the cases where it would run.
 
-We will use different tools to ensure performance is focussed in this service in the form of Golang benchmarks and a server side timeout to prevent perceptive interference in pod creation time.
+We will use different tools to ensure performance is focused in this service in the form of Golang benchmarks and a server side timeout to prevent perceptive interference in pod creation time.
 
