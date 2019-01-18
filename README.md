@@ -28,7 +28,7 @@ admissionregistration.k8s.io/v1beta1
 ### 2) Install the injection
 
 ```bash
-$ kubectl apply -f newrelic-metadata-injection.yaml
+$ kubectl apply -f deploy/newrelic-metadata-injection.yaml
 ```
 
 Executing this:
