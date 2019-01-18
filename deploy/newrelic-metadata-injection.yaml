@@ -47,8 +47,8 @@ spec:
       serviceAccountName: newrelic-metadata-injection-service-account
       containers:
       - name: metadata-injector
-        image: quay.io/newrelic/k8s-metadata-injector-dev:latest
-        imagePullPolicy: IfNotPresent
+        image: quay.io/newrelic/k8s-metadata-injector:latest
+        imagePullPolicy: Always
         volumeMounts:
           - name: tls-key-cert-pair
             mountPath: /etc/tls-key-cert-pair
