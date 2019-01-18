@@ -4,7 +4,7 @@ build:
   artifacts:
   - image: internal/k8s-metadata-injector
     context: .
-  - image: douglas/k8s-cert-signer
+  - image: internal/k8s-cert-signer
     context: k8s-cert-signer
 deploy:
   kubectl:
