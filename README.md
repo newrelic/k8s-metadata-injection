@@ -107,7 +107,7 @@ make benchmark-test
 
 ### Documentation
 
-Aside from the code documentation, this project has its API documentation in the `openapi.yaml` file. Note that this means the schema of the requests the webhook server is supposed to receive. It depends on the currently supported Kubernetes versions.
+Please use the [Open Api 3.0 spec file](openapi.yaml) as documentation reference. Note that it describes the schema of the requests the webhook server replies to. This schema depends on the currently supported Kubernetes versions.
 
 You can go to editor.swagger.io and paste its contents there to see a rendered version.
 
