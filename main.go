@@ -101,6 +101,7 @@ func main() {
 				}
 			case <-signalChan:
 				logger.Info("Got OS shutdown signal, shutting down wenhook server gracefully...")
+				_ = watcher.Close()
 				_ = whsvr.server.Shutdown(context.Background())
 			}
 		}
