@@ -11,6 +11,7 @@ import (
 	"os/signal"
 	"path/filepath"
 	"syscall"
+	"time"
 
 	"github.com/fsnotify/fsnotify"
 	"go.uber.org/zap"
@@ -79,23 +80,25 @@ func main() {
 	signalChan := make(chan os.Signal, 1)
 	signal.Notify(signalChan, syscall.SIGINT, syscall.SIGTERM)
 
+	var debounceTimer <-chan time.Time
 	for {
 		select {
+		case <-debounceTimer:
+			pair, err := tls.LoadX509KeyPair(whsvr.certFile, whsvr.keyFile)
+			if err != nil {
+				logger.Errorw("reload cert error", "err", err)
+				break
+			}
+			whsvr.mu.Lock()
+			whsvr.cert = &pair
+			whsvr.mu.Unlock()
+			logger.Info("cert/key pair reloaded!")
 		case event := <-whsvr.certWatcher.Events:
-			// TODO: use a timer to debounce configuration updates
 			if event.Op&fsnotify.Write == fsnotify.Write || event.Op&fsnotify.Create == fsnotify.Create {
-				pair, err := tls.LoadX509KeyPair(whsvr.certFile, whsvr.keyFile)
-				if err != nil {
-					logger.Errorw("reload cert error", "err", err)
-					break
-				}
-				whsvr.mu.Lock()
-				whsvr.cert = &pair
-				whsvr.mu.Unlock()
-				logger.Info("Cert/key pair reloaded!")
+				debounceTimer = time.After(500 * time.Millisecond)
 			}
 		case <-signalChan:
-			logger.Info("Got OS shutdown signal, shutting down webhook server gracefully...")
+			logger.Info("got OS shutdown signal, shutting down webhook server gracefully...")
 			_ = watcher.Close()
 			_ = whsvr.server.Shutdown(context.Background())
 		}
