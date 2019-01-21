@@ -33,10 +33,6 @@ func TestServeHTTP(t *testing.T) {
 	}
 
 	patchTypeForValidBody := v1beta1.PatchTypeJSONPatch
-	resultForInvalidBody := metav1.Status{
-		Message: "yaml: control characters are not allowed",
-	}
-
 	cases := []struct {
 		name                      string
 		requestBody               []byte
@@ -89,19 +85,18 @@ func TestServeHTTP(t *testing.T) {
 			expectedBodyWhenHTTPError: "invalid Content-Type, expect `application/json`" + "\n",
 		},
 		{
-			name:               "invalid body",
-			requestBody:        []byte{0, 1, 2},
-			contentType:        "application/json",
-			expectedStatusCode: http.StatusOK,
-			expectedAdmissionReview: v1beta1.AdmissionReview{
-				Response: &v1beta1.AdmissionResponse{
-					UID:       "",
-					Allowed:   false,
-					Result:    &resultForInvalidBody,
-					Patch:     nil,
-					PatchType: nil,
-				},
-			},
+			name:                      "invalid body",
+			requestBody:               []byte{0, 1, 2},
+			contentType:               "application/json",
+			expectedStatusCode:        http.StatusBadRequest,
+			expectedBodyWhenHTTPError: "could not decode request body: \"yaml: control characters are not allowed\"\n",
+		},
+		{
+			name:                      "mutation fails - object not present in request body",
+			requestBody:               bytes.Replace(makeTestData(t, "default"), []byte("\"object\""), []byte("\"foo\""), -1),
+			contentType:               "application/json",
+			expectedStatusCode:        http.StatusInternalServerError,
+			expectedBodyWhenHTTPError: "error during mutation: \"object not present in request body\"\n",
 		},
 	}
 
