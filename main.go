@@ -43,6 +43,7 @@ func main() {
 	}
 
 	watcher, _ := fsnotify.NewWatcher()
+	defer func() { _ = watcher.Close() }()
 	// Watch the parent directory of the target files so we can catch
 	// symlink updates of k8s secrets volumes and reload the certificates whenever they change.
 	for _, file := range []string{parameters.certFile, parameters.keyFile} {
@@ -50,60 +51,54 @@ func main() {
 		if err := watcher.Add(watchDir); err != nil {
 			logger.Errorw("could not watch file", "file", file, "err", err)
 		}
+	}
 
-		defer func() { _ = watcher.Close() }()
+	whsvr := &WebhookServer{
+		keyFile:     parameters.keyFile,
+		certFile:    parameters.certFile,
+		cert:        &pair,
+		clusterName: parameters.clusterName,
+		certWatcher: watcher,
+		server: &http.Server{
+			Addr: fmt.Sprintf(":%v", parameters.port),
+		},
+		logger: logger,
+	}
+	whsvr.server.TLSConfig = &tls.Config{GetCertificate: whsvr.getCert}
 
-		whsvr := &WebhookServer{
-			keyFile:     parameters.keyFile,
-			certFile:    parameters.certFile,
-			cert:        &pair,
-			clusterName: parameters.clusterName,
-			certWatcher: watcher,
-			server: &http.Server{
-				Addr: fmt.Sprintf(":%v", parameters.port),
-			},
-			logger: logger,
-		}
-		whsvr.server.TLSConfig = &tls.Config{GetCertificate: whsvr.getCert}
+	mux := http.NewServeMux()
+	mux.Handle("/mutate", whsvr)
+	whsvr.server.Handler = mux
 
-		// define http server and server handler
+	go func() {
 		logger.Info("starting the webhook server")
+		if err := whsvr.server.ListenAndServeTLS("", ""); err != nil {
+			logger.Errorw("failed to start webhook server", "err", err)
+		}
+	}()
 
-		mux := http.NewServeMux()
-		mux.Handle("/mutate", whsvr)
-		whsvr.server.Handler = mux
+	signalChan := make(chan os.Signal, 1)
+	signal.Notify(signalChan, syscall.SIGINT, syscall.SIGTERM)
 
-		// start webhook server in new rountine
-		go func() {
-			if err := whsvr.server.ListenAndServeTLS("", ""); err != nil {
-				logger.Errorw("failed to start webhook server", "err", err)
-			}
-		}()
-
-		// listening OS shutdown signal
-		signalChan := make(chan os.Signal, 1)
-		signal.Notify(signalChan, syscall.SIGINT, syscall.SIGTERM)
-
-		for {
-			select {
-			case event := <-whsvr.certWatcher.Events:
-				// TODO: use a timer to debounce configuration updates
-				if event.Op&fsnotify.Write == fsnotify.Write || event.Op&fsnotify.Create == fsnotify.Create {
-					pair, err := tls.LoadX509KeyPair(whsvr.certFile, whsvr.keyFile)
-					if err != nil {
-						logger.Errorw("reload cert error", "err", err)
-						break
-					}
-					whsvr.mu.Lock()
-					whsvr.cert = &pair
-					whsvr.mu.Unlock()
-					logger.Info("Cert/key pair reloaded!")
+	for {
+		select {
+		case event := <-whsvr.certWatcher.Events:
+			// TODO: use a timer to debounce configuration updates
+			if event.Op&fsnotify.Write == fsnotify.Write || event.Op&fsnotify.Create == fsnotify.Create {
+				pair, err := tls.LoadX509KeyPair(whsvr.certFile, whsvr.keyFile)
+				if err != nil {
+					logger.Errorw("reload cert error", "err", err)
+					break
 				}
-			case <-signalChan:
-				logger.Info("Got OS shutdown signal, shutting down wenhook server gracefully...")
-				_ = watcher.Close()
-				_ = whsvr.server.Shutdown(context.Background())
+				whsvr.mu.Lock()
+				whsvr.cert = &pair
+				whsvr.mu.Unlock()
+				logger.Info("Cert/key pair reloaded!")
 			}
+		case <-signalChan:
+			logger.Info("Got OS shutdown signal, shutting down wenhook server gracefully...")
+			_ = watcher.Close()
+			_ = whsvr.server.Shutdown(context.Background())
 		}
 	}
 }
