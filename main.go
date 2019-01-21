@@ -27,7 +27,6 @@ type WhSvrParameters struct {
 func main() {
 	var parameters WhSvrParameters
 
-	// get command line parameters
 	flag.IntVar(&parameters.port, "port", 443, "Webhook server port.")
 	flag.StringVar(&parameters.certFile, "tlsCertFile", "/etc/tls-key-cert-pair/tls.crt", "File containing the x509 Certificate for HTTPS.")
 	flag.StringVar(&parameters.keyFile, "tlsKeyFile", "/etc/tls-key-cert-pair/tls.key", "File containing the x509 private key to --tlsCertFile.")
@@ -96,7 +95,7 @@ func main() {
 				logger.Info("Cert/key pair reloaded!")
 			}
 		case <-signalChan:
-			logger.Info("Got OS shutdown signal, shutting down wenhook server gracefully...")
+			logger.Info("Got OS shutdown signal, shutting down webhook server gracefully...")
 			_ = watcher.Close()
 			_ = whsvr.server.Shutdown(context.Background())
 		}
