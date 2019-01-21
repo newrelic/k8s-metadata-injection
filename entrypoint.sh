@@ -2,4 +2,4 @@
 
 [ -z ${CERTS_DIR} ] && CERTS_DIR=/etc/tls-key-cert-pair
 
-exec ./k8s-metadata-injection ${CA_OPTS} -tlsCertFile=${CERTS_DIR}/cert.pem -tlsKeyFile=${CERTS_DIR}/key.pem 2>&1
+exec /app/k8s-metadata-injection -tlsCertFile=${CERTS_DIR}/tls.crt -tlsKeyFile=${CERTS_DIR}/tls.key 2>&1
