@@ -101,6 +101,7 @@ func main() {
 			logger.Info("got OS shutdown signal, shutting down webhook server gracefully...")
 			_ = watcher.Close()
 			_ = whsvr.server.Shutdown(context.Background())
+			return
 		}
 	}
 }
