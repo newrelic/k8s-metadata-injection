@@ -99,7 +99,7 @@ func init() {
 
 // Check whether the target resoured need to be mutated
 func mutationRequired(ignoredList []string, metadata *metav1.ObjectMeta) bool {
-	// skip special kubernete system namespaces
+	// skip special kubernetes system namespaces
 	for _, namespace := range ignoredList {
 		if metadata.Namespace == namespace {
 			return false
