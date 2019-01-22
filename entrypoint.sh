@@ -1,5 +1,3 @@
 #!/bin/sh -e
 
-[ -z ${CERTS_DIR} ] && CERTS_DIR=/etc/tls-key-cert-pair
-
-exec /app/k8s-metadata-injection -tlsCertFile=${CERTS_DIR}/tls.crt -tlsKeyFile=${CERTS_DIR}/tls.key 2>&1
+exec /app/k8s-metadata-injection --clusterName ${clusterName} 2>&1
