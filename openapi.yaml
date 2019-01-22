@@ -16,6 +16,8 @@ paths:
             API client uses when calling the webhook. This is provided in order
             to cancel the operation in case it reaches such timeout since
             Kubernetes will discard it anyway.
+          example: >-
+            30s
           in: query
           name: timeout
           schema:

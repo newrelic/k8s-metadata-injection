@@ -67,7 +67,7 @@ func main() {
 	whsvr.server.TLSConfig = &tls.Config{GetCertificate: whsvr.getCert}
 
 	mux := http.NewServeMux()
-	mux.Handle("/mutate", whsvr)
+	mux.Handle("/mutate", withTimeoutMiddleware(parameters.timeout)(whsvr))
 	whsvr.server.Handler = mux
 
 	go func() {
@@ -103,6 +103,21 @@ func main() {
 			_ = whsvr.server.Shutdown(context.Background())
 			return
 		}
+	}
+}
+
+func withTimeoutMiddleware(timeoutMilliseconds *int64) func(next http.Handler) http.Handler {
+	return func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			var timeout time.Duration
+			if timeoutMilliseconds == nil {
+				timeout, _ = time.ParseDuration(r.URL.Query().Get("timeout"))
+			} else {
+				timeout = time.Millisecond * time.Duration(*timeoutMilliseconds)
+			}
+
+			http.TimeoutHandler(next, timeout, "server timeout").ServeHTTP(w, r)
+		})
 	}
 }
 
