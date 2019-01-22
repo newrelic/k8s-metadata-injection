@@ -4,7 +4,7 @@ FROM alpine:latest
 ARG KUBECTL_VERSION="v1.13.0"
 
 USER root
-RUN apk add --update openssl curl
+RUN apk add --update openssl curl bash
 RUN curl -LO https://storage.googleapis.com/kubernetes-release/release/$KUBECTL_VERSION/bin/linux/amd64/kubectl \
     && chmod +x ./kubectl && mv ./kubectl /usr/local/bin/kubectl
 
