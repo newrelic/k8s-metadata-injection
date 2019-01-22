@@ -4,10 +4,10 @@ set -e
 
 usage() {
   cat <<EOF
-Generate certificate suitable for use with an sidecar-injector webhook service.
+Generate certificate suitable for use with New Relic's k8s metadata injeciton mutating admission webhook pod.
 This script uses k8s' CertificateSigningRequest API to a generate a
-certificate signed by k8s CA suitable for use with sidecar-injector webhook
-services. This requires permissions to create and approve CSR. See
+certificate signed by k8s CA suitable for use New Relic's k8s metadata injeciton mutating admission webhook pod.
+This requires permissions to create and approve CSR. See
 https://kubernetes.io/docs/tasks/tls/managing-tls-in-a-cluster for
 detailed explantion and additional instructions.
 The server key/cert k8s CA cert are stored in a k8s secret.
@@ -76,7 +76,7 @@ openssl req -new -key ${tmpdir}/server-key.pem -subj "/CN=${service}.${namespace
 # clean-up any previously created CSR for our service. Ignore errors if not present.
 kubectl delete csr ${csrName} 2>/dev/null || true
 
-# create  server cert/key CSR and  send to k8s API
+# create server cert/key CSR and send it to k8s api
 cat <<EOF | kubectl create -f -
 apiVersion: certificates.k8s.io/v1beta1
 kind: CertificateSigningRequest
