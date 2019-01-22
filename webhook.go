@@ -140,16 +140,12 @@ func (whsvr *WebhookServer) createPatch(pod *corev1.Pod) ([]byte, error) {
 }
 
 // main mutation process
-func (whsvr *WebhookServer) mutate(ar *v1beta1.AdmissionReview) *v1beta1.AdmissionResponse {
+func (whsvr *WebhookServer) mutate(ar *v1beta1.AdmissionReview) ([]byte, error) {
 	req := ar.Request
 	var pod corev1.Pod
 	if err := json.Unmarshal(req.Object.Raw, &pod); err != nil {
 		whsvr.logger.Errorw("could not unmarshal raw object", "err", err, "object", string(req.Object.Raw))
-		return &v1beta1.AdmissionResponse{
-			Result: &metav1.Status{
-				Message: err.Error(),
-			},
-		}
+		return nil, err
 	}
 
 	whsvr.logger.Infow("received admission review", "kind", req.Kind, "namespace", req.Namespace, "name",
@@ -157,31 +153,17 @@ func (whsvr *WebhookServer) mutate(ar *v1beta1.AdmissionReview) *v1beta1.Admissi
 
 	// determine whether to perform mutation
 	if !mutationRequired(ignoredNamespaces, &pod.ObjectMeta) {
-		// whsvr.logger.Infow("Skipping mutation for %s/%s due to policy check", pod.Namespace, pod.Name)
 		whsvr.logger.Infow("skipped mutation", "namespace", pod.Namespace, "pod", pod.Name, "reason", "policy check (special namespaces)")
-		return &v1beta1.AdmissionResponse{
-			Allowed: true,
-		}
+		return nil, nil
 	}
 
 	patchBytes, err := whsvr.createPatch(&pod)
 	if err != nil {
-		return &v1beta1.AdmissionResponse{
-			Result: &metav1.Status{
-				Message: err.Error(),
-			},
-		}
+		return nil, err
 	}
 
 	whsvr.logger.Infow("admission response created", "response", string(patchBytes))
-	return &v1beta1.AdmissionResponse{
-		Allowed: true,
-		Patch:   patchBytes,
-		PatchType: func() *v1beta1.PatchType {
-			pt := v1beta1.PatchTypeJSONPatch
-			return &pt
-		}(),
-	}
+	return patchBytes, nil
 }
 
 // Serve method for webhook server
@@ -211,35 +193,54 @@ func (whsvr *WebhookServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var admissionResponse *v1beta1.AdmissionResponse
-	ar := v1beta1.AdmissionReview{}
-	if _, _, err := deserializer.Decode(body, nil, &ar); err != nil {
+	admissionReviewResponse := v1beta1.AdmissionReview{
+		Response: &v1beta1.AdmissionResponse{
+			Allowed: true, // Always allow the creation of the pod since this webhook does not act as Validating Webhook.
+		},
+	}
+
+	admissionReviewRequest := v1beta1.AdmissionReview{}
+	if _, _, err := deserializer.Decode(body, nil, &admissionReviewRequest); err != nil {
 		whsvr.logger.Errorw("can't decode body", "err", err, "body", body)
-		admissionResponse = &v1beta1.AdmissionResponse{
-			Result: &metav1.Status{
-				Message: err.Error(),
-			},
-		}
-	} else {
-		admissionResponse = whsvr.mutate(&ar)
+		http.Error(w, fmt.Sprintf("could not decode request body: %q", err.Error()), http.StatusBadRequest)
+		return
 	}
 
-	admissionReview := v1beta1.AdmissionReview{}
-	if admissionResponse != nil {
-		admissionReview.Response = admissionResponse
-		if ar.Request != nil {
-			admissionReview.Response.UID = ar.Request.UID
-		}
+	if len(admissionReviewRequest.Request.Object.Raw) == 0 {
+		whsvr.logger.Errorw("object not present in request body", "body", body)
+		http.Error(w, fmt.Sprintf("object not present in request body: %q", body), http.StatusBadRequest)
+		return
 	}
 
-	resp, err := json.Marshal(admissionReview)
+	patch, err := whsvr.mutate(&admissionReviewRequest)
+	if err != nil {
+		whsvr.logger.Errorw("error during mutation", "err", err)
+		http.Error(w, fmt.Sprintf("error during mutation: %q", err.Error()), http.StatusInternalServerError)
+		return
+	}
+
+	if len(patch) > 0 {
+		admissionReviewResponse.Response.Patch = patch
+		admissionReviewResponse.Response.PatchType = func() *v1beta1.PatchType {
+			pt := v1beta1.PatchTypeJSONPatch // Only PatchTypeJSONPatch is allowed by now.
+			return &pt
+		}()
+	}
+
+	if admissionReviewRequest.Request != nil {
+		admissionReviewResponse.Response.UID = admissionReviewRequest.Request.UID
+	}
+
+	resp, err := json.Marshal(admissionReviewResponse)
 	if err != nil {
 		whsvr.logger.Errorw("can't decode response", "err", err)
 		http.Error(w, fmt.Sprintf("could not encode response: %v", err), http.StatusInternalServerError)
+		return
 	}
 	whsvr.logger.Info("writing reponse")
 	if _, err := w.Write(resp); err != nil {
 		whsvr.logger.Errorw("can't write response", "err", err)
 		http.Error(w, fmt.Sprintf("could not write response: %v", err), http.StatusInternalServerError)
+		return
 	}
 }
