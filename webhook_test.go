@@ -32,6 +32,8 @@ func TestServeHTTP(t *testing.T) {
 		}
 	}
 
+	missingObjectRequestBody := bytes.Replace(makeTestData(t, "default"), []byte("\"object\""), []byte("\"foo\""), -1)
+
 	patchTypeForValidBody := v1beta1.PatchTypeJSONPatch
 	cases := []struct {
 		name                      string
@@ -93,10 +95,10 @@ func TestServeHTTP(t *testing.T) {
 		},
 		{
 			name:                      "mutation fails - object not present in request body",
-			requestBody:               bytes.Replace(makeTestData(t, "default"), []byte("\"object\""), []byte("\"foo\""), -1),
+			requestBody:               missingObjectRequestBody,
 			contentType:               "application/json",
-			expectedStatusCode:        http.StatusInternalServerError,
-			expectedBodyWhenHTTPError: "error during mutation: \"object not present in request body\"\n",
+			expectedStatusCode:        http.StatusBadRequest,
+			expectedBodyWhenHTTPError: fmt.Sprintf("object not present in request body: %q\n", missingObjectRequestBody),
 		},
 	}
 

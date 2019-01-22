@@ -4,7 +4,6 @@ package main
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -143,11 +142,6 @@ func (whsvr *WebhookServer) createPatch(pod *corev1.Pod) ([]byte, error) {
 // main mutation process
 func (whsvr *WebhookServer) mutate(ar *v1beta1.AdmissionReview) ([]byte, error) {
 	req := ar.Request
-	if len(req.Object.Raw) == 0 {
-		whsvr.logger.Error("object not present in request body")
-		return nil, errors.New("object not present in request body")
-	}
-
 	var pod corev1.Pod
 	if err := json.Unmarshal(req.Object.Raw, &pod); err != nil {
 		whsvr.logger.Errorw("could not unmarshal raw object", "err", err, "object", string(req.Object.Raw))
@@ -209,6 +203,12 @@ func (whsvr *WebhookServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if _, _, err := deserializer.Decode(body, nil, &admissionReviewRequest); err != nil {
 		whsvr.logger.Errorw("can't decode body", "err", err, "body", body)
 		http.Error(w, fmt.Sprintf("could not decode request body: %q", err.Error()), http.StatusBadRequest)
+		return
+	}
+
+	if len(admissionReviewRequest.Request.Object.Raw) == 0 {
+		whsvr.logger.Errorw("object not present in request body", "body", body)
+		http.Error(w, fmt.Sprintf("object not present in request body: %q", body), http.StatusBadRequest)
 		return
 	}
 
