@@ -44,13 +44,11 @@ func main() {
 
 	watcher, _ := fsnotify.NewWatcher()
 	defer func() { _ = watcher.Close() }()
-	// Watch the parent directory of the target files so we can catch
+	// Watch the parent directory of the key/cert files so we can catch
 	// symlink updates of k8s secrets volumes and reload the certificates whenever they change.
-	for _, file := range []string{parameters.certFile, parameters.keyFile} {
-		watchDir, _ := filepath.Split(file)
-		if err := watcher.Add(watchDir); err != nil {
-			logger.Errorw("could not watch file", "file", file, "err", err)
-		}
+	watchDir, _ := filepath.Split(parameters.certFile)
+	if err := watcher.Add(watchDir); err != nil {
+		logger.Errorw("could not watch folder", "folder", watchDir, "err", err)
 	}
 
 	whsvr := &WebhookServer{
