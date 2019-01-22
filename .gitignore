@@ -1,2 +1,4 @@
 deploy/local.yaml
 bin
+vendor/
+.idea/
