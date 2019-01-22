@@ -52,11 +52,11 @@ $ kubectl apply -f deploy/job.yaml
 
 This manifest contains a service account that has the following **cluster** permissions (**RBAC based**) to be capable of automatically management the certificates:
 
-* MutatingWebhookConfiguration - **get**, **create** and **patch**: to be able to create the webhook and patch its CA bundle.
-* CertificateSigningRequests - **create**, **get** and **delete**: to be able to sign the certificate required for the webhook server without leaving duplicates.
-* CertificateSigningRequests/Approval - **update**: to be able to approve CertificateSigningRequests.
-* Secrets - **create**, **get** and **patch**: to be able to manage the TLS secret used to store the key/cert pair used in the webhook server.
-* ConfigMaps - **get**: to be able go get the k8s api server's CA bundle, used in the MutatingWebhookConfiguration.
+* `MutatingWebhookConfiguration` - **get**, **create** and **patch**: to be able to create the webhook and patch its CA bundle.
+* `CertificateSigningRequests` - **create**, **get** and **delete**: to be able to sign the certificate required for the webhook server without leaving duplicates.
+* `CertificateSigningRequests/Approval` - **update**: to be able to approve CertificateSigningRequests.
+* `Secrets` - **create**, **get** and **patch**: to be able to manage the TLS secret used to store the key/cert pair used in the webhook server.
+* `ConfigMaps` - **get**: to be able go get the k8s api server's CA bundle, used in the MutatingWebhookConfiguration.
 
 This job will execute the shell script [k8s-cert-signer/generate_certificate.sh](./k8s-cert-signer/generate_certificate.sh) to setup everything. This script will:
 
