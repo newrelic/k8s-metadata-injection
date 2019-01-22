@@ -18,7 +18,6 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
 	"k8s.io/apimachinery/pkg/runtime/serializer"
-	v1 "k8s.io/kubernetes/pkg/apis/core/v1"
 )
 
 var (
@@ -79,7 +78,7 @@ type patchOperation struct {
 func init() {
 	_ = corev1.AddToScheme(runtimeScheme)
 	_ = admissionregistrationv1beta1.AddToScheme(runtimeScheme)
-	_ = v1.AddToScheme(runtimeScheme)
+	_ = corev1.AddToScheme(runtimeScheme)
 }
 
 // Check whether the target resoured need to be mutated
