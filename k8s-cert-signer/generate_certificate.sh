@@ -1,4 +1,4 @@
-#!/bin/ash
+#!/bin/bash
 
 set -e
 
@@ -45,7 +45,7 @@ done
 [[ -z ${secret} ]] && secret=newrelic-metadata-injection-secret
 [[ -z ${namespace} ]] && namespace=default
 
-if [ ! -x "$(command -v openssl)" ]; then
+if [[ ! -x "$(command -v openssl)" ]]; then
   echo "openssl not found"
   exit 1
 fi
@@ -108,7 +108,7 @@ for x in $(seq 10); do
   if [[ ${serverCert} != '' ]]; then
       break
   fi
-  sleep 1
+  sleep 5
 done
 if [[ ${serverCert} == '' ]]; then
   echo "ERROR: After approving csr ${csrName}, the signed certificate did not appear on the resource. Giving up after 10 attempts." >&2
