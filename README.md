@@ -66,8 +66,8 @@ This job will execute the shell script [k8s-cert-signer/generate_certificate.sh]
 4. The signature of the key is then approved.
 5. The server's certificate is fetched from the CSR and then encoded.
 6. A secret of type `tls` is created with the server certificate and key.
-7. The api server's CA bundle is fetched.
-8. The admission webhook registration for the webhook server is patched with the api server's CA bundle from the previous step.
+7. The k8s extension api server's CA bundle is fetched.
+8. The mutating webhook configuration for the webhook server is patched with the k8s api server's CA bundle from the previous step. This CA bundle will be used by the k8s extension api server when calling our webhook.
 
 #### Manual management
 
