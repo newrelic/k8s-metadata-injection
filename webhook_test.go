@@ -9,8 +9,10 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/stretchr/testify/assert"
 	"k8s.io/api/admission/v1beta1"
+
+	"github.com/stretchr/testify/assert"
+
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
@@ -30,11 +32,9 @@ func TestServeHTTP(t *testing.T) {
 		}
 	}
 
-	patchTypeForValidBody := v1beta1.PatchTypeJSONPatch
-	resultForInvalidBody := metav1.Status{
-		Message: "yaml: control characters are not allowed",
-	}
+	missingObjectRequestBody := bytes.Replace(makeTestData(t, "default"), []byte("\"object\""), []byte("\"foo\""), -1)
 
+	patchTypeForValidBody := v1beta1.PatchTypeJSONPatch
 	cases := []struct {
 		name                      string
 		requestBody               []byte
@@ -87,19 +87,18 @@ func TestServeHTTP(t *testing.T) {
 			expectedBodyWhenHTTPError: "invalid Content-Type, expect `application/json`" + "\n",
 		},
 		{
-			name:               "invalid body",
-			requestBody:        []byte{0, 1, 2},
-			contentType:        "application/json",
-			expectedStatusCode: http.StatusOK,
-			expectedAdmissionReview: v1beta1.AdmissionReview{
-				Response: &v1beta1.AdmissionResponse{
-					UID:       "",
-					Allowed:   false,
-					Result:    &resultForInvalidBody,
-					Patch:     nil,
-					PatchType: nil,
-				},
-			},
+			name:                      "invalid body",
+			requestBody:               []byte{0, 1, 2},
+			contentType:               "application/json",
+			expectedStatusCode:        http.StatusBadRequest,
+			expectedBodyWhenHTTPError: "could not decode request body: \"yaml: control characters are not allowed\"\n",
+		},
+		{
+			name:                      "mutation fails - object not present in request body",
+			requestBody:               missingObjectRequestBody,
+			contentType:               "application/json",
+			expectedStatusCode:        http.StatusBadRequest,
+			expectedBodyWhenHTTPError: fmt.Sprintf("object not present in request body: %q\n", missingObjectRequestBody),
 		},
 	}
 
