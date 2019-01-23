@@ -75,7 +75,7 @@ openssl req -new -key ${tmpdir}/server-key.pem -subj "/CN=${service}.${namespace
 
 # clean-up any previously created CSR for our service. Ignore errors if not present.
 if kubectl get csr ${csrName}; then
-    echo "CSR already present. Deleting it and creating a new one..."
+    echo "WARN: CSR already present. Deleting it and creating a new one..."
     kubectl delete csr ${csrName}
 fi
 
