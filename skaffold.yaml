@@ -3,7 +3,11 @@ kind: Config
 build:
   artifacts:
   - image: internal/k8s-metadata-injector
+    context: .
+  - image: internal/k8s-cert-signer
+    context: k8s-cert-signer
 deploy:
   kubectl:
     manifests:
+    - deploy/job.yaml
     - deploy/local.yaml

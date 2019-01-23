@@ -3,11 +3,15 @@
 package main
 
 import (
+	"crypto/tls"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"net/http"
 	"strings"
+	"sync"
+
+	"github.com/fsnotify/fsnotify"
 
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/runtime"
@@ -64,9 +68,20 @@ func (whsvr *WebhookServer) getEnvVarsToInject(pod *corev1.Pod, container *corev
 
 // WebhookServer is a webhook server that can accept requests from the Apiserver
 type WebhookServer struct {
+	certFile    string
+	keyFile     string
+	cert        *tls.Certificate
 	clusterName string
 	logger      *zap.SugaredLogger
+	mu          sync.RWMutex
 	server      *http.Server
+	certWatcher *fsnotify.Watcher
+}
+
+func (whsvr *WebhookServer) getCert(*tls.ClientHelloInfo) (*tls.Certificate, error) {
+	whsvr.mu.Lock()
+	defer whsvr.mu.Unlock()
+	return whsvr.cert, nil
 }
 
 type patchOperation struct {
@@ -83,7 +98,7 @@ func init() {
 
 // Check whether the target resoured need to be mutated
 func mutationRequired(ignoredList []string, metadata *metav1.ObjectMeta) bool {
-	// skip special kubernete system namespaces
+	// skip special kubernetes system namespaces
 	for _, namespace := range ignoredList {
 		if metadata.Namespace == namespace {
 			return false
