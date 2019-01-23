@@ -40,7 +40,17 @@ Executing this:
 
 This webhook needs to be authenticated by the Kubernetes extension API server, so it will need to have a signed certificate from a CA trusted by the extension API server. The certificate management is isolated from the webhook server and a secret is used to mount them. 
 
-Important: the webhook server has a file watcher pointed at the secret's folder that will trigger a certificate reload whenever anything is created or modified inside the secret. This allows certificate rotation to be transparent and cause no downtime.
+**Important**: the webhook server has a file watcher pointed at the secret's folder that will trigger a certificate reload whenever anything is created or modified inside the secret. This allows easy certificate rotation with an update of the TLS secret that is created by running:
+
+```bash
+$ namespace=default # Change the namespace here if you also changed it in the yaml files.
+$ serverCert=$(kubectl get csr newrelic-metadata-injection-svc.${namespace} -o jsonpath='{.status.certificate}')
+$ tmpdir=$(mktemp -d)
+$ echo ${serverCert} | openssl base64 -d -A -out ${tmpdir}/server-cert.pem
+$ kubectl patch secret newrelic-metadata-injection-secret --type='json' \
+    -p "[{'op': 'replace', 'path':'/data/tls.crt', 'value':'$(serverCert)'}]"
+$ rm -rf $(tmpdir)
+```
 
 #### Automatic management
 
