@@ -62,7 +62,7 @@ spec:
       containers:
         - name: metadata-cert-setup
           # This is a minimal kubectl image based on Alpine Linux that sings certificates using the k8s extension api server
-          image: quay.io/newrelic/k8s-metadata-injector-certs-dev
+          image: quay.io/newrelic/k8s-metadata-injector-certs
           command: ["./generate_certificate.sh"]
       imagePullSecrets:
         - name: nr-quay-secret
