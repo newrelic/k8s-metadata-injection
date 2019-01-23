@@ -50,7 +50,7 @@ The certificate management can be automatic, using the Kubernetes extension API 
 $ kubectl apply -f deploy/job.yaml
 ```
 
-This manifest contains a service account that has the following **cluster** permissions (**RBAC based**) to be capable of automatically management the certificates:
+This manifest contains a service account that has the following **cluster** permissions (**RBAC based**) to be capable of automatically manage the certificates:
 
 * `MutatingWebhookConfiguration` - **get**, **create** and **patch**: to be able to create the webhook and patch its CA bundle.
 * `CertificateSigningRequests` - **create**, **get** and **delete**: to be able to sign the certificate required for the webhook server without leaving duplicates.
