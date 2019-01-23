@@ -121,9 +121,11 @@ Currently for K8s libraries it uses version 1.13.1. Only couple of libraries are
 
 ### Run
 
-Run `make deploy-dev`. This will compile your binary with compatibility for the container OS architecture, build a temporary docker image, and finally deploy the webhook server to your Minikube and use the Kubernetes API server to sign its TLS certificate ([see section about certificates](#3-install-the-certificates)).
+Run `skaffold run`. This will build a docker image, build the webhook server inside it, and finally deploy the webhook server to your Minikube and use the Kubernetes API server to sign its TLS certificate ([see section about certificates](#3-install-the-certificates)).
 
-If you would like to enable automatic redeploy on changes to the repository, you can run `skaffold dev`.
+To follow the logs, you can run `skaffold run --tail`. To delete the resources created by Skaffold you can run `skaffold delete`.
+
+If you would like to enable automatic redeploy on changes to the repository, you can run `skaffold dev`. It automatically tails the logs and delete the resources when interrupted (i.e. with a `Ctrl + C`).
 
 ### Tests
 
