@@ -1,3 +1,3 @@
 #!/bin/sh -e
 
-exec /app/k8s-metadata-injection --clusterName ${clusterName} 2>&1
+exec NR_K8S_METADATA_INJECTION_CLUSTER_NAME=${clusterName} /app/k8s-metadata-injection 2>&1
