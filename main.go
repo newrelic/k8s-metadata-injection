@@ -18,7 +18,7 @@ import (
 	"go.uber.org/zap"
 )
 
-const appName = "nr-k8s-metadata-injection"
+const appName = "new-relic-k8s-metadata-injection"
 
 // Specification contains the specs for this app.
 type Specification struct {
