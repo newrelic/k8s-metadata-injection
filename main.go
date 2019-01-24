@@ -18,16 +18,15 @@ import (
 	"go.uber.org/zap"
 )
 
-const appName = "nr-k8s-metadata-injection"
+const appName = "new-relic-k8s-metadata-injection"
 
 // Specification contains the specs for this app.
 type Specification struct {
-	Port        int    `default:"443"`                                                      // Webhook server port.
-	TLSCertFile string `default:"/etc/tls-key-cert-pair/tls.crt" envconfig:"tls_cert_file"` // File containing the x509 Certificate for HTTPS.
-	TLSKeyFile  string `default:"/etc/tls-key-cert-pair/tls.key" envconfig:"tls_key_file"`  // File containing the x509 private key for TLSCERTFILE.
-	ClusterName string `default:"cluster" split_words:"true"`                               // The name of the Kubernetes cluster.
-	CABundle    string `default:"metadata-injection.newrelic.com" envconfig:"ca_bundle"`    // caBundle to push to the Kubernetes API.
-	Timeout     time.Duration                                                               // server timeout. Defaults to the timeout passed by K8s API via query param.
+	Port        int           `default:"443"`                                                      // Webhook server port.
+	TLSCertFile string        `default:"/etc/tls-key-cert-pair/tls.crt" envconfig:"tls_cert_file"` // File containing the x509 Certificate for HTTPS.
+	TLSKeyFile  string        `default:"/etc/tls-key-cert-pair/tls.key" envconfig:"tls_key_file"`  // File containing the x509 private key for TLSCERTFILE.
+	ClusterName string        `default:"cluster" split_words:"true"`                               // The name of the Kubernetes cluster.
+	Timeout     time.Duration // server timeout. Defaults to the timeout passed by K8s API via query param.
 }
 
 func main() {
