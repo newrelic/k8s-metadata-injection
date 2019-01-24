@@ -1,0 +1,27 @@
+language: go
+
+services:
+  - docker
+
+go: 
+  - 1.11.x
+
+env:
+  - GO111MODULE=on
+
+install: true
+
+jobs:
+  include:
+    - stage: test
+      script: make lint
+    -
+      script: make test
+
+    - stage: build
+      script: make webhook
+    -
+      script: make cert-manager
+
+notifications:
+  email: false
