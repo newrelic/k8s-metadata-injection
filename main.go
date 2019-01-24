@@ -3,41 +3,43 @@ package main
 import (
 	"context"
 	"crypto/tls"
-	"flag"
 	"fmt"
 	"log"
 	"net/http"
 	"os"
 	"os/signal"
 	"path/filepath"
+	"strings"
 	"syscall"
 	"time"
 
 	"github.com/fsnotify/fsnotify"
+	"github.com/kelseyhightower/envconfig"
 	"go.uber.org/zap"
 )
 
-// WhSvrParameters are configuration parameters for Webhook Server
-type WhSvrParameters struct {
-	port        int    // webhook server port
-	certFile    string // path to the x509 certificate for https
-	keyFile     string // path to the x509 private key matching `CertFile`
-	clusterName string // name of the cluster
+const appName = "nr-k8s-metadata-injection"
+
+// Specification contains the specs for this app.
+type Specification struct {
+	Port        int    `default:"443"`                                                      // Webhook server port.
+	TLSCertFile string `default:"/etc/tls-key-cert-pair/tls.crt" envconfig:"tls_cert_file"` // File containing the x509 Certificate for HTTPS.
+	TLSKeyFile  string `default:"/etc/tls-key-cert-pair/tls.key" envconfig:"tls_key_file"`  // File containing the x509 private key for TLSCERTFILE.
+	ClusterName string `default:"cluster" split_words:"true"`                               // The name of the Kubernetes cluster.
+	CABundle    string `default:"metadata-injection.newrelic.com" envconfig:"ca_bundle"`    // caBundle to push to the Kubernetes API.
 }
 
 func main() {
-	var parameters WhSvrParameters
-
-	flag.IntVar(&parameters.port, "port", 443, "Webhook server port.")
-	flag.StringVar(&parameters.certFile, "tlsCertFile", "/etc/tls-key-cert-pair/tls.crt", "File containing the x509 Certificate for HTTPS.")
-	flag.StringVar(&parameters.keyFile, "tlsKeyFile", "/etc/tls-key-cert-pair/tls.key", "File containing the x509 private key to --tlsCertFile.")
-	flag.StringVar(&parameters.clusterName, "clusterName", "cluster", "The name of the Kubernetes cluster")
-	flag.Parse()
+	var s Specification
+	err := envconfig.Process(strings.Replace(appName, "-", "_", -1), &s)
+	if err != nil {
+		log.Fatal(err.Error())
+	}
 
 	logger := setupLogger()
 	defer func() { _ = logger.Sync() }()
 
-	pair, err := tls.LoadX509KeyPair(parameters.certFile, parameters.keyFile)
+	pair, err := tls.LoadX509KeyPair(s.TLSCertFile, s.TLSKeyFile)
 	if err != nil {
 		logger.Errorw("failed to load key pair", "err", err)
 	}
@@ -46,19 +48,19 @@ func main() {
 	defer func() { _ = watcher.Close() }()
 	// Watch the parent directory of the key/cert files so we can catch
 	// symlink updates of k8s secrets volumes and reload the certificates whenever they change.
-	watchDir, _ := filepath.Split(parameters.certFile)
+	watchDir, _ := filepath.Split(s.TLSCertFile)
 	if err := watcher.Add(watchDir); err != nil {
 		logger.Errorw("could not watch folder", "folder", watchDir, "err", err)
 	}
 
 	whsvr := &WebhookServer{
-		keyFile:     parameters.keyFile,
-		certFile:    parameters.certFile,
+		keyFile:     s.TLSKeyFile,
+		certFile:    s.TLSCertFile,
 		cert:        &pair,
-		clusterName: parameters.clusterName,
+		clusterName: s.ClusterName,
 		certWatcher: watcher,
 		server: &http.Server{
-			Addr: fmt.Sprintf(":%v", parameters.port),
+			Addr: fmt.Sprintf(":%d", s.Port),
 		},
 		logger: logger,
 	}
