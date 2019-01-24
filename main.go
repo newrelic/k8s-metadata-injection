@@ -27,6 +27,7 @@ type Specification struct {
 	TLSKeyFile  string `default:"/etc/tls-key-cert-pair/tls.key" envconfig:"tls_key_file"`  // File containing the x509 private key for TLSCERTFILE.
 	ClusterName string `default:"cluster" split_words:"true"`                               // The name of the Kubernetes cluster.
 	CABundle    string `default:"metadata-injection.newrelic.com" envconfig:"ca_bundle"`    // caBundle to push to the Kubernetes API.
+	Timeout     time.Duration                                                               // server timeout. Defaults to the timeout passed by K8s API via query param.
 }
 
 func main() {
@@ -67,7 +68,7 @@ func main() {
 	whsvr.server.TLSConfig = &tls.Config{GetCertificate: whsvr.getCert}
 
 	mux := http.NewServeMux()
-	mux.Handle("/mutate", whsvr)
+	mux.Handle("/mutate", withTimeoutMiddleware(s.Timeout)(whsvr))
 	whsvr.server.Handler = mux
 
 	go func() {
@@ -103,6 +104,19 @@ func main() {
 			_ = whsvr.server.Shutdown(context.Background())
 			return
 		}
+	}
+}
+
+func withTimeoutMiddleware(timeout time.Duration) func(next http.Handler) http.Handler {
+	return func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			// In case the user does not set a timeout, we use the timeout passed by K8s API via query param.
+			if timeout.Nanoseconds() == 0 {
+				timeout, _ = time.ParseDuration(r.URL.Query().Get("timeout"))
+			}
+
+			http.TimeoutHandler(next, timeout, "server timeout").ServeHTTP(w, r)
+		})
 	}
 }
 
