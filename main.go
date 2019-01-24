@@ -27,7 +27,7 @@ type Specification struct {
 	TLSKeyFile  string `default:"/etc/tls-key-cert-pair/tls.key" envconfig:"tls_key_file"`  // File containing the x509 private key for TLSCERTFILE.
 	ClusterName string `default:"cluster" split_words:"true"`                               // The name of the Kubernetes cluster.
 	CABundle    string `default:"metadata-injection.newrelic.com" envconfig:"ca_bundle"`    // caBundle to push to the Kubernetes API.
-	Timeout     time.Duration
+	Timeout     time.Duration                                                               // server timeout. Defaults to the timeout passed by K8s API via query param.
 }
 
 func main() {
