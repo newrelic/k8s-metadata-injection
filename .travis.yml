@@ -14,14 +14,15 @@ install: true
 jobs:
   include:
     - stage: test
+      name: "Lint"
       script: make lint
-    -
-      script: make test
-
+    - script: make test
+      name: "Unit Tests"
     - stage: build
+      name: "Build Webhook"
       script: make webhook
-    -
-      script: make cert-manager
+    - script: make cert-manager
+      name: "Build cert-manager"
 
 notifications:
   email: false
