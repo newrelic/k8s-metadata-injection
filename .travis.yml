@@ -9,6 +9,8 @@ go:
 env:
   - GO111MODULE=on
 
+# The default install command would be 'go get -t -v ./...', but this is done when running the "Unit Tests" by go test.
+# By setting it to 'true', we skip the install step.
 install: true
 
 cache:
