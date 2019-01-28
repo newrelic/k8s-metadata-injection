@@ -68,7 +68,7 @@ This manifest contains a service account that has the following **cluster** perm
 * `Secrets` - **create**, **get** and **patch**: to be able to manage the TLS secret used to store the key/cert pair used in the webhook server.
 * `ConfigMaps` - **get**: to be able go get the k8s api server's CA bundle, used in the MutatingWebhookConfiguration.
 
-This job will execute the shell script [k8s-cert-signer/generate_certificate.sh](./k8s-cert-signer/generate_certificate.sh) to setup everything. This script will:
+This job will execute the shell script [k8s-webhook-cert-manager/generate_certificate.sh](./k8s-webhook-cert-manager/generate_certificate.sh) to setup everything. This script will:
 
 1. Generate a server key.
 2. If there is any previous CSR (certificate signing request) for this key, it is deleted.

@@ -1,0 +1,34 @@
+language: go
+
+services:
+  - docker
+
+go: 
+  - 1.11.x
+
+env:
+  - GO111MODULE=on
+
+# The default install command would be 'go get -t -v ./...', but this is done when running the "Unit Tests" by go test.
+# By setting it to 'true', we skip the install step.
+install: true
+
+cache:
+  directories:
+    - $GOPATH/pkg/mod
+
+jobs:
+  include:
+    - stage: test
+      name: "Lint"
+      script: make lint
+    - script: make test
+      name: "Unit Tests"
+    - stage: build
+      name: "Build Webhook"
+      script: make webhook
+    - script: make cert-manager
+      name: "Build cert-manager"
+
+notifications:
+  email: false

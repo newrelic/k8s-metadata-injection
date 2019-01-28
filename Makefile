@@ -1,8 +1,10 @@
 BIN_DIR = ./bin
 TOOLS_DIR := $(BIN_DIR)/dev-tools
 BINARY_NAME = k8s-metadata-injection
-DOCKER_IMAGE_NAME=quay.io/newrelic/k8s-metadata-injector-dev
-DOCKER_IMAGE_TAG=latest
+WEBHOOK_DOCKER_IMAGE_NAME=newrelic/k8s-metadata-injection
+WEBHOOK_DOCKER_IMAGE_TAG=latest
+CERT_MANAGER_DOCKER_IMAGE_NAME=newrelic/k8s-webhook-cert-manager
+CERT_MANAGER_DOCKER_IMAGE_TAG=latest
 
 GOLANGCILINT_VERSION = 1.12
 
@@ -25,16 +27,20 @@ $(TOOLS_DIR):
 
 $(TOOLS_DIR)/golangci-lint: $(TOOLS_DIR)
 	@echo "[tools] Downloading 'golangci-lint'"
-	@wget -O - -q https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | BINDIR=$(@D) sh -s v$(GOLANGCILINT_VERSION) &> /dev/null
+	@wget -O - -q https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | BINDIR=$(@D) sh -s v$(GOLANGCILINT_VERSION) > /dev/null 2>&1
 
 .PHONY: lint
 lint: $(TOOLS_DIR)/golangci-lint
 	@echo "[validate] Validating source code running golangci-lint"
 	@$(TOOLS_DIR)/golangci-lint run
 
-.PHONY: docker-build
-docker-build:
-	docker build -t $(DOCKER_IMAGE_NAME):$(DOCKER_IMAGE_TAG) .
+.PHONY: webhook
+webhook:
+	docker build -t $(WEBHOOK_DOCKER_IMAGE_NAME):$(WEBHOOK_DOCKER_IMAGE_TAG) .
+
+.PHONY: cert-manager
+cert-manager:
+	docker build -t $(CERT_MANAGER_DOCKER_IMAGE_NAME):$(CERT_MANAGER_DOCKER_IMAGE_TAG) k8s-webhook-cert-manager
 
 .PHONY: test
 test:
