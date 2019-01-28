@@ -11,6 +11,10 @@ env:
 
 install: true
 
+cache:
+  directories:
+    - $GOPATH/pkg/mod
+
 jobs:
   include:
     - stage: test
