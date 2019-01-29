@@ -60,18 +60,18 @@ spec:
     spec:
       serviceAccountName: newrelic-metadata-injection-service-account
       containers:
-        - name: metadata-cert-setup
-          # This is a minimal kubectl image based on Alpine Linux that sings certificates using the k8s extension api server
-          image: quay.io/newrelic/k8s-metadata-injector-certs
-          command: ["./generate_certificate.sh"]
-          args:
-            - "--service"
-            - "newrelic-metadata-injection-svc"
-            - "--webhook"
-            - "newrelic-metadata-injection-cfg"
-            - "--secret"
-            - "newrelic-metadata-injection-secret"
-            - "--namespace"
-            - "default"
+      - name: metadata-cert-setup
+        # This is a minimal kubectl image based on Alpine Linux that sings certificates using the k8s extension api server
+        image: newrelic/k8s-webhook-cert-manager:latest
+        command: ["./generate_certificate.sh"]
+        args:
+          - "--service"
+          - "newrelic-metadata-injection-svc"
+          - "--webhook"
+          - "newrelic-metadata-injection-cfg"
+          - "--secret"
+          - "newrelic-metadata-injection-secret"
+          - "--namespace"
+          - "default"
       restartPolicy: Never
   backoffLimit: 1
