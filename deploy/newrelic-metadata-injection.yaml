@@ -14,18 +14,17 @@ spec:
       serviceAccountName: newrelic-metadata-injection-service-account
       containers:
       - name: metadata-injector
-        image: quay.io/newrelic/k8s-metadata-injector:latest
-        imagePullPolicy: Always
+        image: newrelic/k8s-metadata-injection:latest
         env:
-            - name: clusterName
-              value: "<YOUR_CLUSTER_NAME>"
+        - name: clusterName
+          value: "<YOUR_CLUSTER_NAME>"
         volumeMounts:
-          - name: tls-key-cert-pair
-            mountPath: /etc/tls-key-cert-pair
-      volumes:
         - name: tls-key-cert-pair
-          secret:
-            secretName: newrelic-metadata-injection-secret
+          mountPath: /etc/tls-key-cert-pair
+      volumes:
+      - name: tls-key-cert-pair
+        secret:
+          secretName: newrelic-metadata-injection-secret
 ---
 apiVersion: v1
 kind: Service
