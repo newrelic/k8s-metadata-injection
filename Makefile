@@ -15,12 +15,7 @@ export GO111MODULE=on
 all: build
 
 .PHONY: build
-build: clean lint test docker-build
-
-.PHONY: clean
-clean:
-	@echo "[clean] Removing binaries"
-	@rm -rf $(BIN_DIR)/$(BINARY_NAME)
+build: lint test docker-build
 
 $(TOOLS_DIR):
 	@mkdir -p $@
