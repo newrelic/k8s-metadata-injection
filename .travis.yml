@@ -26,8 +26,8 @@ jobs:
       name: "Unit Tests"
     - stage: build
       name: "Build Webhook"
-      script: make webhook
-    - script: make cert-manager
+      script: make build-webhook-container
+    - script: make build-cert-manager-container
       name: "Build cert-manager"
 
 notifications:
