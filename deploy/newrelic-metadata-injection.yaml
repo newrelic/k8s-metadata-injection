@@ -59,7 +59,9 @@ webhooks:
     apiGroups: [""]
     apiVersions: ["v1"]
     resources: ["pods"]
-  namespaceSelector:
-    matchLabels:
-      newrelic-metadata-injection: enabled
+  # Uncomment these lines in case you want to enable the metadata decoration
+  # only for pods living in namespaces labeled with 'newrelic-metadata-injection'.
+  # namespaceSelector:
+  #   matchLabels:
+  #     newrelic-metadata-injection: enabled
   failurePolicy: Ignore
