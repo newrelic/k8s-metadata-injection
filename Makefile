@@ -15,7 +15,7 @@ export GO111MODULE=on
 all: build
 
 .PHONY: build
-build: lint test docker-build
+build: lint test build-webhook-container build-cert-manager-container
 
 $(TOOLS_DIR):
 	@mkdir -p $@
@@ -29,12 +29,12 @@ lint: $(TOOLS_DIR)/golangci-lint
 	@echo "[validate] Validating source code running golangci-lint"
 	@$(TOOLS_DIR)/golangci-lint run
 
-.PHONY: webhook
-webhook:
+.PHONY: build-webhook-container
+build-webhook-container:
 	docker build -t $(WEBHOOK_DOCKER_IMAGE_NAME):$(WEBHOOK_DOCKER_IMAGE_TAG) .
 
-.PHONY: cert-manager
-cert-manager:
+.PHONY: build-cert-manager-container
+build-cert-manager-container:
 	docker build -t $(CERT_MANAGER_DOCKER_IMAGE_NAME):$(CERT_MANAGER_DOCKER_IMAGE_TAG) k8s-webhook-cert-manager
 
 .PHONY: test
