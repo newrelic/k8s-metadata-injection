@@ -18,7 +18,10 @@ import (
 	"go.uber.org/zap"
 )
 
-const appName = "new-relic-k8s-metadata-injection"
+const (
+	appName        = "new-relic-k8s-metadata-injection"
+	defaultTimeout = time.Second * 30
+)
 
 // Specification contains the specs for this app.
 type Specification struct {
@@ -26,7 +29,7 @@ type Specification struct {
 	TLSCertFile string        `default:"/etc/tls-key-cert-pair/tls.crt" envconfig:"tls_cert_file"` // File containing the x509 Certificate for HTTPS.
 	TLSKeyFile  string        `default:"/etc/tls-key-cert-pair/tls.key" envconfig:"tls_key_file"`  // File containing the x509 private key for TLSCERTFILE.
 	ClusterName string        `default:"cluster" split_words:"true"`                               // The name of the Kubernetes cluster.
-	Timeout     time.Duration // server timeout. Defaults to the timeout passed by K8s API via query param.
+	Timeout     time.Duration // server timeout. Defaults to the timeout passed by K8s API via query param. If not present, to the defaultTimeout const value.
 }
 
 func main() {
@@ -110,8 +113,13 @@ func withTimeoutMiddleware(timeout time.Duration) func(next http.Handler) http.H
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			// In case the user does not set a timeout, we use the timeout passed by K8s API via query param.
+			// If the latest timeout is not present in the form of URL query param, we use the defaultTimeout const value.
 			if timeout.Nanoseconds() == 0 {
-				timeout, _ = time.ParseDuration(r.URL.Query().Get("timeout"))
+				if qt := r.URL.Query().Get("timeout"); qt != "" {
+					timeout, _ = time.ParseDuration(qt)
+				} else {
+					timeout = defaultTimeout
+				}
 			}
 
 			http.TimeoutHandler(next, timeout, "server timeout").ServeHTTP(w, r)
