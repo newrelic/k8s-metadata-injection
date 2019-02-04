@@ -70,7 +70,7 @@ func main() {
 	whsvr.server.TLSConfig = &tls.Config{GetCertificate: whsvr.getCert}
 
 	mux := http.NewServeMux()
-	mux.Handle("/mutate", withTimeoutMiddleware(s.Timeout)(whsvr))
+	mux.Handle("/mutate", withLoggingMiddleware(logger)(withTimeoutMiddleware(s.Timeout)(whsvr)))
 	whsvr.server.Handler = mux
 
 	go func() {
@@ -124,6 +124,22 @@ func withTimeoutMiddleware(timeout time.Duration) func(next http.Handler) http.H
 
 			http.TimeoutHandler(next, timeout, "server timeout").ServeHTTP(w, r)
 		})
+	}
+}
+
+func withLoggingMiddleware(logger *zap.SugaredLogger) func(next http.Handler) http.Handler {
+	return func(next http.Handler) http.Handler {
+		fn := func(w http.ResponseWriter, r *http.Request) {
+			scheme := "http"
+			if r.TLS != nil {
+				scheme = "https"
+			}
+			logger.Infof("%s %s://%s%s %s\" from %s", r.Method, scheme, r.Host, r.RequestURI, r.Proto, r.RemoteAddr)
+
+			next.ServeHTTP(w, r)
+		}
+
+		return http.HandlerFunc(fn)
 	}
 }
 
