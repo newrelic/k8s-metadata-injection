@@ -120,7 +120,7 @@ done
 
 if [ $is_kube_running = "false" ]; then
    minikube logs
-   printf "Kubernetes does not start within 3 minutes\n"
+   printf "Kubernetes did not start within 3 minutes. Something went wrong.\n"
    exit 1
 fi
 set -e
