@@ -11,8 +11,6 @@ E2E_SUDO=${E2E_SUDO:-}
 
 finish() {
     printf "calling cleanup function\n"
-    # kill kubectl proxy in background
-    # kill %1 || true
     kubectl delete -f ../deploy/ || true
     kubectl delete -f manifests/ || true
 }
