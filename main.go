@@ -39,7 +39,12 @@ func main() {
 		log.Fatal(err.Error())
 	}
 
-	logger := setupLogger()
+	zapLogger, err := zap.NewDevelopment() // We want a human readable log that includes as much as detail as possible.
+	if err != nil {
+		log.Fatalf("can't initialize zap logger: %v", err)
+	}
+	logger := zapLogger.Sugar()
+
 	defer func() { _ = logger.Sync() }()
 
 	pair, err := tls.LoadX509KeyPair(s.TLSCertFile, s.TLSKeyFile)
@@ -141,14 +146,4 @@ func withLoggingMiddleware(logger *zap.SugaredLogger) func(next http.Handler) ht
 
 		return http.HandlerFunc(fn)
 	}
-}
-
-func setupLogger() *zap.SugaredLogger {
-	config := zap.NewProductionConfig()
-	config.OutputPaths = []string{"stdout"}
-	zapLogger, err := config.Build()
-	if err != nil {
-		log.Fatalf("can't initialize zap logger: %v", err)
-	}
-	return zapLogger.Sugar()
 }
