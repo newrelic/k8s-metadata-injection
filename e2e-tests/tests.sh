@@ -97,6 +97,7 @@ export KUBECONFIG=$HOME/.kube/config
 [ -n "$E2E_START_MINIKUBE" ] && start_minikube
 
 minikube update-context
+kubectl config use-context minikube
 
 is_kube_running="false"
 
