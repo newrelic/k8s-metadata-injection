@@ -145,6 +145,9 @@ label="app=newrelic-metadata-injection"
 webhook_pod_name=$(get_pod_name_by_label "$label")
 if [ "$webhook_pod_name" = "" ]; then
     printf "not found any pod with label %s\n" "$label"
+    kubectl get deployments
+    kubectl describe deployment newrelic-metadata-injection-deployment
+    kubectl get pods
     exit 1
 fi
 wait_for_pod "$webhook_pod_name"
@@ -153,17 +156,18 @@ wait_for_pod "$webhook_pod_name"
 
 # deploy a pod
 kubectl create -f manifests/deployment.yaml
+printf "webhook logs:\n"
+kubectl logs "$webhook_pod_name"
 
 label="app=dummy"
 pod_name="$(get_pod_name_by_label "$label")"
 if [ "$pod_name" = "" ]; then
     printf "not found any pod with label %s" "$label"
+    kubectl describe deployment dummy-deployment
     exit 1
 fi
 wait_for_pod "$pod_name"
 
-printf "webhook logs:\n"
-kubectl logs "$webhook_pod_name"
 kubectl get pods
 kubectl describe pod "${pod_name}"
 printf "getting env vars for %s\n" "${pod_name}"
