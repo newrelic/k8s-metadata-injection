@@ -151,6 +151,19 @@ For running benchmark tests, use:
 make benchmark-test
 ```
 
+There are also some basic E2E tests, they are prepared to run using
+[Minikube](https://github.com/kubernetes/minikube). To run them, execute:
+
+``` bash
+make e2e-test
+```
+
+You can specify against which version of K8s you want to execute the tests:
+
+``` bash
+E2E_KUBERNETES_VERSION=v1.10.0 E2E_START_MINIKUBE=yes make e2e-test
+```
+
 ### Documentation
 
 Please use the [Open Api 3.0 spec file](openapi.yaml) as documentation reference. Note that it describes the schema of the requests the webhook server replies to. This schema depends on the currently supported Kubernetes versions.

@@ -42,6 +42,11 @@ test:
 	@echo "[test] Running unit tests"
 	@go test .
 
+.PHONY: e2e-test
+e2e-test:
+	@echo "[test] Running e2e tests"
+	./e2e-tests/tests.sh
+
 .PHONY: benchmark-test
 benchmark-test:
 	@echo "[test] Running benchmark tests"
