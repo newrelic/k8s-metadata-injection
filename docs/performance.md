@@ -14,16 +14,7 @@ Therefore, we ran the following benchmark and performance tests.
 
 ## Kubernetes Request lifecycle
 
-### Internal Kubernetes HTTP API request flow
-![](k8s-api-lifecycle.svg)
-
-Any request to K8s API is affected by a 60 seconds (default value) timeout, including the time spent in all admission webhooks (and the whole lifecycle).
-The default request timeout between the API and any admission webhook is 30 seconds as Kubernetes [source code](https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/apiserver/pkg/util/webhook/webhook.go#L36) shows.
-
-### Caveats
-
-* If a webhook does not give a response before 30 seconds, the K8s API will error because such timeout. This makes our hook to become a Highly Available service aiming to have 0 downtime.
-* If the webhook does not give a response, the `failurePolicy` will not be used as it is only used when a response is given.
+Please refer to the [Request internal lifecycle](lifecycle.md) documentation.
 
 ## Benchmark of the webhook code
 
