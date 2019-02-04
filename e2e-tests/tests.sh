@@ -138,7 +138,7 @@ kubectl version
 trap finish EXIT
 
 # install the metadata-injection webhook
-awk '/image: / { print; print "        imagePullPolicy: Never"; next }1' ../deploy/job.yaml | kubectl create -f -
+kubectl create -f ../deploy/job.yaml
 awk '/image: / { print; print "        imagePullPolicy: Never"; next }1' ../deploy/newrelic-metadata-injection.yaml | kubectl create -f -
 
 label="app=newrelic-metadata-injection"
