@@ -4,8 +4,6 @@ build:
   artifacts:
   - image: internal/k8s-metadata-injector
     context: .
-  - image: internal/k8s-webhook-cert-manager
-    context: k8s-webhook-cert-manager
 deploy:
   kubectl:
     manifests:
