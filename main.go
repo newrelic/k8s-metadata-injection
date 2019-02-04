@@ -13,6 +13,8 @@ import (
 	"syscall"
 	"time"
 
+	"go.uber.org/zap/zapcore"
+
 	"github.com/fsnotify/fsnotify"
 	"github.com/kelseyhightower/envconfig"
 	"go.uber.org/zap"
@@ -145,7 +147,8 @@ func withLoggingMiddleware(logger *zap.SugaredLogger) func(next http.Handler) ht
 
 func setupLogger() *zap.SugaredLogger {
 	config := zap.NewProductionConfig()
-	config.OutputPaths = []string{"stdout"}
+	config.EncoderConfig.EncodeTime = zapcore.ISO8601TimeEncoder // We want human readable timestamps.
+
 	zapLogger, err := config.Build()
 	if err != nil {
 		log.Fatalf("can't initialize zap logger: %v", err)
