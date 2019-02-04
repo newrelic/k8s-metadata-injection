@@ -3,8 +3,6 @@ TOOLS_DIR := $(BIN_DIR)/dev-tools
 BINARY_NAME = k8s-metadata-injection
 WEBHOOK_DOCKER_IMAGE_NAME=newrelic/k8s-metadata-injection
 WEBHOOK_DOCKER_IMAGE_TAG=latest
-CERT_MANAGER_DOCKER_IMAGE_NAME=newrelic/k8s-webhook-cert-manager
-CERT_MANAGER_DOCKER_IMAGE_TAG=latest
 
 GOLANGCILINT_VERSION = 1.12
 
@@ -15,7 +13,7 @@ export GO111MODULE=on
 all: build
 
 .PHONY: build
-build: lint test build-webhook-container build-cert-manager-container
+build: lint test build-webhook-container
 
 $(TOOLS_DIR):
 	@mkdir -p $@
@@ -32,10 +30,6 @@ lint: $(TOOLS_DIR)/golangci-lint
 .PHONY: build-webhook-container
 build-webhook-container:
 	docker build -t $(WEBHOOK_DOCKER_IMAGE_NAME):$(WEBHOOK_DOCKER_IMAGE_TAG) .
-
-.PHONY: build-cert-manager-container
-build-cert-manager-container:
-	docker build -t $(CERT_MANAGER_DOCKER_IMAGE_NAME):$(CERT_MANAGER_DOCKER_IMAGE_TAG) k8s-webhook-cert-manager
 
 .PHONY: test
 test:
