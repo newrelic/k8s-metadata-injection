@@ -35,8 +35,8 @@ If you wish to use the label-based solution: download the yaml file, look for `n
 
 This webhook needs to be authenticated by the Kubernetes extension API server, so it will need to have a signed certificate from a CA trusted by the extension API server. The certificate management is isolated from the webhook server and a secret is used to mount them. So there are 2 installation options:
 
-1. [With **automatic certificate** management.](#automatic-certificate-management), recommended if you don't manually manage your certificates.
-2. [With **manual certificate** management.](#manual-certificate-management), if you like to manage your certificate manually.
+1. [With **automatic certificate** management](#automatic-certificate-management), recommended if you don't manually manage your certificates.
+2. [With **manual certificate** management](#manual-certificate-management), if you like to manage your certificate manually.
 
 Installing the injection, no matter which options chosen, will end up creating these resources in your Kubernetes cluster:
 
@@ -91,9 +91,9 @@ $ caBundle=$(cat caBundle.pem | base64 | td -d '\n')
 $ kubectl patch mutatingwebhookconfiguration newrelic-metadata-injection-cfg --type='json' -p "[{'op': 'replace', 'path': '/webhooks/0/clientConfig/caBundle', 'value':'${caBundle}'}]"
 ```
 
-#### Certificate rotation
+### Certificate rotation
 
-**Important**: the webhook server has a file watcher pointed at the secret's folder that will trigger a certificate reload whenever anything is created or modified inside the secret. This allows easy certificate rotation with an update of the TLS secret that is created by running:
+**Important**: the webhook server has a file watcher pointed at the secret's folder that will trigger a certificate reload whenever anything is created or modified inside the secret. This allows easy certificate rotation with an update of the TLS secret. The following snippet is an example of updating the TLS secret with a new server certificate (the key stays the same):
 
 ```bash
 $ namespace=default # Change the namespace here if you also changed it in the yaml files.
