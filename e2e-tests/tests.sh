@@ -38,8 +38,6 @@ wait_for_pod "$webhook_pod_name"
 
 # deploy a pod
 kubectl create -f manifests/deployment.yaml
-printf "webhook logs:\n"
-kubectl logs "$webhook_pod_name"
 
 label="app=dummy"
 pod_name="$(get_pod_name_by_label "$label")"
@@ -49,6 +47,9 @@ if [ "$pod_name" = "" ]; then
     exit 1
 fi
 wait_for_pod "$pod_name"
+
+printf "webhook logs:\n"
+kubectl logs "$webhook_pod_name"
 
 kubectl get pods
 kubectl describe pod "${pod_name}"
