@@ -45,7 +45,15 @@ Installing the injection, no matter which options chosen, will end up creating t
 
 ### Automatic certificate management
 
-The certificate management can be automatic, using the Kubernetes extension API server (recommended, but optional):
+The certificate management can be automatic, using the Kubernetes extension API server (recommended, but optional). To proceed with this option, download the manifest file:
+
+```bash
+$ wget http://download.newrelic.com/infrastructure_agent/integrations/k8s-metadata-injection-latest.yaml
+```
+
+Then edit this file, replacing `<YOUR_CLUSTER_NAME>` with the name of you cluster.
+
+The next step is to apply the manifest to your Kubernetes cluster:
 
 ```bash
 $ kubectl apply -f http://download.newrelic.com/infrastructure_agent/integrations/k8s-metadata-injection-latest.yaml
