@@ -112,6 +112,3 @@ fi
 set -e
 
 kubectl version
-
-# ensure that we build docker image in minikube
-[ "$E2E_MINIKUBE_DRIVER" != "none" ] && eval "$(minikube docker-env)"

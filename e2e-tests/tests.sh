@@ -5,6 +5,7 @@ printf 'bootstrapping starts:\n'
 # shellcheck disable=SC1090
 . "$(dirname "$0")/k8s-e2e-bootstraping.sh"
 printf 'bootstrapping complete\n'
+
 WEBHOOK_LABEL="app=newrelic-metadata-injection"
 DEPLOYMENT_NAME="newrelic-metadata-injection-deployment"
 DUMMY_POD_LABEL="app=dummy"
@@ -16,6 +17,9 @@ finish() {
     kubectl delete -f ../deploy/ || true
     kubectl delete -f manifests/ || true
 }
+
+# ensure that we build docker image in minikube
+[ "$E2E_MINIKUBE_DRIVER" != "none" ] && eval "$(minikube docker-env)"
 
 # build webhook docker image
 (
