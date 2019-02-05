@@ -173,6 +173,12 @@ Please use the [Open Api 3.0 spec file](openapi.yaml) as documentation reference
 
 You can go to [editor.swagger.io](editor.swagger.io) and paste its contents there to see a rendered version.
 
+## Contributing
+
+We welcome code contributions (in the form of pull requests) from our user community. Before submitting a pull request please review [these guidelines](./CONTRIBUTING.md).
+
+Following these helps us efficiently review and incorporate your contribution and avoid breaking your code with future changes.
+
 ### Performance
 
 Please refer to [docs/performance.md](docs/performance.md).
