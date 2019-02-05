@@ -13,7 +13,7 @@ export GO111MODULE=on
 all: build
 
 .PHONY: build
-build: lint test build-webhook-container
+build: lint test build-container
 
 $(TOOLS_DIR):
 	@mkdir -p $@
@@ -27,8 +27,8 @@ lint: $(TOOLS_DIR)/golangci-lint
 	@echo "[validate] Validating source code running golangci-lint"
 	@$(TOOLS_DIR)/golangci-lint run
 
-.PHONY: build-webhook-container
-build-webhook-container:
+.PHONY: build-container
+build-container:
 	docker build -t $(WEBHOOK_DOCKER_IMAGE_NAME):$(WEBHOOK_DOCKER_IMAGE_TAG) .
 
 .PHONY: test
