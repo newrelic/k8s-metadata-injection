@@ -37,7 +37,7 @@ jobs:
       script: make test
     - stage: build
       name: "Build webhook container"
-      script: make build-webhook-container
+      script: make build-container
     - <<: *e2e-stage
       env:
         - E2E_KUBERNETES_VERSION=v1.9.0
