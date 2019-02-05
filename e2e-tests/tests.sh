@@ -132,7 +132,7 @@ kubectl version
 # build webhook docker image
 (
     cd ..
-    make build-webhook-container
+    make build-container
     cd -
 )
 
