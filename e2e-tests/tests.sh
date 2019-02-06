@@ -7,6 +7,7 @@ printf 'bootstrapping starts:\n'
 printf 'bootstrapping complete\n'
 
 WEBHOOK_LABEL="app=newrelic-metadata-injection"
+JOB_LABEL="job-name=newrelic-metadata-setup"
 DEPLOYMENT_NAME="newrelic-metadata-injection-deployment"
 DUMMY_POD_LABEL="app=dummy"
 DUMMY_DEPLOYMENT_NAME="dummy-deployment"
@@ -33,6 +34,14 @@ trap finish EXIT
 # install the metadata-injection webhook
 kubectl create -f ../deploy/job.yaml
 awk '/image: / { print; print "        imagePullPolicy: Never"; next }1' ../deploy/newrelic-metadata-injection.yaml | kubectl create -f -
+
+job_pod_name=$(get_pod_name_by_label "$JOB_LABEL")
+if [ "$job_pod_name" = "" ]; then
+    printf "not found any pod with label %s\n" "$JOB_LABEL"
+    kubectl get jobs
+    exit 1
+fi
+wait_for_pod "$job_pod_name" "Succeeded"
 
 webhook_pod_name=$(get_pod_name_by_label "$WEBHOOK_LABEL")
 if [ "$webhook_pod_name" = "" ]; then
