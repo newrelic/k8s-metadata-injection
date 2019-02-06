@@ -12,6 +12,7 @@ New Relic requires the following environment variables to identify Kubernetes ob
 - `NEW_RELIC_METADATA_KUBERNETES_DEPLOYMENT_NAME`
 - `NEW_RELIC_METADATA_KUBERNETES_POD_NAME`
 - `NEW_RELIC_METADATA_KUBERNETES_CONTAINER_NAME`
+- `NEW_RELIC_METADATA_KUBERNETES_CONTAINER_IMAGE_NAME`
 
 These environment variables can be set manually by the customer, or they can be automatically injected using a MutatingAdmissionWebhook.
 New Relic provides an easy method for deploying this automatic approach.
