@@ -1,5 +1,7 @@
 # Kubernetes Metadata injection for New Relic APM agents
 
+[![Build Status](https://travis-ci.com/newrelic/k8s-metadata-injection.svg?branch=master)](https://travis-ci.com/newrelic/k8s-metadata-injection)
+
 ## How does it work?
 
 New Relic requires the following environment variables to identify Kubernetes objects in the APM agents:
