@@ -253,7 +253,7 @@ func (whsvr *WebhookServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, fmt.Sprintf("could not encode response: %v", err), http.StatusInternalServerError)
 		return
 	}
-	whsvr.logger.Info("writing reponse")
+	whsvr.logger.Info("writing response")
 	if _, err := w.Write(resp); err != nil {
 		whsvr.logger.Errorw("can't write response", "err", err)
 		http.Error(w, fmt.Sprintf("could not write response: %v", err), http.StatusInternalServerError)
