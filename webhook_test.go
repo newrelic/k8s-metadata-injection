@@ -166,7 +166,7 @@ func makeTestData(t testing.TB, namespace string) []byte {
 		Spec: corev1.PodSpec{
 			Volumes:          []corev1.Volume{{Name: "v0"}},
 			InitContainers:   []corev1.Container{{Name: "c0"}},
-			Containers:       []corev1.Container{{Name: "c1"}, {Name: "c2"}},
+			Containers:       []corev1.Container{{Name: "c1", Image: "newrelic/image:latest"}, {Name: "c2", Image: "newrelic/image2:1.0.0"}},
 			ImagePullSecrets: []corev1.LocalObjectReference{{Name: "p0"}},
 		},
 	}

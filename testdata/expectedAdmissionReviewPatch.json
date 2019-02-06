@@ -1,126 +1,142 @@
 [
-    {
-      "op": "add",
-      "path": "/spec/containers/0/env",
-      "value": [
-        {
-          "name": "NEW_RELIC_METADATA_KUBERNETES_CLUSTER_NAME",
-          "value": "foobar"
+  {
+    "op": "add",
+    "path": "/spec/containers/0/env",
+    "value": [
+      {
+        "name": "NEW_RELIC_METADATA_KUBERNETES_CLUSTER_NAME",
+        "value": "foobar"
+      }
+    ]
+  },
+  {
+    "op": "add",
+    "path": "/spec/containers/0/env/-",
+    "value": {
+      "name": "NEW_RELIC_METADATA_KUBERNETES_NODE_NAME",
+      "valueFrom": {
+        "fieldRef": {
+          "fieldPath": "spec.nodeName"
         }
-      ]
-    },
-    {
-      "op": "add",
-      "path": "/spec/containers/0/env/-",
-      "value": {
-        "name": "NEW_RELIC_METADATA_KUBERNETES_NODE_NAME",
-        "valueFrom": {
-          "fieldRef": {
-            "fieldPath": "spec.nodeName"
-          }
-        }
-      }
-    },
-    {
-      "op": "add",
-      "path": "/spec/containers/0/env/-",
-      "value": {
-        "name": "NEW_RELIC_METADATA_KUBERNETES_NAMESPACE_NAME",
-        "valueFrom": {
-          "fieldRef": {
-            "fieldPath": "metadata.namespace"
-          }
-        }
-      }
-    },
-    {
-      "op": "add",
-      "path": "/spec/containers/0/env/-",
-      "value": {
-        "name": "NEW_RELIC_METADATA_KUBERNETES_POD_NAME",
-        "valueFrom": {
-          "fieldRef": {
-            "fieldPath": "metadata.name"
-          }
-        }
-      }
-    },
-    {
-      "op": "add",
-      "path": "/spec/containers/0/env/-",
-      "value": {
-        "name": "NEW_RELIC_METADATA_KUBERNETES_CONTAINER_NAME",
-        "value": "c1"
-      }
-    },
-    {
-      "op": "add",
-      "path": "/spec/containers/0/env/-",
-      "value": {
-        "name": "NEW_RELIC_METADATA_KUBERNETES_DEPLOYMENT_NAME",
-        "value": "test"
-      }
-    },
-    {
-      "op": "add",
-      "path": "/spec/containers/1/env",
-      "value": [
-        {
-          "name": "NEW_RELIC_METADATA_KUBERNETES_CLUSTER_NAME",
-          "value": "foobar"
-        }
-      ]
-    },
-    {
-      "op": "add",
-      "path": "/spec/containers/1/env/-",
-      "value": {
-        "name": "NEW_RELIC_METADATA_KUBERNETES_NODE_NAME",
-        "valueFrom": {
-          "fieldRef": {
-            "fieldPath": "spec.nodeName"
-          }
-        }
-      }
-    },
-    {
-      "op": "add",
-      "path": "/spec/containers/1/env/-",
-      "value": {
-        "name": "NEW_RELIC_METADATA_KUBERNETES_NAMESPACE_NAME",
-        "valueFrom": {
-          "fieldRef": {
-            "fieldPath": "metadata.namespace"
-          }
-        }
-      }
-    },
-    {
-      "op": "add",
-      "path": "/spec/containers/1/env/-",
-      "value": {
-        "name": "NEW_RELIC_METADATA_KUBERNETES_POD_NAME",
-        "valueFrom": {
-          "fieldRef": {
-            "fieldPath": "metadata.name"
-          }
-        }
-      }
-    },
-    {
-      "op": "add",
-      "path": "/spec/containers/1/env/-",
-      "value": {
-        "name": "NEW_RELIC_METADATA_KUBERNETES_CONTAINER_NAME",
-        "value": "c2"
-      }
-    },
-    {
-      "op": "add",
-      "path": "/spec/containers/1/env/-",
-      "value": {
-        "name": "NEW_RELIC_METADATA_KUBERNETES_DEPLOYMENT_NAME",
-        "value": "test"
       }
     }
-  ]
+  },
+  {
+    "op": "add",
+    "path": "/spec/containers/0/env/-",
+    "value": {
+      "name": "NEW_RELIC_METADATA_KUBERNETES_NAMESPACE_NAME",
+      "valueFrom": {
+        "fieldRef": {
+          "fieldPath": "metadata.namespace"
+        }
+      }
+    }
+  },
+  {
+    "op": "add",
+    "path": "/spec/containers/0/env/-",
+    "value": {
+      "name": "NEW_RELIC_METADATA_KUBERNETES_POD_NAME",
+      "valueFrom": {
+        "fieldRef": {
+          "fieldPath": "metadata.name"
+        }
+      }
+    }
+  },
+  {
+    "op": "add",
+    "path": "/spec/containers/0/env/-",
+    "value": {
+      "name": "NEW_RELIC_METADATA_KUBERNETES_CONTAINER_NAME",
+      "value": "c1"
+    }
+  },
+  {
+    "op": "add",
+    "path": "/spec/containers/0/env/-",
+    "value": {
+      "name": "NEW_RELIC_METADATA_KUBERNETES_CONTAINER_IMAGE_NAME",
+      "value": "newrelic/image:latest"
+    }
+  },
+  {
+    "op": "add",
+    "path": "/spec/containers/0/env/-",
+    "value": {
+      "name": "NEW_RELIC_METADATA_KUBERNETES_DEPLOYMENT_NAME",
+      "value": "test"
+    }
+  },
+  {
+    "op": "add",
+    "path": "/spec/containers/1/env",
+    "value": [
+      {
+        "name": "NEW_RELIC_METADATA_KUBERNETES_CLUSTER_NAME",
+        "value": "foobar"
+      }
+    ]
+  },
+  {
+    "op": "add",
+    "path": "/spec/containers/1/env/-",
+    "value": {
+      "name": "NEW_RELIC_METADATA_KUBERNETES_NODE_NAME",
+      "valueFrom": {
+        "fieldRef": {
+          "fieldPath": "spec.nodeName"
+        }
+      }
+    }
+  },
+  {
+    "op": "add",
+    "path": "/spec/containers/1/env/-",
+    "value": {
+      "name": "NEW_RELIC_METADATA_KUBERNETES_NAMESPACE_NAME",
+      "valueFrom": {
+        "fieldRef": {
+          "fieldPath": "metadata.namespace"
+        }
+      }
+    }
+  },
+  {
+    "op": "add",
+    "path": "/spec/containers/1/env/-",
+    "value": {
+      "name": "NEW_RELIC_METADATA_KUBERNETES_POD_NAME",
+      "valueFrom": {
+        "fieldRef": {
+          "fieldPath": "metadata.name"
+        }
+      }
+    }
+  },
+  {
+    "op": "add",
+    "path": "/spec/containers/1/env/-",
+    "value": {
+      "name": "NEW_RELIC_METADATA_KUBERNETES_CONTAINER_NAME",
+      "value": "c2"
+    }
+  },
+  {
+    "op": "add",
+    "path": "/spec/containers/1/env/-",
+    "value": {
+      "name": "NEW_RELIC_METADATA_KUBERNETES_CONTAINER_IMAGE_NAME",
+      "value": "newrelic/image2:1.0.0"
+    }
+  },
+  {
+    "op": "add",
+    "path": "/spec/containers/1/env/-",
+    "value": {
+      "name": "NEW_RELIC_METADATA_KUBERNETES_DEPLOYMENT_NAME",
+      "value": "test"
+    }
+  }
+]

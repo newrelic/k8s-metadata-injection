@@ -70,16 +70,17 @@ printf "%s\n" "$env_vars"
 
 errors=""
 for PAIR in \
-           "CLUSTER_NAME      <YOUR_CLUSTER_NAME>" \
-           "NODE_NAME         minikube" \
-           "NAMESPACE_NAME    default" \
-           "POD_NAME          ${pod_name}" \
-           "CONTAINER_NAME    busybox" \
-           "DEPLOYMENT_NAME   dummy-deployment"
+           "CLUSTER_NAME            <YOUR_CLUSTER_NAME>" \
+           "NODE_NAME               minikube" \
+           "NAMESPACE_NAME          default" \
+           "POD_NAME                ${pod_name}" \
+           "CONTAINER_NAME          busybox" \
+           "CONTAINER_IMAGE_NAME    busybox:latest" \
+           "DEPLOYMENT_NAME         dummy-deployment"
 do
     k=$(echo "$PAIR" | awk '{ print $1 }')
     v=$(echo "$PAIR" | awk '{ print $2 }')
-    if ! echo "$env_vars" | grep -q "${ENV_VARS_PREFIX}_${k}=${v}"; then
+    if ! echo "$env_vars" | grep -q "${ENV_VARS_PREFIX}_${k}=${v}$"; then
         errors="${errors}\n${ENV_VARS_PREFIX}_${k}=${v} is not present"
     fi
 done
