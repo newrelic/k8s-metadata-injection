@@ -34,7 +34,7 @@ build-container:
 .PHONY: test
 test:
 	@echo "[test] Running unit tests"
-	@go test .
+	@go test ./...
 
 .PHONY: e2e-test
 e2e-test:
