@@ -1,6 +1,6 @@
 # Kubernetes Metadata injection for New Relic APM agents
 
-[![Build Status](https://travis-ci.com/newrelic/k8s-metadata-injection.svg?branch=master)](https://travis-ci.com/newrelic/k8s-metadata-injection)
+[![Build Status](https://travis-ci.com/newrelic/k8s-metadata-injection.svg?branch=master)](https://travis-ci.com/newrelic/k8s-metadata-injection) [![Go Report Card](https://goreportcard.com/badge/github.com/newrelic/k8s-metadata-injection)](https://goreportcard.com/report/github.com/newrelic/k8s-metadata-injection)
 
 ## How does it work?
 
