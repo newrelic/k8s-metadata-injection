@@ -1,4 +1,4 @@
-package main
+package server
 
 import (
 	"bytes"
@@ -103,8 +103,8 @@ func TestServeHTTP(t *testing.T) {
 	}
 
 	whsvr := &WebhookServer{
-		clusterName: "foobar",
-		server:      &http.Server{},
+		ClusterName: "foobar",
+		Server:      &http.Server{},
 	}
 
 	server := httptest.NewServer(whsvr)
@@ -137,8 +137,8 @@ func Benchmark_WebhookPerformance(b *testing.B) {
 	body := makeTestData(b, "default")
 
 	whsvr := &WebhookServer{
-		clusterName: "foobar",
-		server: &http.Server{
+		ClusterName: "foobar",
+		Server: &http.Server{
 			Addr: ":8080",
 		},
 	}
