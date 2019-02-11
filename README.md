@@ -140,7 +140,7 @@ You can go to [editor.swagger.io](editor.swagger.io) and paste its contents ther
 
 ### Documentation
 
-If you wish to read higher-level documentation, please refer to the [official documentation for the project](https://docs.newrelic.com/docs/integrations/kubernetes-integration/metadata-injection/kubernetes-apm-metadata-injection).
+If you wish to read higher-level documentation about this project, please refer to [its official documentation](https://docs.newrelic.com/docs/integrations/kubernetes-integration/metadata-injection/kubernetes-apm-metadata-injection).
 
 ### Performance
 
