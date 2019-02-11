@@ -176,3 +176,9 @@ You can go to [editor.swagger.io](editor.swagger.io) and paste its contents ther
 ### Performance
 
 Please refer to [docs/performance.md](docs/performance.md).
+
+## Contributing
+
+We welcome code contributions (in the form of pull requests) from our user community. Before submitting a pull request please review [these guidelines](./CONTRIBUTING.md).
+
+Following these helps us efficiently review and incorporate your contribution and avoid breaking your code with future changes.
