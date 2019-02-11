@@ -27,8 +27,8 @@ const (
 	defaultTimeout = time.Second * 30
 )
 
-// Specification contains the specs for this app.
-type Specification struct {
+// specification contains the specs for this app.
+type specification struct {
 	Port        int           `default:"443"`                                                      // Webhook server port.
 	TLSCertFile string        `default:"/etc/tls-key-cert-pair/tls.crt" envconfig:"tls_cert_file"` // File containing the x509 Certificate for HTTPS.
 	TLSKeyFile  string        `default:"/etc/tls-key-cert-pair/tls.key" envconfig:"tls_key_file"`  // File containing the x509 private key for TLSCERTFILE.
@@ -37,7 +37,7 @@ type Specification struct {
 }
 
 func main() {
-	var s Specification
+	var s specification
 	err := envconfig.Process(strings.Replace(appName, "-", "_", -1), &s)
 	if err != nil {
 		log.Fatal(err.Error())
