@@ -102,7 +102,7 @@ func TestServeHTTP(t *testing.T) {
 		},
 	}
 
-	whsvr := &WebhookServer{
+	whsvr := &Webhook{
 		ClusterName: "foobar",
 		Server:      &http.Server{},
 	}
@@ -136,7 +136,7 @@ func TestServeHTTP(t *testing.T) {
 func Benchmark_WebhookPerformance(b *testing.B) {
 	body := makeTestData(b, "default")
 
-	whsvr := &WebhookServer{
+	whsvr := &Webhook{
 		ClusterName: "foobar",
 		Server: &http.Server{
 			Addr: ":8080",

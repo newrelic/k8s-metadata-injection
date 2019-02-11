@@ -44,7 +44,7 @@ func createEnvVarFromString(envVarName, envVarValue string) corev1.EnvVar {
 }
 
 // getEnvVarsToInject returns the environment variables to inject in the given container
-func (whsvr *WebhookServer) getEnvVarsToInject(pod *corev1.Pod, container *corev1.Container) []corev1.EnvVar {
+func (whsvr *Webhook) getEnvVarsToInject(pod *corev1.Pod, container *corev1.Container) []corev1.EnvVar {
 	vars := []corev1.EnvVar{
 		createEnvVarFromString("NEW_RELIC_METADATA_KUBERNETES_CLUSTER_NAME", whsvr.ClusterName),
 		createEnvVarFromFieldPath("NEW_RELIC_METADATA_KUBERNETES_NODE_NAME", "spec.nodeName"),
@@ -67,8 +67,8 @@ func (whsvr *WebhookServer) getEnvVarsToInject(pod *corev1.Pod, container *corev
 	return vars
 }
 
-// WebhookServer is a webhook server that can accept requests from the Apiserver
-type WebhookServer struct {
+// Webhook is a webhook server that can accept requests from the Apiserver
+type Webhook struct {
 	CertFile    string
 	KeyFile     string
 	Cert        *tls.Certificate
@@ -80,7 +80,7 @@ type WebhookServer struct {
 }
 
 // GetCert returns the certificate that should be used by the server in the TLS handshake.
-func (whsvr *WebhookServer) GetCert(*tls.ClientHelloInfo) (*tls.Certificate, error) {
+func (whsvr *Webhook) GetCert(*tls.ClientHelloInfo) (*tls.Certificate, error) {
 	whsvr.Mu.Lock()
 	defer whsvr.Mu.Unlock()
 	return whsvr.Cert, nil
@@ -109,7 +109,7 @@ func mutationRequired(ignoredList []string, metadata *metav1.ObjectMeta) bool {
 	return true
 }
 
-func (whsvr *WebhookServer) updateContainer(pod *corev1.Pod, index int, container *corev1.Container) (patch []patchOperation) {
+func (whsvr *Webhook) updateContainer(pod *corev1.Pod, index int, container *corev1.Container) (patch []patchOperation) {
 	// Create map with all environment variable names
 	envVarMap := map[string]bool{}
 	for _, envVar := range container.Env {
@@ -146,7 +146,7 @@ func (whsvr *WebhookServer) updateContainer(pod *corev1.Pod, index int, containe
 }
 
 // create mutation patch for resources
-func (whsvr *WebhookServer) createPatch(pod *corev1.Pod) ([]byte, error) {
+func (whsvr *Webhook) createPatch(pod *corev1.Pod) ([]byte, error) {
 	var patch []patchOperation
 
 	for i, container := range pod.Spec.Containers {
@@ -157,7 +157,7 @@ func (whsvr *WebhookServer) createPatch(pod *corev1.Pod) ([]byte, error) {
 }
 
 // main mutation process
-func (whsvr *WebhookServer) mutate(ar *v1beta1.AdmissionReview) ([]byte, error) {
+func (whsvr *Webhook) mutate(ar *v1beta1.AdmissionReview) ([]byte, error) {
 	req := ar.Request
 	var pod corev1.Pod
 	if err := json.Unmarshal(req.Object.Raw, &pod); err != nil {
@@ -184,7 +184,7 @@ func (whsvr *WebhookServer) mutate(ar *v1beta1.AdmissionReview) ([]byte, error) 
 }
 
 // Serve method for webhook server
-func (whsvr *WebhookServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func (whsvr *Webhook) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	var body []byte
 
 	if whsvr.Logger == nil {

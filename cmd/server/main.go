@@ -60,7 +60,7 @@ func main() {
 		logger.Errorw("could not watch folder", "folder", watchDir, "err", err)
 	}
 
-	whsvr := &server.WebhookServer{
+	whsvr := &server.Webhook{
 		KeyFile:     s.TLSKeyFile,
 		CertFile:    s.TLSCertFile,
 		Cert:        &pair,
