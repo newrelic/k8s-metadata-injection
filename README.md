@@ -4,6 +4,16 @@
 
 ## How does it work?
 
+Please refer to the [official documentation](https://docs.newrelic.com/docs/integrations/kubernetes-integration/metadata-injection/kubernetes-apm-metadata-injection) to learn the reasoning behind this project.
+
+## Setup
+
+Please refer to the [setup instructions in the official documentation](https://docs.newrelic.com/docs/integrations/kubernetes-integration/metadata-injection/kubernetes-apm-metadata-injection#install).
+
+## Development
+
+### How does it work?
+
 New Relic requires the following environment variables to identify Kubernetes objects in the APM agents:
 
 - `NEW_RELIC_METADATA_KUBERNETES_CLUSTER_NAME`
@@ -14,54 +24,28 @@ New Relic requires the following environment variables to identify Kubernetes ob
 - `NEW_RELIC_METADATA_KUBERNETES_CONTAINER_NAME`
 - `NEW_RELIC_METADATA_KUBERNETES_CONTAINER_IMAGE_NAME`
 
-These environment variables can be set manually by the customer, or they can be automatically injected using a MutatingAdmissionWebhook.
-New Relic provides an easy method for deploying this automatic approach.
+These environment variables are automatically injected in the pods using a MutatingAdmissionWebhook.
 
-## Setup
+### Prerequisites
 
-### 1) Check if MutatingAdmissionWebhook is enabled on your cluster
+For the development process [Minikube](https://kubernetes.io/docs/getting-started-guides/minikube) and [Skaffold](https://github.com/GoogleCloudPlatform/skaffold) tools are used.
 
-This feature requires Kubernetes 1.9 or later. Verify that the kube-apiserver process has the admission-control flag set.
+* [Install Minikube](https://kubernetes.io/docs/tasks/tools/install-minikube/).
+* [Install Skaffold](https://github.com/GoogleCloudPlatform/skaffold#installation).
 
-```
-$ kubectl api-versions | grep admissionregistration.k8s.io/v1beta1
-admissionregistration.k8s.io/v1beta1
-```
+Currently the project compiles with **Go 1.11.4**.
 
-### 2) Install the injection
+### Dependency management
 
-```bash
-$ kubectl apply -f deploy/newrelic-metadata-injection.yaml
-```
+[Go modules](https://github.com/golang/go/wiki/Modules) are used for managing dependencies. This project does not need to be in your GOROOT, if you wish so.
 
-Executing this:
+Currently for K8s libraries it uses version 1.13.1. Only couple of libraries are direct dependencies, the rest are indirect. You need to point all of them to the same K8s version to make sure that everything works as expected. For the moment this process is manual.
 
-- creates `newrelic-metadata-injection-deployment` and `newrelic-metadata-injection-svc`.
-- registers the `newrelic-metadata-injection-svc` service as a MutatingAdmissionWebhook with the Kubernetes API.
+### Setup
 
-### 3) Install the certificates
+### Automatic certificate management
 
-This webhook needs to be authenticated by the Kubernetes extension API server, so it will need to have a signed certificate from a CA trusted by the extension API server. The certificate management is isolated from the webhook server and a secret is used to mount them. 
-
-**Important**: the webhook server has a file watcher pointed at the secret's folder that will trigger a certificate reload whenever anything is created or modified inside the secret. This allows easy certificate rotation with an update of the TLS secret that is created by running:
-
-```bash
-$ namespace=default # Change the namespace here if you also changed it in the yaml files.
-$ serverCert=$(kubectl get csr newrelic-metadata-injection-svc.${namespace} -o jsonpath='{.status.certificate}')
-$ tmpdir=$(mktemp -d)
-$ echo ${serverCert} | openssl base64 -d -A -out ${tmpdir}/server-cert.pem
-$ kubectl patch secret newrelic-metadata-injection-secret --type='json' \
-    -p "[{'op': 'replace', 'path':'/data/tls.crt', 'value':'$(serverCert)'}]"
-$ rm -rf $(tmpdir)
-```
-
-#### Automatic management
-
-The certificate management can be automatic, using the Kubernetes extension API server (recommended, but optional):
-
-```bash
-$ kubectl apply -f deploy/job.yaml
-```
+The certificate management can be automatic, using the Kubernetes extension API server (this is the default development option). It uses the resources defined in [deploy/job.yaml](./deploy/job.yaml).
 
 This manifest contains a service account that has the following **cluster** permissions (**RBAC based**) to be capable of automatically manage the certificates:
 
@@ -84,9 +68,15 @@ This job will execute the shell script [k8s-webhook-cert-manager/generate_certif
 
 If you wish to learn more about TLS certificates management inside Kubernetes, check out [the official documentation for Managing TLS Certificate in a Cluster](https://kubernetes.io/docs/tasks/tls/managing-tls-in-a-cluster/#create-a-certificate-signing-request-object-to-send-to-the-kubernetes-api).
 
-#### Manual management
+### Custom certificate management
 
-Otherwise, if you are managing the certificate manually you will have to create the TLS secret with the signed certificate/key pair and patch the webhook's CA bundle:
+Otherwise, if you want to develop the custom certificate management option remove the following line from the [Skaffold file](./skaffold.yaml):
+
+```yaml
+    - deploy/job.yaml
+```
+
+Then you have to create the TLS secret with the signed certificate/key pair and patch the webhook's CA bundle:
 
 ```bash
 $ kubectl create secret tls newrelic-metadata-injection-secret \
@@ -100,31 +90,6 @@ $ kubectl patch mutatingwebhookconfiguration newrelic-metadata-injection-cfg --t
 ```
 
 Either certificate management choice made, the important thing is to have the secret created with the correct name and namespace. As long as this is done the webhook server will be able to pick it up.
-
-### 3) Enable the automatic Kubernetes metadata injection on your namespaces
-
-The injection is only applied to namespaces that have the `newrelic-metadata-injection` label set to `enabled`.
-
-```
-$ kubectl label namespace <namespace> newrelic-metadata-injection=enabled
-```
-
-## Development
-
-### Prerequisites
-
-For the development process [Minikube](https://kubernetes.io/docs/getting-started-guides/minikube) and [Skaffold](https://github.com/GoogleCloudPlatform/skaffold) tools are used.
-
-* [Install Minikube](https://kubernetes.io/docs/tasks/tools/install-minikube/).
-* [Install Skaffold](https://github.com/GoogleCloudPlatform/skaffold#installation).
-
-Currently the project compiles with **Go 1.11.4**.
-
-### Dependency management
-
-[Go modules](https://github.com/golang/go/wiki/Modules) are used for managing dependencies. This project does not need to be in your GOROOT, if you wish so.
-
-Currently for K8s libraries it uses version 1.13.1. Only couple of libraries are direct dependencies, the rest are indirect. You need to point all of them to the same K8s version to make sure that everything works as expected. For the moment this process is manual.
 
 ### Configuration
 
@@ -167,11 +132,15 @@ You can specify against which version of K8s you want to execute the tests:
 E2E_KUBERNETES_VERSION=v1.10.0 E2E_START_MINIKUBE=yes make e2e-test
 ```
 
-### Documentation
+### API Documentation
 
 Please use the [Open Api 3.0 spec file](openapi.yaml) as documentation reference. Note that it describes the schema of the requests the webhook server replies to. This schema depends on the currently supported Kubernetes versions.
 
 You can go to [editor.swagger.io](editor.swagger.io) and paste its contents there to see a rendered version.
+
+### Documentation
+
+If you wish to read higher-level documentation, please refer to the [official documentation for the project](https://docs.newrelic.com/docs/integrations/kubernetes-integration/metadata-injection/kubernetes-apm-metadata-injection).
 
 ### Performance
 
