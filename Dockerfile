@@ -12,7 +12,7 @@ RUN go mod download
 
 COPY . /app
 ENV CGO_ENABLED=0
-RUN go build -o bin/k8s-metadata-injection .
+RUN go build -o bin/k8s-metadata-injection cmd/server/main.go
 
 FROM alpine:latest
 
