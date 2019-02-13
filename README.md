@@ -2,19 +2,13 @@
 
 [![Build Status](https://travis-ci.com/newrelic/k8s-metadata-injection.svg?branch=master)](https://travis-ci.com/newrelic/k8s-metadata-injection) [![Go Report Card](https://goreportcard.com/badge/github.com/newrelic/k8s-metadata-injection)](https://goreportcard.com/report/github.com/newrelic/k8s-metadata-injection)
 
-## How does it work?
+## Documentation
 
-Please refer to the [official documentation](https://docs.newrelic.com/docs/integrations/kubernetes-integration/metadata-injection/kubernetes-apm-metadata-injection) to learn the reasoning behind this project.
+If you wish to read higher-level documentation about this project, please, visit the [official documentation site](https://docs.newrelic.com/docs/integrations/kubernetes-integration/metadata-injection/kubernetes-apm-metadata-injection).
 
-## Setup
+# How does it work?
 
-Please refer to the [setup instructions in the official documentation](https://docs.newrelic.com/docs/integrations/kubernetes-integration/metadata-injection/kubernetes-apm-metadata-injection#install).
-
-## Development
-
-### How does it work?
-
-New Relic requires the following environment variables to identify Kubernetes objects in the APM agents:
+New Relic APM agents requires the following environment variables to provide Kubernetes object information in the context of an specific application distributed trace, transaction trace or error trace.
 
 - `NEW_RELIC_METADATA_KUBERNETES_CLUSTER_NAME`
 - `NEW_RELIC_METADATA_KUBERNETES_NODE_NAME`
@@ -24,7 +18,11 @@ New Relic requires the following environment variables to identify Kubernetes ob
 - `NEW_RELIC_METADATA_KUBERNETES_CONTAINER_NAME`
 - `NEW_RELIC_METADATA_KUBERNETES_CONTAINER_IMAGE_NAME`
 
-These environment variables are automatically injected in the pods using a MutatingAdmissionWebhook.
+These environment variables are automatically injected in the pods using a MutatingAdmissionWebhook provided by this project.
+
+Please refer to the [official documentation](https://docs.newrelic.com/docs/integrations/kubernetes-integration/metadata-injection/kubernetes-apm-metadata-injection) to learn more about the reasoning behind this project.
+
+## Development
 
 ### Prerequisites
 
@@ -40,56 +38,6 @@ Currently the project compiles with **Go 1.11.4**.
 [Go modules](https://github.com/golang/go/wiki/Modules) are used for managing dependencies. This project does not need to be in your GOROOT, if you wish so.
 
 Currently for K8s libraries it uses version 1.13.1. Only couple of libraries are direct dependencies, the rest are indirect. You need to point all of them to the same K8s version to make sure that everything works as expected. For the moment this process is manual.
-
-### Setup
-
-### Automatic certificate management
-
-The certificate management can be automatic, using the Kubernetes extension API server (this is the default development option). It uses the resources defined in [deploy/job.yaml](./deploy/job.yaml).
-
-This manifest contains a service account that has the following **cluster** permissions (**RBAC based**) to be capable of automatically manage the certificates:
-
-* `MutatingWebhookConfiguration` - **get**, **create** and **patch**: to be able to create the webhook and patch its CA bundle.
-* `CertificateSigningRequests` - **create**, **get** and **delete**: to be able to sign the certificate required for the webhook server without leaving duplicates.
-* `CertificateSigningRequests/Approval` - **update**: to be able to approve CertificateSigningRequests.
-* `Secrets` - **create**, **get** and **patch**: to be able to manage the TLS secret used to store the key/cert pair used in the webhook server.
-* `ConfigMaps` - **get**: to be able go get the k8s api server's CA bundle, used in the MutatingWebhookConfiguration.
-
-This job will execute the shell script [k8s-webhook-cert-manager/generate_certificate.sh](./k8s-webhook-cert-manager/generate_certificate.sh) to setup everything. This script will:
-
-1. Generate a server key.
-2. If there is any previous CSR (certificate signing request) for this key, it is deleted.
-3. Generate a CSR for such key.
-4. The signature of the key is then approved.
-5. The server's certificate is fetched from the CSR and then encoded.
-6. A secret of type `tls` is created with the server certificate and key.
-7. The k8s extension api server's CA bundle is fetched.
-8. The mutating webhook configuration for the webhook server is patched with the k8s api server's CA bundle from the previous step. This CA bundle will be used by the k8s extension api server when calling our webhook.
-
-If you wish to learn more about TLS certificates management inside Kubernetes, check out [the official documentation for Managing TLS Certificate in a Cluster](https://kubernetes.io/docs/tasks/tls/managing-tls-in-a-cluster/#create-a-certificate-signing-request-object-to-send-to-the-kubernetes-api).
-
-### Custom certificate management
-
-Otherwise, if you want to develop the custom certificate management option remove the following line from the [Skaffold file](./skaffold.yaml):
-
-```yaml
-    - deploy/job.yaml
-```
-
-Then you have to create the TLS secret with the signed certificate/key pair and patch the webhook's CA bundle:
-
-```bash
-$ kubectl create secret tls newrelic-metadata-injection-secret \
-      --key=server-key.pem \
-      --cert=signed-server-cert.pem \
-      --dry-run -o yaml |
-  kubectl -n default apply -f -
-
-$ caBundle=$(cat caBundle.pem | base64 | td -d '\n')
-$ kubectl patch mutatingwebhookconfiguration newrelic-metadata-injection-cfg --type='json' -p "[{'op': 'replace', 'path': '/webhooks/0/clientConfig/caBundle', 'value':'${caBundle}'}]"
-```
-
-Either certificate management choice made, the important thing is to have the secret created with the correct name and namespace. As long as this is done the webhook server will be able to pick it up.
 
 ### Configuration
 
@@ -138,13 +86,46 @@ Please use the [Open Api 3.0 spec file](openapi.yaml) as documentation reference
 
 You can go to [editor.swagger.io](editor.swagger.io) and paste its contents there to see a rendered version.
 
-### Documentation
-
-If you wish to read higher-level documentation about this project, please refer to [its official documentation](https://docs.newrelic.com/docs/integrations/kubernetes-integration/metadata-injection/kubernetes-apm-metadata-injection).
-
 ### Performance
 
 Please refer to [docs/performance.md](docs/performance.md).
+
+## Certificates management
+
+Admission webhooks are called by the Kubernetes API server and it needs to authenticate the webhooks using TLS. In this project we offer 2 different options of certificate management.
+
+Either certificate management choice made, the important thing is to have the secret created with the correct name and namespace, and also to have the correct CA bundle in the MutatingWebhookConfiguration resource. As long as this is done the webhook server will be able to pick it up.
+
+### Automatic 
+
+Please refer to the [setup instructions in the official documentation](https://docs.newrelic.com/docs/integrations/kubernetes-integration/metadata-injection/kubernetes-apm-metadata-injection#install).
+
+For the automatic certificate management, the [k8s-webhook-cert-manager](https://github.com/newrelic/k8s-webhook-cert-manager) is used. Feel free to check the repository to know more about it.
+
+The manifest file at [deploy/job.yaml](./deploy/job.yaml) contains a service account that has the following **cluster** permissions (**RBAC based**) to be capable of automatically manage the certificates:
+
+* `MutatingWebhookConfiguration` - **get**, **create** and **patch**: to be able to create the webhook and patch its CA bundle.
+* `CertificateSigningRequests` - **create**, **get** and **delete**: to be able to sign the certificate required for the webhook server without leaving duplicates.
+* `CertificateSigningRequests/Approval` - **update**: to be able to approve CertificateSigningRequests.
+* `Secrets` - **create**, **get** and **patch**: to be able to manage the TLS secret used to store the key/cert pair used in the webhook server.
+* `ConfigMaps` - **get**: to be able go get the k8s api server's CA bundle, used in the MutatingWebhookConfiguration.
+
+If you wish to learn more about TLS certificates management inside Kubernetes, check out [the official documentation for Managing TLS Certificates in a Cluster](https://kubernetes.io/docs/tasks/tls/managing-tls-in-a-cluster/#create-a-certificate-signing-request-object-to-send-to-the-kubernetes-api).
+
+### Custom
+
+Otherwise, if you want to use the custom certificate management option you have to create the TLS secret with the signed certificate/key pair and patch the webhook's CA bundle:
+
+```bash
+$ kubectl create secret tls newrelic-metadata-injection-secret \
+      --key=server-key.pem \
+      --cert=signed-server-cert.pem \
+      --dry-run -o yaml |
+  kubectl -n default apply -f -
+
+$ caBundle=$(cat caBundle.pem | base64 | td -d '\n')
+$ kubectl patch mutatingwebhookconfiguration newrelic-metadata-injection-cfg --type='json' -p "[{'op': 'replace', 'path': '/webhooks/0/clientConfig/caBundle', 'value':'${caBundle}'}]"
+```
 
 ## Contributing
 
