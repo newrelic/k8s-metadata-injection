@@ -74,16 +74,36 @@ type Webhook struct {
 	Cert        *tls.Certificate
 	ClusterName string
 	Logger      *zap.SugaredLogger
-	Mu          sync.RWMutex
+	mu          sync.RWMutex
 	Server      *http.Server
 	CertWatcher *fsnotify.Watcher
 }
 
 // GetCert returns the certificate that should be used by the server in the TLS handshake.
 func (whsvr *Webhook) GetCert(*tls.ClientHelloInfo) (*tls.Certificate, error) {
-	whsvr.Mu.Lock()
-	defer whsvr.Mu.Unlock()
+	whsvr.LockCert()
+	defer whsvr.UnlockCert()
 	return whsvr.Cert, nil
+}
+
+// LockCert locks a mutex for writing the Webhook's certificate
+func (whsvr *Webhook) LockCert() {
+	whsvr.mu.Lock()
+}
+
+// UnlockCert unlocks a mutex for writing the Webhook's certificate
+func (whsvr *Webhook) UnlockCert() {
+	whsvr.mu.Unlock()
+}
+
+// RLockCert locks a mutex for reading the Webhook's certificate
+func (whsvr *Webhook) RLockCert() {
+	whsvr.mu.RLock()
+}
+
+// RUnlockCert unlocks a mutex for reading the Webhook's certificate
+func (whsvr *Webhook) RUnlockCert() {
+	whsvr.mu.RUnlock()
 }
 
 type patchOperation struct {
