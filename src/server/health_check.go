@@ -3,6 +3,7 @@ package server
 import "net/http"
 
 // HealthCheck defines a readiness check for a Webhook struct based on the presence of its TLS certificate and key.
+// It requires the whole webhook as parameter to be able to RLock on the certificate for the presence confirmation.
 type HealthCheck struct {
 	webhookServer *Webhook
 }
@@ -13,7 +14,6 @@ func (h *HealthCheck) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	defer h.webhookServer.RUnlockCert()
 
 	if h.webhookServer.Cert == nil {
-		w.WriteHeader(503)
 		var response = "Certificate not present."
 		w.WriteHeader(503)
 		if _, err := w.Write([]byte(response)); err != nil {
