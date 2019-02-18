@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestHealthCheck_ServeHTTP(t *testing.T) {
+func TestTLSReadyReadinessProbe(t *testing.T) {
 	cases := []struct {
 		desc         string
 		certificate  *tls.Certificate
@@ -28,7 +28,7 @@ func TestHealthCheck_ServeHTTP(t *testing.T) {
 	}
 
 	webhook := Webhook{}
-	healthCheck := NewHealthCheck(&webhook)
+	healthCheck := http.HandlerFunc(TLSReadyReadinessProbe(&webhook))
 	server := httptest.NewServer(healthCheck)
 
 	for _, c := range cases {

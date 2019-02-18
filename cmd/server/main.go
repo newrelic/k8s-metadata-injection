@@ -78,11 +78,11 @@ func main() {
 	whsvr.Server.Handler = mux
 
 	// The health check needs to be in another server because it cannot be under TLS.
-	healthCheck := server.NewHealthCheck(whsvr)
+	readinessProbe := http.HandlerFunc(server.TLSReadyReadinessProbe(whsvr))
 	go func() {
-		logger.Info("starting the health server")
-		if err := http.ListenAndServe(":8080", healthCheck); err != nil {
-			logger.Errorw("failed to start health server", "err", err)
+		logger.Info("starting the TLS readiness server")
+		if err := http.ListenAndServe(":8080", readinessProbe); err != nil {
+			logger.Errorw("failed to start TLS readiness server", "err", err)
 		}
 	}()
 
