@@ -4,7 +4,7 @@ import "net/http"
 
 // TLSReadyReadinessProbe defines a readiness check for a Webhook struct based on the presence of its TLS certificate and key.
 // It requires the whole webhook as parameter to be able to RLock on the certificate for the presence confirmation.
-func TLSReadyReadinessProbe(webhook *Webhook) func(w http.ResponseWriter, r *http.Request) {
+func TLSReadyReadinessProbe(webhook *Webhook) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		webhook.RLock()
 		defer webhook.RUnlock()
