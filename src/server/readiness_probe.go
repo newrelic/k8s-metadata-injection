@@ -6,8 +6,8 @@ import "net/http"
 // It requires the whole webhook as parameter to be able to RLock on the certificate for the presence confirmation.
 func TLSReadyReadinessProbe(webhook *Webhook) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		webhook.RLockCert()
-		defer webhook.RUnlockCert()
+		webhook.RLock()
+		defer webhook.RUnlock()
 
 		if webhook.Cert == nil {
 			var response = "Certificate not present."

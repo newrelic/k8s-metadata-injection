@@ -105,9 +105,9 @@ func main() {
 				logger.Errorw("reload cert error", "err", err)
 				break
 			}
-			whsvr.LockCert()
+			whsvr.Lock()
 			whsvr.Cert = &pair
-			whsvr.UnlockCert()
+			whsvr.Unlock()
 			logger.Info("cert/key pair reloaded!")
 		case event := <-whsvr.CertWatcher.Events:
 			if event.Op&fsnotify.Write == fsnotify.Write || event.Op&fsnotify.Create == fsnotify.Create {

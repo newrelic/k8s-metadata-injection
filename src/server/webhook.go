@@ -69,41 +69,21 @@ func (whsvr *Webhook) getEnvVarsToInject(pod *corev1.Pod, container *corev1.Cont
 
 // Webhook is a webhook server that can accept requests from the Apiserver
 type Webhook struct {
+	sync.RWMutex
 	CertFile    string
 	KeyFile     string
 	Cert        *tls.Certificate
 	ClusterName string
 	Logger      *zap.SugaredLogger
-	mu          sync.RWMutex
 	Server      *http.Server
 	CertWatcher *fsnotify.Watcher
 }
 
 // GetCert returns the certificate that should be used by the server in the TLS handshake.
 func (whsvr *Webhook) GetCert(*tls.ClientHelloInfo) (*tls.Certificate, error) {
-	whsvr.LockCert()
-	defer whsvr.UnlockCert()
+	whsvr.Lock()
+	defer whsvr.Unlock()
 	return whsvr.Cert, nil
-}
-
-// LockCert locks a mutex for writing the Webhook's certificate
-func (whsvr *Webhook) LockCert() {
-	whsvr.mu.Lock()
-}
-
-// UnlockCert unlocks a mutex for writing the Webhook's certificate
-func (whsvr *Webhook) UnlockCert() {
-	whsvr.mu.Unlock()
-}
-
-// RLockCert locks a mutex for reading the Webhook's certificate
-func (whsvr *Webhook) RLockCert() {
-	whsvr.mu.RLock()
-}
-
-// RUnlockCert unlocks a mutex for reading the Webhook's certificate
-func (whsvr *Webhook) RUnlockCert() {
-	whsvr.mu.RUnlock()
 }
 
 type patchOperation struct {
