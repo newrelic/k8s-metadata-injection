@@ -10,7 +10,7 @@ func TLSReadyReadinessProbe(webhook *Webhook) func(w http.ResponseWriter, r *htt
 		defer webhook.RUnlock()
 
 		if webhook.Cert == nil {
-			var response = "Certificate not present."
+			response := "Certificate not present"
 			w.WriteHeader(503)
 			if _, err := w.Write([]byte(response)); err != nil {
 				webhook.Logger.Errorw("can't write response", "err", err, "response", response)
@@ -18,8 +18,7 @@ func TLSReadyReadinessProbe(webhook *Webhook) func(w http.ResponseWriter, r *htt
 			return
 		}
 
-		var okResponse = "OK"
-		w.WriteHeader(200)
+		okResponse := "OK"
 		if _, err := w.Write([]byte(okResponse)); err != nil {
 			webhook.Logger.Errorw("can't write response", "err", err, "response", okResponse)
 		}
