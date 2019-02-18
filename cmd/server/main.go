@@ -78,7 +78,7 @@ func main() {
 	whsvr.Server.Handler = mux
 
 	// The health check needs to be in another server because it cannot be under TLS.
-	readinessProbe := http.HandlerFunc(server.TLSReadyReadinessProbe(whsvr))
+	readinessProbe := server.TLSReadyReadinessProbe(whsvr)
 	go func() {
 		logger.Info("starting the TLS readiness server")
 		if err := http.ListenAndServe(":8080", readinessProbe); err != nil {
