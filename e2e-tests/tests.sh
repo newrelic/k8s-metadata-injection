@@ -20,7 +20,7 @@ finish() {
 }
 
 # ensure that we build docker image in minikube
-[ "$E2E_MINIKUBE_DRIVER" != "none" ] && eval "$(minikube docker-env)"
+[ "$E2E_MINIKUBE_DRIVER" != "none" ] && eval "$(minikube docker-env --shell bash)"
 
 # build webhook docker image
 (
