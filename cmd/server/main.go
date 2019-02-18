@@ -77,6 +77,15 @@ func main() {
 	mux.Handle("/mutate", withLoggingMiddleware(logger)(withTimeoutMiddleware(s.Timeout)(whsvr)))
 	whsvr.Server.Handler = mux
 
+	// The health check needs to be in another server because it cannot be under TLS.
+	readinessProbe := server.TLSReadyReadinessProbe(whsvr)
+	go func() {
+		logger.Info("starting the TLS readiness server")
+		if err := http.ListenAndServe(":8080", readinessProbe); err != nil {
+			logger.Errorw("failed to start TLS readiness server", "err", err)
+		}
+	}()
+
 	go func() {
 		logger.Info("starting the webhook server")
 		if err := whsvr.Server.ListenAndServeTLS("", ""); err != nil {
@@ -96,9 +105,9 @@ func main() {
 				logger.Errorw("reload cert error", "err", err)
 				break
 			}
-			whsvr.Mu.Lock()
+			whsvr.Lock()
 			whsvr.Cert = &pair
-			whsvr.Mu.Unlock()
+			whsvr.Unlock()
 			logger.Info("cert/key pair reloaded!")
 		case event := <-whsvr.CertWatcher.Events:
 			if event.Op&fsnotify.Write == fsnotify.Write || event.Op&fsnotify.Create == fsnotify.Create {

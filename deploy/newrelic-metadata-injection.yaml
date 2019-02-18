@@ -23,6 +23,12 @@ spec:
         volumeMounts:
         - name: tls-key-cert-pair
           mountPath: /etc/tls-key-cert-pair
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 1
+          periodSeconds: 1
       volumes:
       - name: tls-key-cert-pair
         secret:
