@@ -20,6 +20,8 @@ spec:
         env:
         - name: clusterName
           value: "<YOUR_CLUSTER_NAME>"
+        - name: NEW_RELIC_K8S_METADATA_INJECTION_PORT
+          value: "6443"
         volumeMounts:
         - name: tls-key-cert-pair
           mountPath: /etc/tls-key-cert-pair
@@ -44,7 +46,7 @@ metadata:
 spec:
   ports:
   - port: 443
-    targetPort: 443
+    targetPort: 6443
   selector:
     app: newrelic-metadata-injection
 ---
