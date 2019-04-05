@@ -29,7 +29,7 @@ const (
 
 // specification contains the specs for this app.
 type specification struct {
-	Port        int           `default:"443"`                                                      // Webhook server port.
+	Port        int           `default:"8443"`                                                     // Webhook server port.
 	TLSCertFile string        `default:"/etc/tls-key-cert-pair/tls.crt" envconfig:"tls_cert_file"` // File containing the x509 Certificate for HTTPS.
 	TLSKeyFile  string        `default:"/etc/tls-key-cert-pair/tls.key" envconfig:"tls_key_file"`  // File containing the x509 private key for TLSCERTFILE.
 	ClusterName string        `default:"cluster" split_words:"true"`                               // The name of the Kubernetes cluster.
