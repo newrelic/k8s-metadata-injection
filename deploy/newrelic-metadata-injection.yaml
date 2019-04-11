@@ -16,7 +16,7 @@ spec:
       serviceAccountName: newrelic-metadata-injection-service-account
       containers:
       - name: metadata-injector
-        image: newrelic/k8s-metadata-injection:latest
+        image: newrelic/k8s-metadata-injection:1.1.0
         env:
         - name: clusterName
           value: "<YOUR_CLUSTER_NAME>"
