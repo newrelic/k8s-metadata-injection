@@ -12,46 +12,46 @@ can be found at https://github.com/newrelic/k8s-metadata-injection.
 
 ## Contents
  
-* [golang/glog](#golang/glog)
-* [apimachinery/pkg](#apimachinery/pkg)
-* [apimachinery/third_party](#apimachinery/third_party)
-* [json-iterator/go](#json-iterator/go)
-* [x/sys](#x/sys)
-* [PuerkitoBio/urlesc](#PuerkitoBio/urlesc)
-* [ghodss/yaml](#ghodss/yaml)
-* [kube-openapi/pkg](#kube-openapi/pkg)
-* [x/net](#x/net)
-* [go-openapi/swag](#go-openapi/swag)
-* [google/gofuzz](#google/gofuzz)
-* [x/text](#x/text)
-* [api/admission](#api/admission)
-* [zap/internal](#zap/internal)
-* [go-openapi/jsonpointer](#go-openapi/jsonpointer)
-* [mailru/easyjson](#mailru/easyjson)
+* [golang/glog](#golangglog)
+* [apimachinery/pkg](#apimachinerypkg)
+* [apimachinery/third_party](#apimachinerythird_party)
+* [json-iterator/go](#json-iteratorgo)
+* [x/sys](#xsys)
+* [PuerkitoBio/urlesc](#PuerkitoBiourlesc)
+* [ghodss/yaml](#ghodssyaml)
+* [kube-openapi/pkg](#kube-openapipkg)
+* [x/net](#xnet)
+* [go-openapi/swag](#go-openapiswag)
+* [google/gofuzz](#googlegofuzz)
+* [x/text](#xtext)
+* [api/admission](#apiadmission)
+* [zap/internal](#zapinternal)
+* [go-openapi/jsonpointer](#go-openapijsonpointer)
+* [mailru/easyjson](#mailrueasyjson)
 * [multierr](#multierr)
-* [gogo/protobuf](#gogo/protobuf)
+* [gogo/protobuf](#gogoprotobuf)
 * [yaml.v2](#yaml.v2)
 * [inf.v0](#inf.v0)
-* [api/authentication](#api/authentication)
-* [emicklei/go-restful](#emicklei/go-restful)
-* [spf13/pflag](#spf13/pflag)
+* [api/authentication](#apiauthentication)
+* [emicklei/go-restful](#emickleigo-restful)
+* [spf13/pflag](#spf13pflag)
 * [atomic](#atomic)
 * [zap](#zap)
-* [zap/buffer](#zap/buffer)
-* [zap/zapcore](#zap/zapcore)
-* [PuerkitoBio/purell](#PuerkitoBio/purell)
-* [fsnotify/fsnotify](#fsnotify/fsnotify)
-* [api/admissionregistration](#api/admissionregistration)
-* [api/core](#api/core)
-* [go-openapi/spec](#go-openapi/spec)
-* [kelseyhightower/envconfig](#kelseyhightower/envconfig)
-* [modern-go/concurrent](#modern-go/concurrent)
-* [modern-go/reflect2](#modern-go/reflect2)
-* [go-openapi/jsonreference](#go-openapi/jsonreference)
+* [zap/buffer](#zapbuffer)
+* [zap/zapcore](#zapzapcore)
+* [PuerkitoBio/purell](#PuerkitoBiopurell)
+* [fsnotify/fsnotify](#fsnotifyfsnotify)
+* [api/admissionregistration](#apiadmissionregistration)
+* [api/core](#apicore)
+* [go-openapi/spec](#go-openapispec)
+* [kelseyhightower/envconfig](#kelseyhightowerenvconfig)
+* [modern-go/concurrent](#modern-goconcurrent)
+* [modern-go/reflect2](#modern-goreflect2)
+* [go-openapi/jsonreference](#go-openapijsonreference)
 
 ## emicklei/go-restful
 
-* Web: github.com/emicklei/go-restful
+* Web: http://github.com/emicklei/go-restful
 * License: MIT
 
 ```
@@ -82,7 +82,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ## spf13/pflag
 
-* Web: github.com/spf13/pflag
+* Web: http://github.com/spf13/pflag
 * License: BSD-3-Clause
 
 ```
@@ -120,7 +120,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ## inf.v0
 
-* Web: gopkg.in/inf.v0
+* Web: http://gopkg.in/inf.v0
 * License: BSD-3-Clause
 
 ```
@@ -158,7 +158,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ## api/authentication
 
-* Web: k8s.io/api/authentication
+* Web: http://k8s.io/api/authentication
 * License: Apache-2.0
 
 ```
@@ -370,7 +370,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ## zap/buffer
 
-* Web: go.uber.org/zap/buffer
+* Web: http://go.uber.org/zap/buffer
 * License: MIT
 
 ```
@@ -399,7 +399,7 @@ THE SOFTWARE.
 
 ## atomic
 
-* Web: go.uber.org/atomic
+* Web: http://go.uber.org/atomic
 * License: MIT
 
 ```
@@ -428,7 +428,7 @@ THE SOFTWARE.
 
 ## zap
 
-* Web: go.uber.org/zap
+* Web: http://go.uber.org/zap
 * License: MIT
 
 ```
@@ -457,7 +457,7 @@ THE SOFTWARE.
 
 ## api/admissionregistration
 
-* Web: k8s.io/api/admissionregistration
+* Web: http://k8s.io/api/admissionregistration
 * License: Apache-2.0
 
 ```
@@ -669,7 +669,7 @@ THE SOFTWARE.
 
 ## api/core
 
-* Web: k8s.io/api/core
+* Web: http://k8s.io/api/core
 * License: Apache-2.0
 
 ```
@@ -881,7 +881,7 @@ THE SOFTWARE.
 
 ## go-openapi/spec
 
-* Web: github.com/go-openapi/spec
+* Web: http://github.com/go-openapi/spec
 * License: Apache-2.0
 
 ```
@@ -1093,7 +1093,7 @@ THE SOFTWARE.
 
 ## zap/zapcore
 
-* Web: go.uber.org/zap/zapcore
+* Web: http://go.uber.org/zap/zapcore
 * License: MIT
 
 ```
@@ -1122,7 +1122,7 @@ THE SOFTWARE.
 
 ## PuerkitoBio/purell
 
-* Web: github.com/PuerkitoBio/purell
+* Web: http://github.com/PuerkitoBio/purell
 * License: BSD-3-Clause
 
 ```
@@ -1144,7 +1144,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 ## fsnotify/fsnotify
 
-* Web: github.com/fsnotify/fsnotify
+* Web: http://github.com/fsnotify/fsnotify
 * License: BSD-3-Clause
 
 ```
@@ -1182,7 +1182,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ## modern-go/reflect2
 
-* Web: github.com/modern-go/reflect2
+* Web: http://github.com/modern-go/reflect2
 * License: Apache-2.0
 
 ```
@@ -1393,7 +1393,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ## go-openapi/jsonreference
 
-* Web: github.com/go-openapi/jsonreference
+* Web: http://github.com/go-openapi/jsonreference
 * License: Apache-2.0
 
 ```
@@ -1605,7 +1605,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ## kelseyhightower/envconfig
 
-* Web: github.com/kelseyhightower/envconfig
+* Web: http://github.com/kelseyhightower/envconfig
 * License: MIT
 
 ```
@@ -1634,7 +1634,7 @@ SOFTWARE.
 
 ## modern-go/concurrent
 
-* Web: github.com/modern-go/concurrent
+* Web: http://github.com/modern-go/concurrent
 * License: Apache-2.0
 
 ```
@@ -1845,7 +1845,7 @@ SOFTWARE.
 
 ## golang/glog
 
-* Web: github.com/golang/glog
+* Web: http://github.com/golang/glog
 * License: Apache-2.0
 
 ```
@@ -2046,7 +2046,7 @@ third-party archives.
 
 ## apimachinery/pkg
 
-* Web: k8s.io/apimachinery/pkg
+* Web: http://k8s.io/apimachinery/pkg
 * License: Apache-2.0
 
 ```
@@ -2258,7 +2258,7 @@ third-party archives.
 
 ## kube-openapi/pkg
 
-* Web: k8s.io/kube-openapi/pkg
+* Web: http://k8s.io/kube-openapi/pkg
 * License: Apache-2.0
 
 ```
@@ -2470,7 +2470,7 @@ third-party archives.
 
 ## x/net
 
-* Web: golang.org/x/net
+* Web: http://golang.org/x/net
 * License: BSD-3-Clause
 
 ```
@@ -2507,7 +2507,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ## go-openapi/swag
 
-* Web: github.com/go-openapi/swag
+* Web: http://github.com/go-openapi/swag
 * License: Apache-2.0
 
 ```
@@ -2719,7 +2719,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ## apimachinery/third_party
 
-* Web: k8s.io/apimachinery/third_party
+* Web: http://k8s.io/apimachinery/third_party
 * License: Apache-2.0
 
 ```
@@ -2931,7 +2931,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ## json-iterator/go
 
-* Web: github.com/json-iterator/go
+* Web: http://github.com/json-iterator/go
 * License: MIT
 
 ```
@@ -2962,7 +2962,7 @@ SOFTWARE.
 
 ## x/sys
 
-* Web: golang.org/x/sys
+* Web: http://golang.org/x/sys
 * License: BSD-3-Clause
 
 ```
@@ -2999,7 +2999,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ## PuerkitoBio/urlesc
 
-* Web: github.com/PuerkitoBio/urlesc
+* Web: http://github.com/PuerkitoBio/urlesc
 * License: BSD-3-Clause
 
 ```
@@ -3036,7 +3036,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ## ghodss/yaml
 
-* Web: github.com/ghodss/yaml
+* Web: http://github.com/ghodss/yaml
 * License: MIT
 
 ```
@@ -3096,7 +3096,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ## api/admission
 
-* Web: k8s.io/api/admission
+* Web: http://k8s.io/api/admission
 * License: Apache-2.0
 
 ```
@@ -3308,7 +3308,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ## google/gofuzz
 
-* Web: github.com/google/gofuzz
+* Web: http://github.com/google/gofuzz
 * License: Apache-2.0
 
 ```
@@ -3520,7 +3520,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ## x/text
 
-* Web: golang.org/x/text
+* Web: http://golang.org/x/text
 * License: BSD-3-Clause
 
 ```
@@ -3557,7 +3557,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ## multierr
 
-* Web: go.uber.org/multierr
+* Web: http://go.uber.org/multierr
 * License: MIT
 
 ```
@@ -3586,7 +3586,7 @@ THE SOFTWARE.
 
 ## gogo/protobuf
 
-* Web: github.com/gogo/protobuf
+* Web: http://github.com/gogo/protobuf
 * License: BSD-3-Clause
 
 ```
@@ -3631,7 +3631,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ## yaml.v2
 
-* Web: gopkg.in/yaml.v2
+* Web: http://gopkg.in/yaml.v2
 * License: Apache-2.0
 
 ```
@@ -3842,7 +3842,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ## zap/internal
 
-* Web: go.uber.org/zap/internal
+* Web: http://go.uber.org/zap/internal
 * License: MIT
 
 ```
@@ -3871,7 +3871,7 @@ THE SOFTWARE.
 
 ## go-openapi/jsonpointer
 
-* Web: github.com/go-openapi/jsonpointer
+* Web: http://github.com/go-openapi/jsonpointer
 * License: Apache-2.0
 
 ```
@@ -4083,7 +4083,7 @@ THE SOFTWARE.
 
 ## mailru/easyjson
 
-* Web: github.com/mailru/easyjson
+* Web: http://github.com/mailru/easyjson
 * License: MIT
 
 ```
