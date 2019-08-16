@@ -23,7 +23,7 @@ import (
 )
 
 const (
-	appName        = "new-relic-k8s-metadata-injection"
+	appName = "new-relic-k8s-metadata-injection"
 )
 
 // specification contains the specs for this app.
