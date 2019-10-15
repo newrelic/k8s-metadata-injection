@@ -132,3 +132,9 @@ $ kubectl patch mutatingwebhookconfiguration newrelic-metadata-injection-cfg --t
 We welcome code contributions (in the form of pull requests) from our user community. Before submitting a pull request please review [these guidelines](./CONTRIBUTING.md).
 
 Following these helps us efficiently review and incorporate your contribution and avoid breaking your code with future changes.
+
+## Release a new version
+
+- Update the version in `deploy/newrelic-metadata-injection.yaml`.
+- Create a Github release.
+- Launch the `k8s-metadata-injection-release` job in Jenkins.
