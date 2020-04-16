@@ -1,4 +1,4 @@
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: newrelic-metadata-injection-deployment
@@ -7,6 +7,9 @@ metadata:
     app: newrelic-metadata-injection
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      app: newrelic-metadata-injection
   template:
     metadata:
       namespace: default
