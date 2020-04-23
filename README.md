@@ -136,5 +136,6 @@ Following these helps us efficiently review and incorporate your contribution an
 ## Release a new version
 
 - Update the version in `deploy/newrelic-metadata-injection.yaml`.
+- Update the version in `WEBHOOK_DOCKER_IMAGE_TAG` in the `Makefile`.
 - Create a Github release.
 - Launch the `k8s-metadata-injection-release` job in Jenkins.
