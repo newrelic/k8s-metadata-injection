@@ -30,11 +30,6 @@ e2e-stage: &e2e-stage
 
 jobs:
   include:
-    - stage: test
-      name: "Lint"
-      script: make lint
-    - name: "Unit tests"
-      script: make test
     - stage: build
       name: "Build webhook container"
       script: make build-container
