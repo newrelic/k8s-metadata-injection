@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
 
-E2E_KUBERNETES_VERSION=${E2E_E2E_KUBERNETES_VERSION:-v1.10.0}
-E2E_MINIKUBE_VERSION=${E2E_E2E_MINIKUBE_VERSION:-v0.33.1}
+E2E_KUBERNETES_VERSION=${E2E_E2E_KUBERNETES_VERSION:-v1.16.0}
+E2E_MINIKUBE_VERSION=${E2E_E2E_MINIKUBE_VERSION:-latest}
 E2E_SETUP_MINIKUBE=${E2E_SETUP_MINIKUBE:-}
 E2E_SETUP_KUBECTL=${E2E_SETUP_KUBECTL:-}
 E2E_START_MINIKUBE=${E2E_START_MINIKUBE:-}
@@ -21,7 +21,7 @@ setup_kubectl() {
 }
 
 start_minikube() {
-    $E2E_SUDO minikube start --vm-driver="$E2E_MINIKUBE_DRIVER" --bootstrapper=kubeadm --kubernetes-version="$E2E_KUBERNETES_VERSION" --logtostderr
+    $E2E_SUDO minikube start --driver="$E2E_MINIKUBE_DRIVER" --kubernetes-version="$E2E_KUBERNETES_VERSION" --logtostderr
 }
 
 get_pod_name_by_label() {
