@@ -55,7 +55,7 @@ jobs:
 # safelist
 branches:
   only:
-  - master
+  - main
 
 notifications:
   email: false

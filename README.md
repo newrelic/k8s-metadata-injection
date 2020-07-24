@@ -1,6 +1,27 @@
+[![Community Project header](https://github.com/newrelic/opensource-website/raw/master/src/images/categories/Community_Project.png)](https://opensource.newrelic.com/oss-category/#community-project)
+
+
 # Kubernetes Metadata injection for New Relic APM agents
 
-[![Build Status](https://travis-ci.com/newrelic/k8s-metadata-injection.svg?branch=master)](https://travis-ci.com/newrelic/k8s-metadata-injection) [![Go Report Card](https://goreportcard.com/badge/github.com/newrelic/k8s-metadata-injection)](https://goreportcard.com/report/github.com/newrelic/k8s-metadata-injection)
+[![Build Status](https://travis-ci.com/newrelic/k8s-metadata-injection.svg?branch=main)](https://travis-ci.com/newrelic/k8s-metadata-injection) [![Go Report Card](https://goreportcard.com/badge/github.com/newrelic/k8s-metadata-injection)](https://goreportcard.com/report/github.com/newrelic/k8s-metadata-injection)
+
+# Table of contents
+
+- [Documentation](#documentation)
+- [Development](#development)
+  - [Prerequisites](#prerequisites)
+  - [Dependency management](#dependency-management)
+  - [Configuration](#configuration)
+  - [Run](#run)
+  - [Tests](#tests)
+  - [API Documentation](#api-documentation)
+  - [Performance](#performance)
+- [Certificates management](#certificates-management)
+  - [Automatic](#automatic)
+  - [Custom](#custom)
+- [Contributing](#contributing)
+- [License](#license)
+- [Release a new version](#release-a-new-version)
 
 ## Documentation
 
@@ -132,6 +153,9 @@ $ kubectl patch mutatingwebhookconfiguration newrelic-metadata-injection-cfg --t
 We welcome code contributions (in the form of pull requests) from our user community. Before submitting a pull request please review [these guidelines](./CONTRIBUTING.md).
 
 Following these helps us efficiently review and incorporate your contribution and avoid breaking your code with future changes.
+
+## License
+Kubernetes Metadata injection is licensed under the [Apache 2.0](http://apache.org/licenses/LICENSE-2.0.txt) License.
 
 ## Release a new version
 
