@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## 1.3.0
 
+- Update k8s-webhook-cert-manager to 1.3.0
 - Update to golang version 1.14.6 and alpine 3.12.0
 
 ## 1.2.0
