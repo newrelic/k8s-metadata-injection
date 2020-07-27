@@ -1,4 +1,4 @@
-FROM golang:1.11.4-alpine3.8 as build
+FROM golang:1.14.6-alpine3.12 as build
 
 RUN apk update && apk upgrade && \
     apk add --no-cache git
@@ -14,7 +14,7 @@ COPY . /app
 ENV CGO_ENABLED=0
 RUN go build -o bin/k8s-metadata-injection cmd/server/main.go
 
-FROM alpine:latest
+FROM alpine:3.12.0
 
 RUN mkdir /app
 RUN apk add --update openssl

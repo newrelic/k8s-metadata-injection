@@ -1,5 +1,7 @@
 module github.com/newrelic/k8s-metadata-injection
 
+go 1.14
+
 require (
 	github.com/emicklei/go-restful v2.8.1+incompatible // indirect
 	github.com/fsnotify/fsnotify v1.4.7
