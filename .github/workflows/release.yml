@@ -1,0 +1,23 @@
+name: Release
+
+on:
+  release:
+    types:
+      - created
+      - edited
+
+jobs:
+  build-and-release:
+    name: Build and release
+    runs-on: ubuntu-latest
+    env:
+      WEBHOOK_DOCKER_IMAGE_NAME: newrelic/k8s-metadata-injection
+      WEBHOOK_DOCKER_IMAGE_TAG: ${{ github.event.release.name }}
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build container image
+        run: make
+      - run: echo ${{ github.event.release.prerelease }}
+      - name: Push container image
+        if: ${{ ! github.event.release.prerelease }}
+        run: echo "docker push $WEBHOOK_DOCKER_IMAGE_NAME:$WEBHOOK_DOCKER_IMAGE_TAG"
