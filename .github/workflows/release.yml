@@ -10,10 +10,12 @@ jobs:
     runs-on: ubuntu-latest
     env:
       DOCKER_IMAGE_NAME: roobre/k8s-metadata-injection # change this!
-      DOCKER_IMAGE_TAG: ${{ github.event.release.name }}
+      DOCKER_IMAGE_TAG: ${{ github.event.release.tag_name }}
       S3_PATH: s3://nr-downloads-main/infrastructure_agent
     steps:
-      - run: test -n "$DOCKER_IMAGE_TAG"
+      - name: Validate tag name
+        run: echo "$DOCKER_IMAGE_TAG" | grep -E '^v[0-9.]*[0-9]$' > /dev/null
+
       - if: ${{ github.event.release.prerelease }}
         run: |
           echo "DOCKER_IMAGE_TAG=$DOCKER_IMAGE_TAG-pre" >> $GITHUB_ENV
