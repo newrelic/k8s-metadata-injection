@@ -8,16 +8,35 @@ on:
 
 jobs:
   build-and-release:
-    name: Build and release
+    name: Release docker & config
     runs-on: ubuntu-latest
     env:
-      WEBHOOK_DOCKER_IMAGE_NAME: newrelic/k8s-metadata-injection
-      WEBHOOK_DOCKER_IMAGE_TAG: ${{ github.event.release.name }}
+      DOCKER_IMAGE_TAG: ${{ github.event.release.name }}
     steps:
       - uses: actions/checkout@v2
+
       - name: Build container image
-        run: make
-      - run: echo ${{ github.event.release.prerelease }}
+        run: |
+          test -n "$DOCKER_IMAGE_TAG"
+          make
+      - uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Push container image
         if: ${{ ! github.event.release.prerelease }}
-        run: echo "docker push $WEBHOOK_DOCKER_IMAGE_NAME:$WEBHOOK_DOCKER_IMAGE_TAG"
+        run: docker push $DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG
+
+      - name: Combine YAMLs
+        run: echo '---' | cat deploy/newrelic-metadata-injection.yaml - deploy/job.yaml | tee deploy/combined.yaml
+      - uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      - name: Upload configuration files to https://download.newrelic.com
+        if: ${{ ! github.event.release.prerelease }}
+        run: |
+          aws s3 cp deploy/combined.yaml s3://nr-downloads-main/infrastructure_agent/integrations/kubernetes/k8s-metadata-injection-$DOCKER_IMAGE_TAG.yaml
+          aws s3 cp deploy/combined.yaml s3://nr-downloads-main/infrastructure_agent/integrations/kubernetes/k8s-metadata-injection-latest.yaml
+          aws s3 cp deploy/newrelic-metadata-injection.yaml s3://nr-downloads-main/infrastructure_agent/integrations/kubernetes/k8s-metadata-injection-custom-certs-$DOCKER_IMAGE_TAG.yaml
+          aws s3 cp deploy/newrelic-metadata-injection.yaml s3://nr-downloads-main/infrastructure_agent/integrations/kubernetes/k8s-metadata-injection-custom-certs-latest.yaml
