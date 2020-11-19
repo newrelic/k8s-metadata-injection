@@ -9,14 +9,15 @@ jobs:
     name: Release docker & config
     runs-on: ubuntu-latest
     env:
+      DOCKER_IMAGE_NAME: roobre/k8s-metadata-injection # change this!
       DOCKER_IMAGE_TAG: ${{ github.event.release.name }}
       S3_PATH: s3://nr-downloads-main/infrastructure_agent
     steps:
       - run: test -n "$DOCKER_IMAGE_TAG"
       - if: ${{ github.event.release.prerelease }}
         run: |
-          export DOCKER_IMAGE_TAG=$DOCKER_IMAGE_TAG-pre
-          export S3_PATH=$S3_PATH/test
+          echo "DOCKER_IMAGE_TAG=$DOCKER_IMAGE_TAG-pre" >> $GITHUB_ENV
+          echo "S3_PATH=$S3_PATH/test" >> $GITHUB_ENV
 
       - uses: actions/checkout@v2
 
@@ -27,7 +28,7 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Push container image
-        run: docker push $DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG
+        run: docker push "$DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG"
 
       - uses: aws-actions/configure-aws-credentials@v1
         with:
