@@ -28,7 +28,7 @@ jobs:
         run: docker push $DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG
 
       - name: Combine YAMLs
-        run: echo '---' | cat deploy/newrelic-metadata-injection.yaml - deploy/job.yaml | tee deploy/combined.yaml
+        run: make deploy/combined.yaml
       - uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}

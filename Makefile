@@ -45,3 +45,6 @@ e2e-test:
 benchmark-test:
 	@echo "[test] Running benchmark tests"
 	@go test -run=^Benchmark* -bench .
+
+deploy/combined.yaml: deploy/newrelic-metadata-injection.yaml deploy/job.yaml
+	echo '---' | cat deploy/newrelic-metadata-injection.yaml - deploy/job.yaml > deploy/combined.yaml
