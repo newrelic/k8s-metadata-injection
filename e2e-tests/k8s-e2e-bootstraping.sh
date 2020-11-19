@@ -77,11 +77,11 @@ minikube version
 [ -n "$E2E_SETUP_KUBECTL" ] && setup_kubectl
 
 export MINIKUBE_WANTREPORTERRORPROMPT=false
-export MINIKUBE_HOME=$HOME
-export CHANGE_MINIKUBE_NONE_USER=true
-mkdir "$HOME"/.kube || true
-touch "$HOME"/.kube/config
-export KUBECONFIG=$HOME/.kube/config
+#export MINIKUBE_HOME=$HOME
+#export CHANGE_MINIKUBE_NONE_USER=true
+#mkdir "$HOME"/.kube || true
+#touch "$HOME"/.kube/config
+#export KUBECONFIG=$HOME/.kube/config
 
 [ -n "$E2E_START_MINIKUBE" ] && start_minikube
 
