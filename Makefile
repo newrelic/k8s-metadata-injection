@@ -1,8 +1,8 @@
 BIN_DIR = ./bin
 TOOLS_DIR := $(BIN_DIR)/dev-tools
 BINARY_NAME ?= k8s-metadata-injection
-WEBHOOK_DOCKER_IMAGE_NAME ?= newrelic/k8s-metadata-injection
-WEBHOOK_DOCKER_IMAGE_TAG ?= latest
+DOCKER_IMAGE_NAME ?= newrelic/k8s-metadata-injection
+DOCKER_IMAGE_TAG ?= latest
 
 GOLANGCILINT_VERSION = 1.12
 
@@ -29,7 +29,7 @@ lint: $(TOOLS_DIR)/golangci-lint
 
 .PHONY: build-container
 build-container:
-	docker build -t $(WEBHOOK_DOCKER_IMAGE_NAME):$(WEBHOOK_DOCKER_IMAGE_TAG) .
+	docker build -t $(DOCKER_IMAGE_NAME):$(DOCKER_IMAGE_TAG) .
 
 .PHONY: test
 test:
