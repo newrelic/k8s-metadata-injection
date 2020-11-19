@@ -7,36 +7,38 @@ on:
       - edited
 
 jobs:
-  build-and-release:
+  release-docker:
     name: Release docker & config
     runs-on: ubuntu-latest
     env:
       DOCKER_IMAGE_TAG: ${{ github.event.release.name }}
+      S3_PATH: s3://nr-downloads-main/infrastructure_agent
     steps:
+      - run: test -n "$DOCKER_IMAGE_TAG"
+      - if: ${{ github.event.release.prerelease }}
+        run: |
+          export DOCKER_IMAGE_TAG=$DOCKER_IMAGE_TAG-pre
+          export S3_PATH=$S3_PATH/test
+
       - uses: actions/checkout@v2
 
       - name: Build container image
-        run: |
-          test -n "$DOCKER_IMAGE_TAG"
-          make
+        run: make
       - uses: docker/login-action@v1
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Push container image
-        if: ${{ ! github.event.release.prerelease }}
         run: docker push $DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG
 
-      - name: Combine YAMLs
-        run: make deploy/combined.yaml
       - uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       - name: Upload configuration files to https://download.newrelic.com
-        if: ${{ ! github.event.release.prerelease }}
         run: |
-          aws s3 cp deploy/combined.yaml s3://nr-downloads-main/infrastructure_agent/integrations/kubernetes/k8s-metadata-injection-$DOCKER_IMAGE_TAG.yaml
-          aws s3 cp deploy/combined.yaml s3://nr-downloads-main/infrastructure_agent/integrations/kubernetes/k8s-metadata-injection-latest.yaml
-          aws s3 cp deploy/newrelic-metadata-injection.yaml s3://nr-downloads-main/infrastructure_agent/integrations/kubernetes/k8s-metadata-injection-custom-certs-$DOCKER_IMAGE_TAG.yaml
-          aws s3 cp deploy/newrelic-metadata-injection.yaml s3://nr-downloads-main/infrastructure_agent/integrations/kubernetes/k8s-metadata-injection-custom-certs-latest.yaml
+          make deploy/combined.yaml
+          aws s3 cp deploy/combined.yaml $S3_PATH/integrations/kubernetes/k8s-metadata-injection-$DOCKER_IMAGE_TAG.yaml
+          aws s3 cp deploy/combined.yaml $S3_PATH/integrations/kubernetes/k8s-metadata-injection-latest.yaml
+          aws s3 cp deploy/newrelic-metadata-injection.yaml $S3_PATH/integrations/kubernetes/k8s-metadata-injection-custom-certs-$DOCKER_IMAGE_TAG.yaml
+          aws s3 cp deploy/newrelic-metadata-injection.yaml $S3_PATH/integrations/kubernetes/k8s-metadata-injection-custom-certs-latest.yaml
