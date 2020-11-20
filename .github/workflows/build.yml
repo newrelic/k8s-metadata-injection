@@ -18,8 +18,9 @@ jobs:
 #    needs: [ build ]
     env:
       CHANGE_MINIKUBE_NONE_USER: true
-      E2E_MINIKUBE_DRIVER: none
-      E2E_SUDO: sudo
+#      E2E_MINIKUBE_DRIVER: none
+      E2E_MINIKUBE_DRIVER: docker
+#      E2E_SUDO: sudo
     strategy:
       matrix:
         k8s_version:
