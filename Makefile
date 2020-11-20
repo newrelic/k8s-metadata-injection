@@ -2,7 +2,7 @@ BIN_DIR = ./bin
 TOOLS_DIR := $(BIN_DIR)/dev-tools
 BINARY_NAME ?= k8s-metadata-injection
 DOCKER_IMAGE_NAME ?= newrelic/k8s-metadata-injection
-DOCKER_IMAGE_TAG ?= latest
+DOCKER_IMAGE_TAG ?= 1.3.0
 
 GOLANGCILINT_VERSION = 1.12
 
