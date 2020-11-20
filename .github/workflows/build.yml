@@ -17,6 +17,7 @@ jobs:
           - v1.18.12
     steps:
       - uses: actions/checkout@v2
+      - run: make # If using `docker` as minikube driver, image should not get rebuilt by `make e2e-test`
       - uses: manusa/actions-setup-minikube@v2.0.1
         with:
           minikube version: v1.15.1
