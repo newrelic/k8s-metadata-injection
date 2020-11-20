@@ -9,7 +9,7 @@ jobs:
     name: Release docker & config
     runs-on: ubuntu-latest
     env:
-      DOCKER_IMAGE_NAME: roobre/k8s-metadata-injection # change this!
+      DOCKER_IMAGE_NAME: newrelic/k8s-metadata-injection
       DOCKER_IMAGE_TAG: ${{ github.event.release.tag_name }}
       S3_PATH: s3://nr-downloads-main/infrastructure_agent
     steps:
