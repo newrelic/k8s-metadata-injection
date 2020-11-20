@@ -50,7 +50,7 @@ func TestServeHTTP(t *testing.T) {
 			expectedStatusCode: http.StatusOK,
 			expectedAdmissionReview: v1beta1.AdmissionReview{
 				Response: &v1beta1.AdmissionResponse{
-					UID:       types.UID(1),
+					UID:       types.UID("1"),
 					Allowed:   true,
 					Result:    nil,
 					Patch:     expectedPatchForValidBody.Bytes(),
@@ -65,7 +65,7 @@ func TestServeHTTP(t *testing.T) {
 			expectedStatusCode: http.StatusOK,
 			expectedAdmissionReview: v1beta1.AdmissionReview{
 				Response: &v1beta1.AdmissionResponse{
-					UID:       types.UID(1),
+					UID:       types.UID("1"),
 					Allowed:   true,
 					Result:    nil,
 					Patch:     nil,
@@ -183,7 +183,7 @@ func makeTestData(t testing.TB, namespace string) []byte {
 				Raw: raw,
 			},
 			Operation: v1beta1.Create,
-			UID:       types.UID(1),
+			UID:       types.UID("1"),
 		},
 	}
 	reviewJSON, err := json.Marshal(review)
