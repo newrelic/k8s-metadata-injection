@@ -38,7 +38,9 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Push container image
-        run: docker push "$DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG"
+        run: |
+          docker push "$DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG"
+          docker push "$DOCKER_IMAGE_NAME:latest"
 
       - uses: aws-actions/configure-aws-credentials@v1
         with:
