@@ -4,7 +4,7 @@ BINARY_NAME ?= k8s-metadata-injection
 DOCKER_IMAGE_NAME ?= newrelic/k8s-metadata-injection
 DOCKER_IMAGE_TAG ?= 1.3.0
 
-GOLANGCILINT_VERSION = 1.12
+GOLANGCILINT_VERSION = 1.33.0
 
 # required for enabling Go modules inside $GOPATH
 export GO111MODULE=on
