@@ -1,10 +1,10 @@
 BIN_DIR = ./bin
 TOOLS_DIR := $(BIN_DIR)/dev-tools
-BINARY_NAME = k8s-metadata-injection
-WEBHOOK_DOCKER_IMAGE_NAME=newrelic/k8s-metadata-injection
-WEBHOOK_DOCKER_IMAGE_TAG=1.3.0
+BINARY_NAME ?= k8s-metadata-injection
+DOCKER_IMAGE_NAME ?= newrelic/k8s-metadata-injection
+DOCKER_IMAGE_TAG ?= 1.3.0
 
-GOLANGCILINT_VERSION = 1.12
+GOLANGCILINT_VERSION = 1.33.0
 
 # required for enabling Go modules inside $GOPATH
 export GO111MODULE=on
@@ -29,7 +29,9 @@ lint: $(TOOLS_DIR)/golangci-lint
 
 .PHONY: build-container
 build-container:
-	docker build -t $(WEBHOOK_DOCKER_IMAGE_NAME):$(WEBHOOK_DOCKER_IMAGE_TAG) .
+	grep -e "image: $(DOCKER_IMAGE_NAME):$(DOCKER_IMAGE_TAG)" deploy/newrelic-metadata-injection.yaml > /dev/null || \
+	( echo "Docker image tag being built $(DOCKER_IMAGE_TAG) is not synchronized with deployment yaml" && exit 1 )
+	docker build -t $(DOCKER_IMAGE_NAME):$(DOCKER_IMAGE_TAG) .
 
 .PHONY: test
 test:
@@ -45,3 +47,6 @@ e2e-test:
 benchmark-test:
 	@echo "[test] Running benchmark tests"
 	@go test -run=^Benchmark* -bench .
+
+deploy/combined.yaml: deploy/newrelic-metadata-injection.yaml deploy/job.yaml
+	echo '---' | cat deploy/newrelic-metadata-injection.yaml - deploy/job.yaml > deploy/combined.yaml

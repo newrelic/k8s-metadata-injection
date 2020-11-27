@@ -21,6 +21,13 @@ setup_kubectl() {
 }
 
 start_minikube() {
+    export MINIKUBE_WANTREPORTERRORPROMPT=false
+    export MINIKUBE_HOME=$HOME
+    export CHANGE_MINIKUBE_NONE_USER=true
+    mkdir "$HOME"/.kube || true
+    touch "$HOME"/.kube/config
+    export KUBECONFIG=$HOME/.kube/config
+
     $E2E_SUDO minikube start --driver="$E2E_MINIKUBE_DRIVER" --kubernetes-version="$E2E_KUBERNETES_VERSION" --logtostderr
 }
 
@@ -75,13 +82,6 @@ cd "$(dirname "$0")"
 minikube version
 
 [ -n "$E2E_SETUP_KUBECTL" ] && setup_kubectl
-
-export MINIKUBE_WANTREPORTERRORPROMPT=false
-export MINIKUBE_HOME=$HOME
-export CHANGE_MINIKUBE_NONE_USER=true
-mkdir "$HOME"/.kube || true
-touch "$HOME"/.kube/config
-export KUBECONFIG=$HOME/.kube/config
 
 [ -n "$E2E_START_MINIKUBE" ] && start_minikube
 
