@@ -1,4 +1,4 @@
-[![Community Project header](https://github.com/newrelic/opensource-website/raw/master/src/images/categories/Community_Project.png)](https://opensource.newrelic.com/oss-category/#community-project)
+[![Community Plus header](https://github.com/newrelic/opensource-website/raw/master/src/images/categories/Community_Plus.png)](https://opensource.newrelic.com/oss-category/#community-plus)
 
 
 # Kubernetes Metadata injection for New Relic APM agents
@@ -117,7 +117,7 @@ Admission webhooks are called by the Kubernetes API server and it needs to authe
 
 Either certificate management choice made, the important thing is to have the secret created with the correct name and namespace, and also to have the correct CA bundle in the MutatingWebhookConfiguration resource. As long as this is done the webhook server will be able to pick it up.
 
-### Automatic 
+### Automatic
 
 Please refer to the [setup instructions in the official documentation](https://docs.newrelic.com/docs/integrations/kubernetes-integration/metadata-injection/kubernetes-apm-metadata-injection#install).
 
