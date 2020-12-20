@@ -27,7 +27,7 @@ jobs:
   e2e-kubernetes:
     name: Kuebrnetes E2E tests
     needs: [ test ]
-    runs-on: ubuntu-18.04 # required by manusa/actions-setup-minikube@v2.0.1
+    runs-on: ubuntu-latest
     env:
       E2E_MINIKUBE_DRIVER: docker
     strategy:
@@ -35,7 +35,7 @@ jobs:
         k8s_version: [ "v1.15.12", "v1.16.15", "v1.17.14", "v1.18.12" ]
     steps:
       - uses: actions/checkout@v2
-      - uses: manusa/actions-setup-minikube@v2.0.1
+      - uses: manusa/actions-setup-minikube@v2.3.0
         with:
           minikube version: v1.15.1
           kubernetes version: ${{ matrix.k8s_version }}
