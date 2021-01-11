@@ -32,7 +32,7 @@ jobs:
       E2E_MINIKUBE_DRIVER: docker
     strategy:
       matrix:
-        k8s_version: [ "v1.15.12", "v1.16.15", "v1.17.14", "v1.18.12" ]
+        k8s_version: [ "v1.15.12", "v1.16.15", "v1.17.14", "v1.18.12", "v1.19.4" ]
     steps:
       - uses: actions/checkout@v2
       - uses: manusa/actions-setup-minikube@v2.0.1
