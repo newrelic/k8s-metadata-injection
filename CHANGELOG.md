@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## 1.3.2
 
 - Update k8s-webhook-cert-manager to 1.3.2
-  This new version introduce a fix to extend support to version 1.19.x of Kubernetes
+  This new version introduces a fix to extend support to version 1.19.x of Kubernetes
 
 ## 1.3.1
 
