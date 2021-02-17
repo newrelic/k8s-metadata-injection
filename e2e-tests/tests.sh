@@ -23,15 +23,14 @@ finish() {
 [ "$E2E_MINIKUBE_DRIVER" = "none" ] || eval "$(minikube docker-env --shell bash)"
 
 # build webhook docker image
-(
-    cd ..
-    # Set GOOS and GOARCH explicitly since Dockerfile expects them in the binary name
-    GOOS=linux \
-    GOARCH=amd64 \
-    DOCKERARGS="--build-arg TARGETOS=linux --build-arg TARGETARCH=amd64"  \
-    make compile build-container
-    cd -
-)
+
+# Set GOOS and GOARCH explicitly since Dockerfile expects them in the binary name
+# TARGETOS and TARGETARCH should get populated automatically, but for some reason they are not.
+#  Perhaps Minikube's docker has something to do with it, so we set them manually.
+GOOS=linux \
+GOARCH=amd64 \
+DOCKERARGS="--build-arg TARGETOS=linux --build-arg TARGETARCH=amd64" \
+make compile build-container
 
 trap finish EXIT
 
