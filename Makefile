@@ -12,6 +12,7 @@ export GO111MODULE=on
 # GOOS and GOARCH will likely come from env
 GOOS ?=
 GOARCH ?=
+CGO_ENABLED ?= 0
 
 ifneq ($(strip $(GOOS)), )
 BINARY_NAME := $(BINARY_NAME)-$(GOOS)
@@ -42,7 +43,7 @@ lint: $(TOOLS_DIR)/golangci-lint
 compile:
 	@echo "=== $(INTEGRATION) === [ compile ]: Building $(INTEGRATION)..."
 	go mod download
-	go build -o $(BINARY_NAME) ./cmd/server
+	CGO_ENABLED=$(CGO_ENABLED) go build -o $(BINARY_NAME) ./cmd/server
 
 .PHONY: build-container
 build-container:
