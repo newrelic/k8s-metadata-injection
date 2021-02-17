@@ -1,24 +1,15 @@
-FROM golang:1.14.6-alpine3.12 as build
+FROM alpine:3.13
 
-RUN apk update && apk upgrade && \
-    apk add --no-cache git
-RUN mkdir /app
-WORKDIR /app
-
-# Trick for caching the dependencies better based on changes in the go.mod and go.sum files
-COPY go.mod /app
-COPY go.sum /app
-RUN go mod download
-
-COPY . /app
-ENV CGO_ENABLED=0
-RUN go build -o bin/k8s-metadata-injection cmd/server/main.go
-
-FROM alpine:3.12.0
+# Set by docker automatically
+# If building with `docker build`, make sure to set GOOS/GOARCH explicitly when calling make:
+# `make compile GOOS=something GOARCH=something`
+# Otherwise the makefile will not append them to the binary name and docker build wil fail.
+ARG TARGETOS
+ARG TARGETARCH
 
 RUN mkdir /app
 RUN apk add --update openssl
 COPY entrypoint.sh /app
-COPY --from=build /app/bin/k8s-metadata-injection /app
+COPY bin/k8s-metadata-injection-${TARGETOS}-${TARGETARCH} /app/k8s-metadata-injection
 
 CMD ["/app/entrypoint.sh"]
