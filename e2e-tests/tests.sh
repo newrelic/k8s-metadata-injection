@@ -1,10 +1,10 @@
 #!/usr/bin/env sh
 set -e
 
-printf 'bootstrapping starts:\n'
-# shellcheck disable=SC1090
-. "$(dirname "$0")/k8s-e2e-bootstraping.sh"
-printf 'bootstrapping complete\n'
+#printf 'bootstrapping starts:\n'
+## shellcheck disable=SC1090
+#. "$(dirname "$0")/k8s-e2e-bootstraping.sh"
+#printf 'bootstrapping complete\n'
 
 WEBHOOK_LABEL="app=newrelic-metadata-injection"
 JOB_LABEL="job-name=newrelic-metadata-setup"
@@ -20,12 +20,16 @@ finish() {
 }
 
 # ensure that we build docker image in minikube
-[ "$E2E_MINIKUBE_DRIVER" != "none" ] && eval "$(minikube docker-env --shell bash)"
+[ "$E2E_MINIKUBE_DRIVER" = "none" ] || eval "$(minikube docker-env --shell bash)"
 
 # build webhook docker image
 (
     cd ..
-    make build-container
+    # Set GOOS and GOARCH explicitly since Dockerfile expects them in the binary name
+    GOOS=linux \
+    GOARCH=amd64 \
+    DOCKERARGS="--build-arg TARGETOS=linux --build-arg TARGETARCH=amd64"  \
+    make compile build-container
     cd -
 )
 

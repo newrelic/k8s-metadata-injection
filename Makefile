@@ -48,7 +48,7 @@ compile:
 build-container:
 	grep -e "image: $(DOCKER_IMAGE_NAME):$(DOCKER_IMAGE_TAG)" deploy/newrelic-metadata-injection.yaml > /dev/null || \
 	( echo "Docker image tag being built $(DOCKER_IMAGE_TAG) is not synchronized with deployment yaml" && exit 1 )
-	docker build -t $(DOCKER_IMAGE_NAME):$(DOCKER_IMAGE_TAG) .
+	docker build -t $(DOCKER_IMAGE_NAME):$(DOCKER_IMAGE_TAG) $$DOCKERARGS .
 
 .PHONY: test
 test:
