@@ -46,7 +46,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       E2E_MINIKUBE_DRIVER: docker
-      DOCKER_BUILDKIT: '1'
+      DOCKER_BUILDKIT: '1' # Setting DOCKER_BUILDKIT=1 ensures TARGETOS and TARGETARCH are populated
     strategy:
       fail-fast: false
       matrix:
