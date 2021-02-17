@@ -29,6 +29,7 @@ jobs:
 
   release:
     name: Release docker & config
+    needs: [ build ]
     runs-on: ubuntu-latest
     env:
       DOCKER_IMAGE_NAME: roobre/k8s-metadata-injection # TODO TODO CHANGEME CHANGEME
