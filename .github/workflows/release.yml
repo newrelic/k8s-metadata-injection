@@ -33,6 +33,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       DOCKER_IMAGE_NAME: roobre/k8s-metadata-injection # TODO TODO CHANGEME CHANGEME
+      DOCKER_PLATFORMS: "linux/amd64,linux/arm64,linux/arm" # Must be consistent with the matrix from the job above
       S3_PATH: s3://nr-downloads-main/infrastructure_agent
     steps:
       - name: Generate docker image version from git tag
