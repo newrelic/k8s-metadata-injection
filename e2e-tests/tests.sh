@@ -1,10 +1,10 @@
 #!/usr/bin/env sh
 set -e
 
-#printf 'bootstrapping starts:\n'
-## shellcheck disable=SC1090
-#. "$(dirname "$0")/k8s-e2e-bootstraping.sh"
-#printf 'bootstrapping complete\n'
+printf 'bootstrapping starts:\n'
+# shellcheck disable=SC1090
+. "$(dirname "$0")/k8s-e2e-bootstraping.sh"
+printf 'bootstrapping complete\n'
 
 WEBHOOK_LABEL="app=newrelic-metadata-injection"
 JOB_LABEL="job-name=newrelic-metadata-setup"
@@ -25,7 +25,11 @@ finish() {
 # build webhook docker image
 
 # Set GOOS and GOARCH explicitly since Dockerfile expects them in the binary name
-GOOS=linux GOARCH=amd64 make compile build-container
+(
+    cd ..
+    GOOS=linux GOARCH=amd64 make compile build-container
+    cd -
+)
 
 trap finish EXIT
 
