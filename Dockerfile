@@ -8,7 +8,10 @@ ARG TARGETOS
 ARG TARGETARCH
 
 RUN mkdir /app
-ADD --chmod=755 entrypoint.sh /app
-ADD --chmod=755 bin/k8s-metadata-injection-${TARGETOS}-${TARGETARCH} /app/k8s-metadata-injection
+WORKDIR /app
+
+ADD --chmod=755 entrypoint.sh ./
+ADD --chmod=755 bin/k8s-metadata-injection-${TARGETOS}-${TARGETARCH} ./
+RUN mv k8s-metadata-injection-${TARGETOS}-${TARGETARCH} k8s-metadata-injection
 
 CMD ["/app/entrypoint.sh"]
