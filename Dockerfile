@@ -9,7 +9,7 @@ ARG TARGETARCH
 
 RUN mkdir /app
 RUN apk add --update openssl
-COPY --chmod=755 entrypoint.sh /app
-COPY --chmod=755 bin/k8s-metadata-injection-${TARGETOS}-${TARGETARCH} /app/k8s-metadata-injection
+ADD --chmod=755 entrypoint.sh /app
+ADD --chmod=755 bin/k8s-metadata-injection-${TARGETOS}-${TARGETARCH} /app/k8s-metadata-injection
 
 CMD ["/app/entrypoint.sh"]
