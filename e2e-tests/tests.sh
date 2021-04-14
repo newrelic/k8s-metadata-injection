@@ -20,12 +20,14 @@ finish() {
 }
 
 # ensure that we build docker image in minikube
-[ "$E2E_MINIKUBE_DRIVER" != "none" ] && eval "$(minikube docker-env --shell bash)"
+[ "$E2E_MINIKUBE_DRIVER" = "none" ] || eval "$(minikube docker-env --shell bash)"
 
 # build webhook docker image
+
+# Set GOOS and GOARCH explicitly since Dockerfile expects them in the binary name
 (
     cd ..
-    make build-container
+    GOOS=linux GOARCH=amd64 make compile build-container
     cd -
 )
 

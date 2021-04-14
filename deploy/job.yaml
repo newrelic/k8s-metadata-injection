@@ -68,7 +68,7 @@ spec:
       containers:
       - name: metadata-cert-setup
         # This is a minimal kubectl image based on Alpine Linux that sings certificates using the k8s extension api server
-        image: newrelic/k8s-webhook-cert-manager:1.3.2
+        image: newrelic/k8s-webhook-cert-manager:1.4.0
         command: ["./generate_certificate.sh"]
         args:
           - "--service"
