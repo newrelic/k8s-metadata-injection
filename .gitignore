@@ -1,2 +1,4 @@
 deploy/local.*
 bin
+vendor
+.idea

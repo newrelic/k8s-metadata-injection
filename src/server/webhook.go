@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"k8s.io/apimachinery/pkg/api/resource"
 	"net/http"
 	"strings"
 	"sync"
@@ -145,6 +146,177 @@ func (whsvr *Webhook) updateContainer(pod *corev1.Pod, index int, container *cor
 	return patch
 }
 
+//SAME logic of updateContainer
+func (whsvr *Webhook) injectVolumes(pod *corev1.Pod) (patch []patchOperation) {
+
+	VolMap := map[string]bool{}
+	for _, v := range pod.Spec.Volumes {
+		VolMap[v.Name] = true
+	}
+
+	first := len(VolMap) == 0
+	var valueV interface{}
+	basePathV := fmt.Sprintf("/spec/volumes")
+
+	for _, v := range getVolumes() {
+		if _, present := VolMap[v.Name]; !present {
+			valueV = v
+			path := basePathV
+
+			if first {
+				valueV = []corev1.Volume{v}
+				first = false
+			} else {
+				path = path + "/-"
+			}
+
+			patch = append(patch, patchOperation{
+				Op:    "add",
+				Path:  path,
+				Value: valueV,
+			})
+		}
+	}
+	return patch
+}
+
+func (whsvr *Webhook) injectContainer(pod *corev1.Pod) (patch []patchOperation) {
+
+	basePath := fmt.Sprintf("/spec/containers/-")
+	value := getSidecarContainer()
+	patch = append(patch, patchOperation{
+		Op:    "add",
+		Path:  basePath,
+		Value: value,
+	})
+
+	return patch
+}
+
+func getSidecarContainer() corev1.Container {
+	q, _ := resource.ParseQuantity("100m")
+	m, _ := resource.ParseQuantity("100Mb")
+	t := true
+	f := false
+	i := int64(1000)
+
+	return corev1.Container{
+		Name:  "newrelic-injected",
+		Image: "newrelic/infrastructure-k8s:2.0.1-unprivileged",
+		Env: []corev1.EnvVar{
+			{
+				Name: "NRIA_LICENSE_KEY",
+				ValueFrom: &corev1.EnvVarSource{
+					SecretKeyRef: &corev1.SecretKeySelector{
+						LocalObjectReference: corev1.LocalObjectReference{
+							Name: "newrelic-newrelic-infrastructure-config",
+						},
+						Key: "license",
+					},
+				},
+			},
+			{
+				Name:  "NRIA_VERBOSE",
+				Value: "1",
+			},
+			{
+				Name:  "CLUSTER_NAME",
+				Value: "test-paolo-fargate",
+			},
+			{
+				Name:  "CLUSTER_NAME",
+				Value: "{\"clusterName\":\"$(CLUSTER_NAME)\"}",
+			},
+			{
+				Name:  "CLUSTER_NAME",
+				Value: "KUBERNETES_SERVICE_HOST,KUBERNETES_SERVICE_PORT,CLUSTER_NAME,CADVISOR_PORT,NRK8S_NODE_NAME,KUBE_STATE_METRICS_URL,KUBE_STATE_METRICS_POD_LABEL,TIMEOUT,ETCD_TLS_SECRET_NAME,ETCD_TLS_SECRET_NAMESPACE,API_SERVER_SECURE_PORT,KUBE_STATE_METRICS_SCHEME,KUBE_STATE_METRICS_PORT,SCHEDULER_ENDPOINT_URL,ETCD_ENDPOINT_URL,CONTROLLER_MANAGER_ENDPOINT_URL,API_SERVER_ENDPOINT_URL,DISABLE_KUBE_STATE_METRICS,DISCOVERY_CACHE_TTL",
+			},
+			{
+				Name: "NRK8S_NODE_NAME",
+				ValueFrom: &corev1.EnvVarSource{
+					FieldRef: &corev1.ObjectFieldSelector{
+						APIVersion: "v1",
+						FieldPath:  "spec.nodeName",
+					},
+				},
+			},
+			{
+				Name: "NRIA_DISPLAY_NAME",
+				ValueFrom: &corev1.EnvVarSource{
+					FieldRef: &corev1.ObjectFieldSelector{
+						APIVersion: "v1",
+						FieldPath:  "spec.nodeName",
+					},
+				},
+			},
+		},
+		Resources: corev1.ResourceRequirements{
+			Limits: corev1.ResourceList{
+				"cpu":    q,
+				"memory": m,
+			},
+			Requests: corev1.ResourceList{
+				"cpu":    q,
+				"memory": m,
+			},
+		},
+		VolumeMounts: []corev1.VolumeMount{
+			{
+				Name:      "tmpfs-data",
+				MountPath: "/var/db/newrelic-infra/data",
+			},
+			{
+				Name:      "tmpfs-user-data",
+				MountPath: "/var/db/newrelic-infra/user_data",
+			},
+			{
+				Name:      "tmpfs-tmp",
+				MountPath: "/tmp",
+			},
+			{
+				Name:      "tmpfs-cache",
+				MountPath: "/var/cache/nr-kubernetes",
+			},
+		},
+		ImagePullPolicy: "IfNotPresent",
+		SecurityContext: &corev1.SecurityContext{
+			RunAsUser:                &i,
+			ReadOnlyRootFilesystem:   &t,
+			AllowPrivilegeEscalation: &f,
+		},
+	}
+}
+
+func getVolumes() []corev1.Volume {
+	valueVolumes := []corev1.Volume{
+		{
+			Name: "tmpfs-data",
+			VolumeSource: corev1.VolumeSource{
+				EmptyDir: nil,
+			},
+		},
+		{
+			Name: "tmpfs-user-data",
+			VolumeSource: corev1.VolumeSource{
+				EmptyDir: nil,
+			},
+		},
+		{
+			Name: "tmpfs-tmp",
+			VolumeSource: corev1.VolumeSource{
+				EmptyDir: nil,
+			},
+		},
+		{
+			Name: "tmpfs-cache",
+			VolumeSource: corev1.VolumeSource{
+				EmptyDir: nil,
+			},
+		},
+	}
+	return valueVolumes
+}
+
 // create mutation patch for resources
 func (whsvr *Webhook) createPatch(pod *corev1.Pod) ([]byte, error) {
 	var patch []patchOperation
@@ -152,6 +324,8 @@ func (whsvr *Webhook) createPatch(pod *corev1.Pod) ([]byte, error) {
 	for i, container := range pod.Spec.Containers {
 		patch = append(patch, whsvr.updateContainer(pod, i, &container)...)
 	}
+	patch = append(patch, whsvr.injectContainer(pod)...)
+	patch = append(patch, whsvr.injectVolumes(pod)...)
 
 	return json.Marshal(patch)
 }

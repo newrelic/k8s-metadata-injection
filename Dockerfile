@@ -4,8 +4,8 @@ FROM alpine:3.13
 # If building with `docker build`, make sure to set GOOS/GOARCH explicitly when calling make:
 # `make compile GOOS=something GOARCH=something`
 # Otherwise the makefile will not append them to the binary name and docker build wil fail.
-ARG TARGETOS
-ARG TARGETARCH
+ARG TARGETOS=linux
+ARG TARGETARCH=amd64
 
 RUN mkdir /app
 WORKDIR /app
