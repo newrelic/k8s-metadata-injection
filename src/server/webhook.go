@@ -13,7 +13,7 @@ import (
 
 	"github.com/fsnotify/fsnotify"
 	"go.uber.org/zap"
-	admissionv1beta1 "k8s.io/api/admission/v1beta1"
+	admissionv1 "k8s.io/api/admission/v1"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
@@ -147,7 +147,7 @@ func (whsvr *Webhook) createPatch(pod *corev1.Pod) ([]byte, error) {
 }
 
 // main mutation process
-func (whsvr *Webhook) mutate(ar *admissionv1beta1.AdmissionReview) ([]byte, error) {
+func (whsvr *Webhook) mutate(ar *admissionv1.AdmissionReview) ([]byte, error) {
 	req := ar.Request
 	var pod corev1.Pod
 	if err := json.Unmarshal(req.Object.Raw, &pod); err != nil {
@@ -200,13 +200,7 @@ func (whsvr *Webhook) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	admissionReviewResponse := admissionv1beta1.AdmissionReview{
-		Response: &admissionv1beta1.AdmissionResponse{
-			Allowed: true, // Always allow the creation of the pod since this webhook does not act as Validating Webhook.
-		},
-	}
-
-	admissionReviewRequest := admissionv1beta1.AdmissionReview{}
+	admissionReviewRequest := admissionv1.AdmissionReview{}
 	if _, _, err := deserializer.Decode(body, nil, &admissionReviewRequest); err != nil {
 		whsvr.Logger.Errorw("can't decode body", "err", err, "body", body)
 		http.Error(w, fmt.Sprintf("could not decode request body: %q", err.Error()), http.StatusBadRequest)
@@ -226,10 +220,30 @@ func (whsvr *Webhook) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	switch admissionReviewRequest.APIVersion {
+	// Types should be backward compatible between v1 and v1beta1 according to
+	// https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#webhook-request-and-response.
+	case "admission.k8s.io/v1", "admission.k8s.io/v1beta1":
+	default:
+		whsvr.Logger.Errorw("unsupported admission API Version request", "version", admissionReviewRequest.APIVersion)
+		http.Error(w, fmt.Sprintf("unsupported admission API Version request: %q", admissionReviewRequest.APIVersion), http.StatusBadRequest)
+		return
+	}
+
+	admissionReviewResponse := admissionv1.AdmissionReview{
+		TypeMeta: metav1.TypeMeta{
+			Kind:       admissionReviewRequest.Kind,
+			APIVersion: admissionReviewRequest.APIVersion,
+		},
+		Response: &admissionv1.AdmissionResponse{
+			Allowed: true, // Always allow the creation of the pod since this webhook does not act as Validating Webhook.
+		},
+	}
+
 	if len(patch) > 0 {
 		admissionReviewResponse.Response.Patch = patch
-		admissionReviewResponse.Response.PatchType = func() *admissionv1beta1.PatchType {
-			pt := admissionv1beta1.PatchTypeJSONPatch // Only PatchTypeJSONPatch is allowed by now.
+		admissionReviewResponse.Response.PatchType = func() *admissionv1.PatchType {
+			pt := admissionv1.PatchTypeJSONPatch // Only PatchTypeJSONPatch is allowed by now.
 			return &pt
 		}()
 	}

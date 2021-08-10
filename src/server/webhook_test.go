@@ -10,7 +10,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	admissionv1beta1 "k8s.io/api/admission/v1beta1"
+	admissionv1 "k8s.io/api/admission/v1"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
@@ -31,22 +31,26 @@ func TestServeHTTP(t *testing.T) {
 
 	missingObjectRequestBody := bytes.Replace(makeTestData(t, "default"), []byte("\"object\""), []byte("\"foo\""), -1)
 
-	patchTypeForValidBody := admissionv1beta1.PatchTypeJSONPatch
+	patchTypeForValidBody := admissionv1.PatchTypeJSONPatch
 	cases := []struct {
 		name                      string
 		requestBody               []byte
 		contentType               string
 		expectedStatusCode        int
 		expectedBodyWhenHTTPError string
-		expectedAdmissionReview   admissionv1beta1.AdmissionReview
+		expectedAdmissionReview   admissionv1.AdmissionReview
 	}{
 		{
 			name:               "mutation applied - valid body",
 			requestBody:        makeTestData(t, "default"),
 			contentType:        "application/json",
 			expectedStatusCode: http.StatusOK,
-			expectedAdmissionReview: admissionv1beta1.AdmissionReview{
-				Response: &admissionv1beta1.AdmissionResponse{
+			expectedAdmissionReview: admissionv1.AdmissionReview{
+				TypeMeta: metav1.TypeMeta{
+					Kind:       "AdmissionReview",
+					APIVersion: "admission.k8s.io/v1",
+				},
+				Response: &admissionv1.AdmissionResponse{
 					UID:       types.UID("1"),
 					Allowed:   true,
 					Result:    nil,
@@ -60,8 +64,12 @@ func TestServeHTTP(t *testing.T) {
 			requestBody:        makeTestData(t, "kube-system"),
 			contentType:        "application/json",
 			expectedStatusCode: http.StatusOK,
-			expectedAdmissionReview: admissionv1beta1.AdmissionReview{
-				Response: &admissionv1beta1.AdmissionResponse{
+			expectedAdmissionReview: admissionv1.AdmissionReview{
+				TypeMeta: metav1.TypeMeta{
+					Kind:       "AdmissionReview",
+					APIVersion: "admission.k8s.io/v1",
+				},
+				Response: &admissionv1.AdmissionResponse{
 					UID:       types.UID("1"),
 					Allowed:   true,
 					Result:    nil,
@@ -117,7 +125,7 @@ func TestServeHTTP(t *testing.T) {
 			if err != nil {
 				t.Fatalf("could not read body: %v", err)
 			}
-			var gotReview admissionv1beta1.AdmissionReview
+			var gotReview admissionv1.AdmissionReview
 			if err := json.Unmarshal(gotBody, &gotReview); err != nil {
 				assert.Equal(t, c.expectedBodyWhenHTTPError, string(gotBody))
 				return
@@ -171,13 +179,17 @@ func makeTestData(t testing.TB, namespace string) []byte {
 		t.Fatalf("Could not create test pod: %v", err)
 	}
 
-	review := admissionv1beta1.AdmissionReview{
-		Request: &admissionv1beta1.AdmissionRequest{
+	review := admissionv1.AdmissionReview{
+		TypeMeta: metav1.TypeMeta{
+			Kind:       "AdmissionReview",
+			APIVersion: "admission.k8s.io/v1",
+		},
+		Request: &admissionv1.AdmissionRequest{
 			Kind: metav1.GroupVersionKind{},
 			Object: runtime.RawExtension{
 				Raw: raw,
 			},
-			Operation: admissionv1beta1.Create,
+			Operation: admissionv1.Create,
 			UID:       types.UID("1"),
 		},
 	}
