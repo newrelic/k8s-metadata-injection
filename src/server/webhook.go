@@ -12,15 +12,12 @@ import (
 	"sync"
 
 	"github.com/fsnotify/fsnotify"
-
-	corev1 "k8s.io/api/core/v1"
-	"k8s.io/apimachinery/pkg/runtime"
-
 	"go.uber.org/zap"
-	"k8s.io/api/admission/v1beta1"
+	admissionv1beta1 "k8s.io/api/admission/v1beta1"
 	admissionregistrationv1beta1 "k8s.io/api/admissionregistration/v1beta1"
+	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-
+	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/serializer"
 )
 
@@ -157,7 +154,7 @@ func (whsvr *Webhook) createPatch(pod *corev1.Pod) ([]byte, error) {
 }
 
 // main mutation process
-func (whsvr *Webhook) mutate(ar *v1beta1.AdmissionReview) ([]byte, error) {
+func (whsvr *Webhook) mutate(ar *admissionv1beta1.AdmissionReview) ([]byte, error) {
 	req := ar.Request
 	var pod corev1.Pod
 	if err := json.Unmarshal(req.Object.Raw, &pod); err != nil {
@@ -210,13 +207,13 @@ func (whsvr *Webhook) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	admissionReviewResponse := v1beta1.AdmissionReview{
-		Response: &v1beta1.AdmissionResponse{
+	admissionReviewResponse := admissionv1beta1.AdmissionReview{
+		Response: &admissionv1beta1.AdmissionResponse{
 			Allowed: true, // Always allow the creation of the pod since this webhook does not act as Validating Webhook.
 		},
 	}
 
-	admissionReviewRequest := v1beta1.AdmissionReview{}
+	admissionReviewRequest := admissionv1beta1.AdmissionReview{}
 	if _, _, err := deserializer.Decode(body, nil, &admissionReviewRequest); err != nil {
 		whsvr.Logger.Errorw("can't decode body", "err", err, "body", body)
 		http.Error(w, fmt.Sprintf("could not decode request body: %q", err.Error()), http.StatusBadRequest)
@@ -238,8 +235,8 @@ func (whsvr *Webhook) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	if len(patch) > 0 {
 		admissionReviewResponse.Response.Patch = patch
-		admissionReviewResponse.Response.PatchType = func() *v1beta1.PatchType {
-			pt := v1beta1.PatchTypeJSONPatch // Only PatchTypeJSONPatch is allowed by now.
+		admissionReviewResponse.Response.PatchType = func() *admissionv1beta1.PatchType {
+			pt := admissionv1beta1.PatchTypeJSONPatch // Only PatchTypeJSONPatch is allowed by now.
 			return &pt
 		}()
 	}

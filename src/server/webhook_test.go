@@ -2,22 +2,19 @@ package server
 
 import (
 	"bytes"
-	json_encoding "encoding/json"
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 
-	"k8s.io/api/admission/v1beta1"
-
 	"github.com/stretchr/testify/assert"
-
+	admissionv1beta1 "k8s.io/api/admission/v1beta1"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/types"
-	"k8s.io/apimachinery/pkg/util/json"
 )
 
 func TestServeHTTP(t *testing.T) {
@@ -27,29 +24,29 @@ func TestServeHTTP(t *testing.T) {
 	}
 	var expectedPatchForValidBody bytes.Buffer
 	if len(patchForValidBody) > 0 {
-		if err := json_encoding.Compact(&expectedPatchForValidBody, patchForValidBody); err != nil {
+		if err := json.Compact(&expectedPatchForValidBody, patchForValidBody); err != nil {
 			t.Fatalf(err.Error())
 		}
 	}
 
 	missingObjectRequestBody := bytes.Replace(makeTestData(t, "default"), []byte("\"object\""), []byte("\"foo\""), -1)
 
-	patchTypeForValidBody := v1beta1.PatchTypeJSONPatch
+	patchTypeForValidBody := admissionv1beta1.PatchTypeJSONPatch
 	cases := []struct {
 		name                      string
 		requestBody               []byte
 		contentType               string
 		expectedStatusCode        int
 		expectedBodyWhenHTTPError string
-		expectedAdmissionReview   v1beta1.AdmissionReview
+		expectedAdmissionReview   admissionv1beta1.AdmissionReview
 	}{
 		{
 			name:               "mutation applied - valid body",
 			requestBody:        makeTestData(t, "default"),
 			contentType:        "application/json",
 			expectedStatusCode: http.StatusOK,
-			expectedAdmissionReview: v1beta1.AdmissionReview{
-				Response: &v1beta1.AdmissionResponse{
+			expectedAdmissionReview: admissionv1beta1.AdmissionReview{
+				Response: &admissionv1beta1.AdmissionResponse{
 					UID:       types.UID("1"),
 					Allowed:   true,
 					Result:    nil,
@@ -63,8 +60,8 @@ func TestServeHTTP(t *testing.T) {
 			requestBody:        makeTestData(t, "kube-system"),
 			contentType:        "application/json",
 			expectedStatusCode: http.StatusOK,
-			expectedAdmissionReview: v1beta1.AdmissionReview{
-				Response: &v1beta1.AdmissionResponse{
+			expectedAdmissionReview: admissionv1beta1.AdmissionReview{
+				Response: &admissionv1beta1.AdmissionResponse{
 					UID:       types.UID("1"),
 					Allowed:   true,
 					Result:    nil,
@@ -112,7 +109,6 @@ func TestServeHTTP(t *testing.T) {
 
 	for i, c := range cases {
 		t.Run(fmt.Sprintf("[%d] %s", i, c.name), func(t *testing.T) {
-
 			resp, err := http.Post(server.URL, c.contentType, bytes.NewReader(c.requestBody))
 			assert.NoError(t, err)
 			assert.Equal(t, c.expectedStatusCode, resp.StatusCode)
@@ -121,7 +117,7 @@ func TestServeHTTP(t *testing.T) {
 			if err != nil {
 				t.Fatalf("could not read body: %v", err)
 			}
-			var gotReview v1beta1.AdmissionReview
+			var gotReview admissionv1beta1.AdmissionReview
 			if err := json.Unmarshal(gotBody, &gotReview); err != nil {
 				assert.Equal(t, c.expectedBodyWhenHTTPError, string(gotBody))
 				return
@@ -130,7 +126,6 @@ func TestServeHTTP(t *testing.T) {
 			assert.Equal(t, c.expectedAdmissionReview, gotReview)
 		})
 	}
-
 }
 
 func Benchmark_WebhookPerformance(b *testing.B) {
@@ -176,13 +171,13 @@ func makeTestData(t testing.TB, namespace string) []byte {
 		t.Fatalf("Could not create test pod: %v", err)
 	}
 
-	review := v1beta1.AdmissionReview{
-		Request: &v1beta1.AdmissionRequest{
+	review := admissionv1beta1.AdmissionReview{
+		Request: &admissionv1beta1.AdmissionRequest{
 			Kind: metav1.GroupVersionKind{},
 			Object: runtime.RawExtension{
 				Raw: raw,
 			},
-			Operation: v1beta1.Create,
+			Operation: admissionv1beta1.Create,
 			UID:       types.UID("1"),
 		},
 	}
