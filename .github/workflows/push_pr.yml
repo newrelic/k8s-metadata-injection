@@ -65,4 +65,3 @@ jobs:
           kubernetes version: ${{ matrix.k8s-version }}
           driver: ${{ env.E2E_MINIKUBE_DRIVER }}
       - run: make e2e-test
-        continue-on-error: ${{ contains(matrix.k8sVersion, '1.20') }} # experimental support for 1.20.x
