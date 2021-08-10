@@ -43,7 +43,7 @@ jobs:
       - name: Run unit tests
         run: make test
   e2e-kubernetes:
-    name: Kuebrnetes E2E tests
+    name: Kubernetes E2E tests
     needs: [ test ]
     runs-on: ubuntu-latest
     env:

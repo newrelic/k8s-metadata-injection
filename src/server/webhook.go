@@ -88,7 +88,7 @@ type patchOperation struct {
 	Value interface{} `json:"value,omitempty"`
 }
 
-// Check whether the target resoured need to be mutated
+// Check whether the target resource needs to be mutated
 func mutationRequired(ignoredList []string, metadata *metav1.ObjectMeta) bool {
 	// skip special kubernetes system namespaces
 	for _, namespace := range ignoredList {

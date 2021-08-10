@@ -34,7 +34,7 @@ As an alternative, you can see the [source code](https://github.com/kubernetes/a
 
 #### Non-intrusive commitment 
 
-We are commited to keep the webhook as a non-intrusive mechanism for injecting the required env vars into the containers.
+We are committed to keep the webhook as a non-intrusive mechanism for injecting the required env vars into the containers.
 In order to achieve this we took the following design decisions:
 
 1. The `failurePolicy` is set to `Ignore`. Any response from our webhook with a non success HTTP Status Code will be then skipped, so the Kubernetes API will continue the execution of the request lifecycle.
