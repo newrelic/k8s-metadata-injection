@@ -62,7 +62,7 @@ kubectl -n default create -f manifests/deployment.yaml
 
 pod_name="$(get_pod_name_by_label "$DUMMY_POD_LABEL")"
 if [ "$pod_name" = "" ]; then
-    printf "not found any pod with label %s" "$DUMMY_POD_LABEL"
+    printf "not found any pod with label %s\n" "$DUMMY_POD_LABEL"
     kubectl -n default describe deployment "$DUMMY_DEPLOYMENT_NAME"
     exit 1
 fi
