@@ -15,8 +15,8 @@ ENV_VARS_PREFIX="NEW_RELIC_METADATA_KUBERNETES"
 
 finish() {
     printf "calling cleanup function\n"
-    kubectl delete -f ../deploy/ || true
-    kubectl delete -f manifests/ || true
+    kubectl --ignore-not-found=true delete -f ../deploy/ || true
+    kubectl --ignore-not-found=true delete -f manifests/ || true
 }
 
 # ensure that we build docker image in minikube
