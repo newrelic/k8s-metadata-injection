@@ -74,8 +74,8 @@ kubectl logs "$webhook_pod_name"
 kubectl get pods
 kubectl describe pod "${pod_name}"
 printf "getting env vars for %s\n" "${pod_name}"
-kubectl exec "${pod_name}" env
-env_vars="$(kubectl exec "${pod_name}" env | grep "${ENV_VARS_PREFIX}")"
+kubectl exec "${pod_name}" -- env
+env_vars="$(kubectl exec "${pod_name}" -- env | grep "${ENV_VARS_PREFIX}")"
 printf "\nInjected environment variables:\n"
 printf "%s\n" "$env_vars"
 
