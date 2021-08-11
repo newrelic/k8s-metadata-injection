@@ -16,25 +16,10 @@ metadata:
 rules:
   - apiGroups: ["admissionregistration.k8s.io"]
     resources: ["mutatingwebhookconfigurations"]
-    verbs: ["get", "create", "patch"]
-  - apiGroups: ["certificates.k8s.io"]
-    resources: ["certificatesigningrequests"]
-    verbs: ["create", "get", "delete"]
-  - apiGroups: ["certificates.k8s.io"]
-    resources: ["certificatesigningrequests/approval"]
-    verbs: ["update"]
+    verbs: ["get", "update"]
   - apiGroups: [""]
     resources: ["secrets"]
-    verbs: ["create", "get", "patch"]
-  - apiGroups: [""]
-    resources: ["configmaps"]
-    verbs: ["get"]
-  - apiGroups: ["certificates.k8s.io"]
-    resources:
-      - "signers"
-    resourceNames:
-      - "kubernetes.io/legacy-unknown"
-    verbs: ["approve"]
+    verbs: ["create", "get"]
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
@@ -63,19 +48,24 @@ spec:
   template:
     spec:
       serviceAccountName: newrelic-metadata-injection-service-account
-      containers:
-      - name: metadata-cert-setup
-        # This is a minimal kubectl image based on Alpine Linux that sings certificates using the k8s extension api server
-        image: newrelic/k8s-webhook-cert-manager:1.4.0
-        command: ["./generate_certificate.sh"]
+      initContainers:
+      - name: generate-certificate
+        image: newrelic/kube-webhook-certgen:v1.5.2-1-g18cfc89
         args:
-          - "--service"
-          - "newrelic-metadata-injection-svc"
-          - "--webhook"
-          - "newrelic-metadata-injection-cfg"
-          - "--secret"
-          - "newrelic-metadata-injection-secret"
-          - "--namespace"
-          - "default"
+        - create
+        - --host=newrelic-metadata-injection-svc,newrelic-metadata-injection-svc.default.svc
+        - --namespace=default
+        - --secret-name=newrelic-metadata-injection-secret
+        - --cert-name=tls.crt
+        - --key-name=tls.key
+      containers:
+      - name: patch-webhook
+        image: newrelic/kube-webhook-certgen:v1.5.2-1-g18cfc89
+        args:
+        - patch
+        - --webhook-name=newrelic-metadata-injection-cfg
+        - --namespace=default
+        - --secret-name=newrelic-metadata-injection-secret
+        - --patch-validating=false
       restartPolicy: Never
   backoffLimit: 1
