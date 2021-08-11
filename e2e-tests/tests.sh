@@ -97,8 +97,8 @@ do
 done
 
 if [ -n "$errors" ]; then
-    printf "Test errors:\n"
-    printf '%s\n' "$errors"
+    printf "Test errors:$errors\n"
+    exit 1
 else
     printf "Tests are passing successfully\n\n"
 fi
