@@ -29,7 +29,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/AdmissionReviewResponse'
           description: >-
-            The request was succes. Note that in case the status field is
+            The request was successful. Note that in case the status field is
             present, the mutation was not executed.
         '400':
           description: Bad request.

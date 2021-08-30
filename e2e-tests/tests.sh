@@ -15,8 +15,8 @@ ENV_VARS_PREFIX="NEW_RELIC_METADATA_KUBERNETES"
 
 finish() {
     printf "calling cleanup function\n"
-    kubectl delete -f ../deploy/ || true
-    kubectl delete -f manifests/ || true
+    kubectl --ignore-not-found=true delete -f ../deploy/ || true
+    kubectl --ignore-not-found=true delete -f manifests/ || true
 }
 
 # ensure that we build docker image in minikube
@@ -34,13 +34,13 @@ finish() {
 trap finish EXIT
 
 # install the metadata-injection webhook
-kubectl create -f ../deploy/job.yaml
-awk '/image: / { print; print "        imagePullPolicy: Never"; next }1' ../deploy/newrelic-metadata-injection.yaml | kubectl create -f -
+kubectl -n default create -f ../deploy/job.yaml
+awk '/image: / { print; print "        imagePullPolicy: Never"; next }1' ../deploy/newrelic-metadata-injection.yaml | kubectl -n default create -f -
 
 job_pod_name=$(get_pod_name_by_label "$JOB_LABEL")
 if [ "$job_pod_name" = "" ]; then
     printf "not found any pod with label %s\n" "$JOB_LABEL"
-    kubectl get jobs
+    kubectl -n default get jobs
     exit 1
 fi
 wait_for_pod "$job_pod_name" "Succeeded"
@@ -48,9 +48,9 @@ wait_for_pod "$job_pod_name" "Succeeded"
 webhook_pod_name=$(get_pod_name_by_label "$WEBHOOK_LABEL")
 if [ "$webhook_pod_name" = "" ]; then
     printf "not found any pod with label %s\n" "$WEBHOOK_LABEL"
-    kubectl get deployments
-    kubectl describe deployment "$DEPLOYMENT_NAME"
-    kubectl get pods
+    kubectl -n default get deployments
+    kubectl -n default describe deployment "$DEPLOYMENT_NAME"
+    kubectl -n default get pods
     exit 1
 fi
 wait_for_pod "$webhook_pod_name"
@@ -58,24 +58,24 @@ wait_for_pod "$webhook_pod_name"
 ### Testing
 
 # deploy a pod
-kubectl create -f manifests/deployment.yaml
+kubectl -n default create -f manifests/deployment.yaml
 
 pod_name="$(get_pod_name_by_label "$DUMMY_POD_LABEL")"
 if [ "$pod_name" = "" ]; then
-    printf "not found any pod with label %s" "$DUMMY_POD_LABEL"
-    kubectl describe deployment "$DUMMY_DEPLOYMENT_NAME"
+    printf "not found any pod with label %s\n" "$DUMMY_POD_LABEL"
+    kubectl -n default describe deployment "$DUMMY_DEPLOYMENT_NAME"
     exit 1
 fi
 wait_for_pod "$pod_name"
 
 printf "webhook logs:\n"
-kubectl logs "$webhook_pod_name"
+kubectl -n default logs "$webhook_pod_name"
 
-kubectl get pods
-kubectl describe pod "${pod_name}"
+kubectl -n default get pods
+kubectl -n default describe pod "${pod_name}"
 printf "getting env vars for %s\n" "${pod_name}"
-kubectl exec "${pod_name}" env
-env_vars="$(kubectl exec "${pod_name}" env | grep "${ENV_VARS_PREFIX}")"
+kubectl -n default exec "${pod_name}" -- env
+env_vars="$(kubectl -n default exec "${pod_name}" -- env | grep "${ENV_VARS_PREFIX}")"
 printf "\nInjected environment variables:\n"
 printf "%s\n" "$env_vars"
 
@@ -97,8 +97,8 @@ do
 done
 
 if [ -n "$errors" ]; then
-    printf "Test errors:\n"
-    printf '%s\n' "$errors"
+    printf "Test errors:$errors\n"
+    exit 1
 else
     printf "Tests are passing successfully\n\n"
 fi

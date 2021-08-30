@@ -13,11 +13,10 @@ import (
 	"syscall"
 	"time"
 
-	"go.uber.org/zap/zapcore"
-
 	"github.com/fsnotify/fsnotify"
 	"github.com/kelseyhightower/envconfig"
 	"go.uber.org/zap"
+	"go.uber.org/zap/zapcore"
 
 	"github.com/newrelic/k8s-metadata-injection/src/server"
 )
