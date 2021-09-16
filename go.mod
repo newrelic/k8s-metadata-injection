@@ -3,7 +3,7 @@ module github.com/newrelic/k8s-metadata-injection
 go 1.16
 
 require (
-	github.com/fsnotify/fsnotify v1.4.9
+	github.com/fsnotify/fsnotify v1.5.1
 	github.com/google/gofuzz v1.2.0 // indirect
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/stretchr/testify v1.7.0
