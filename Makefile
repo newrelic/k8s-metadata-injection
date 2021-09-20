@@ -2,7 +2,8 @@ BIN_DIR = ./bin
 TOOLS_DIR := $(BIN_DIR)/dev-tools
 BINARY_NAME ?= $(BIN_DIR)/k8s-metadata-injection
 DOCKER_IMAGE_NAME ?= newrelic/k8s-metadata-injection
-DOCKER_IMAGE_TAG ?= 1.5.0
+# This default tag is used during e2e test execution in the ci
+DOCKER_IMAGE_TAG ?= 1.6.0
 
 GOLANGCILINT_VERSION = 1.33.0
 
