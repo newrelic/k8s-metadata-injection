@@ -48,8 +48,6 @@ compile:
 
 .PHONY: build-container
 build-container:
-	grep -e "image: $(DOCKER_IMAGE_NAME):$(DOCKER_IMAGE_TAG)" deploy/newrelic-metadata-injection.yaml > /dev/null || \
-	( echo "Docker image tag being built $(DOCKER_IMAGE_TAG) is not synchronized with deployment yaml" && exit 1 )
 	docker build -t $(DOCKER_IMAGE_NAME):$(DOCKER_IMAGE_TAG) $$DOCKERARGS .
 
 .PHONY: test
@@ -66,6 +64,3 @@ e2e-test:
 benchmark-test:
 	@echo "[test] Running benchmark tests"
 	@go test -run=^Benchmark* -bench .
-
-deploy/combined.yaml: deploy/newrelic-metadata-injection.yaml deploy/job.yaml
-	echo '---' | cat deploy/newrelic-metadata-injection.yaml - deploy/job.yaml > deploy/combined.yaml

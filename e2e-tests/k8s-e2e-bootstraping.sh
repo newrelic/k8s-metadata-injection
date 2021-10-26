@@ -4,6 +4,7 @@ E2E_KUBERNETES_VERSION=${E2E_E2E_KUBERNETES_VERSION:-v1.16.0}
 E2E_MINIKUBE_VERSION=${E2E_E2E_MINIKUBE_VERSION:-latest}
 E2E_SETUP_MINIKUBE=${E2E_SETUP_MINIKUBE:-}
 E2E_SETUP_KUBECTL=${E2E_SETUP_KUBECTL:-}
+E2E_SETUP_HELM=${E2E_SETUP_HELM:-}
 E2E_START_MINIKUBE=${E2E_START_MINIKUBE:-}
 E2E_MINIKUBE_DRIVER=${E2E_MINIKUBE_DRIVER:-virtualbox}
 E2E_SUDO=${E2E_SUDO:-}
@@ -20,11 +21,15 @@ setup_kubectl() {
         && $E2E_SUDO mv kubectl /usr/local/bin/
 }
 
+setup_helm() {
+    curl -sL https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+}
+
 start_minikube() {
     export MINIKUBE_WANTREPORTERRORPROMPT=false
     export MINIKUBE_HOME=$HOME
     export CHANGE_MINIKUBE_NONE_USER=true
-    mkdir "$HOME"/.kube || true
+    mkdir -p "$HOME"/.kube
     touch "$HOME"/.kube/config
     export KUBECONFIG=$HOME/.kube/config
 
@@ -82,6 +87,7 @@ cd "$(dirname "$0")"
 minikube version
 
 [ -n "$E2E_SETUP_KUBECTL" ] && setup_kubectl
+[ -n "$E2E_SETUP_HELM" ] && setup_helm
 
 [ -n "$E2E_START_MINIKUBE" ] && start_minikube
 
@@ -113,3 +119,4 @@ fi
 set -e
 
 kubectl version
+helm version

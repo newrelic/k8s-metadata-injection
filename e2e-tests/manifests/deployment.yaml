@@ -18,6 +18,7 @@ spec:
       containers:
       - name: busybox
         image: busybox:latest
+        stdin: true
+        tty: true
         command:
-          - sleep
-          - "3600"
+          - cat

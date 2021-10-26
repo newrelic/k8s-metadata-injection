@@ -6,17 +6,14 @@ printf 'bootstrapping starts:\n'
 . "$(dirname "$0")/k8s-e2e-bootstraping.sh"
 printf 'bootstrapping complete\n'
 
-WEBHOOK_LABEL="app=newrelic-metadata-injection"
-JOB_LABEL="job-name=newrelic-metadata-setup"
-DEPLOYMENT_NAME="newrelic-metadata-injection-deployment"
+WEBHOOK_LABEL="app.kubernetes.io/name=nri-metadata-injection,app.kubernetes.io/instance=nri-mdi"
+DEPLOYMENT_NAME="nri-mdi-nri-metadata-injection"
 DUMMY_POD_LABEL="app=dummy"
 DUMMY_DEPLOYMENT_NAME="dummy-deployment"
 ENV_VARS_PREFIX="NEW_RELIC_METADATA_KUBERNETES"
 
 finish() {
-    printf "calling cleanup function\n"
-    kubectl --ignore-not-found=true delete -f ../deploy/ || true
-    kubectl --ignore-not-found=true delete -f manifests/ || true
+    helm uninstall nri-mdi
 }
 
 # ensure that we build docker image in minikube
@@ -34,16 +31,11 @@ finish() {
 trap finish EXIT
 
 # install the metadata-injection webhook
-kubectl -n default create -f ../deploy/job.yaml
-awk '/image: / { print; print "        imagePullPolicy: Never"; next }1' ../deploy/newrelic-metadata-injection.yaml | kubectl -n default create -f -
-
-job_pod_name=$(get_pod_name_by_label "$JOB_LABEL")
-if [ "$job_pod_name" = "" ]; then
-    printf "not found any pod with label %s\n" "$JOB_LABEL"
-    kubectl -n default get jobs
-    exit 1
+helm repo add newrelic https://helm-charts.newrelic.com
+helm install nri-mdi newrelic/nri-metadata-injection --set cluster=YOUR-CLUSTER-NAME
+if [ $? -ne 0 ]; then
+    printf "Helm failed to install this release\n"
 fi
-wait_for_pod "$job_pod_name" "Succeeded"
 
 webhook_pod_name=$(get_pod_name_by_label "$WEBHOOK_LABEL")
 if [ "$webhook_pod_name" = "" ]; then
@@ -81,7 +73,7 @@ printf "%s\n" "$env_vars"
 
 errors=""
 for PAIR in \
-           "CLUSTER_NAME            <YOUR_CLUSTER_NAME>" \
+           "CLUSTER_NAME            YOUR-CLUSTER-NAME" \
            "NODE_NAME               minikube" \
            "NAMESPACE_NAME          default" \
            "POD_NAME                ${pod_name}" \
