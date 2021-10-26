@@ -14,6 +14,9 @@ ENV_VARS_PREFIX="NEW_RELIC_METADATA_KUBERNETES"
 
 finish() {
     helm uninstall nri-mdi
+
+    printf "webhook logs:\n"
+    kubectl logs "$webhook_pod_name"
 }
 
 # ensure that we build docker image in minikube
@@ -40,34 +43,37 @@ fi
 webhook_pod_name=$(get_pod_name_by_label "$WEBHOOK_LABEL")
 if [ "$webhook_pod_name" = "" ]; then
     printf "not found any pod with label %s\n" "$WEBHOOK_LABEL"
-    kubectl -n default get deployments
-    kubectl -n default describe deployment "$DEPLOYMENT_NAME"
-    kubectl -n default get pods
+    kubectl get deployments
+    kubectl describe deployment "$DEPLOYMENT_NAME"
+    kubectl get pods
     exit 1
 fi
 wait_for_pod "$webhook_pod_name"
+sleep 10 # Wait 10 second more so the API Server can settle its cache 
 
 ### Testing
 
 # deploy a pod
-kubectl -n default create -f manifests/deployment.yaml
+kubectl create -f manifests/deployment.yaml
 
 pod_name="$(get_pod_name_by_label "$DUMMY_POD_LABEL")"
 if [ "$pod_name" = "" ]; then
     printf "not found any pod with label %s\n" "$DUMMY_POD_LABEL"
-    kubectl -n default describe deployment "$DUMMY_DEPLOYMENT_NAME"
+    kubectl describe deployment "$DUMMY_DEPLOYMENT_NAME"
     exit 1
 fi
 wait_for_pod "$pod_name"
 
-printf "webhook logs:\n"
-kubectl -n default logs "$webhook_pod_name"
+kubectl get pods
+kubectl describe pod "${pod_name}"
 
-kubectl -n default get pods
-kubectl -n default describe pod "${pod_name}"
 printf "getting env vars for %s\n" "${pod_name}"
-kubectl -n default exec "${pod_name}" -- env
-env_vars="$(kubectl -n default exec "${pod_name}" -- env | grep "${ENV_VARS_PREFIX}")"
+set +e # This grep can be empty in the webhook is not correctly running and we want logs and a proper error
+printf "+ date"
+date
+printf "+ kubectl exec \"${pod_name}\" -- env | grep \"${ENV_VARS_PREFIX}\""
+env_vars="$(kubectl exec "${pod_name}" -- env | grep "${ENV_VARS_PREFIX}")"
+set -e
 printf "\nInjected environment variables:\n"
 printf "%s\n" "$env_vars"
 
