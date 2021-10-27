@@ -6,18 +6,17 @@ printf 'bootstrapping starts:\n'
 . "$(dirname "$0")/k8s-e2e-bootstraping.sh"
 printf 'bootstrapping complete\n'
 
-WEBHOOK_LABEL="app.kubernetes.io/name=nri-metadata-injection,app.kubernetes.io/instance=nri-mdi"
-DEPLOYMENT_NAME="nri-metadata-injection"
+HELM_RELEASE_NAME="nri-metadata-injection"
+WEBHOOK_LABEL="app.kubernetes.io/name=nri-metadata-injection,app.kubernetes.io/instance=${HELM_RELEASE_NAME}"
 DUMMY_DEPLOYMENT_NAME="dummy-deployment"
 DUMMY_POD_LABEL="app=${DUMMY_DEPLOYMENT_NAME}"
 ENV_VARS_PREFIX="NEW_RELIC_METADATA_KUBERNETES"
-HELM_RELEASE_NAME="nri-metadata-injection"
 
 finish() {
     printf "webhook logs:\n"
-    kubectl logs "$webhook_pod_name" || true
+    kubectl logs "$(get_pod_name_by_label "$WEBHOOK_LABEL")" || true
 
-    helm uninstall "$HELM_RELEASE_NAME"
+    helm uninstall "$HELM_RELEASE_NAME" || true
     kubectl delete deployment ${DUMMY_DEPLOYMENT_NAME} || true
 }
 
@@ -27,9 +26,8 @@ finish() {
 # build webhook docker image
 
 # Set GOOS and GOARCH explicitly since Dockerfile expects them in the binary name
-(
-    GOOS=linux GOARCH=amd64 docker build -t newrelic/k8s-metadata-injection:e2e-test ..
-)
+GOOS=linux GOARCH=amd64 make -C .. compile
+GOOS=linux GOARCH=amd64 docker build -t newrelic/k8s-metadata-injection:e2e-test ..
 
 trap finish EXIT
 
