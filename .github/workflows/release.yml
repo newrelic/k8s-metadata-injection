@@ -37,7 +37,6 @@ jobs:
     env:
       DOCKER_IMAGE_NAME: newrelic/k8s-metadata-injection
       DOCKER_PLATFORMS: "linux/amd64,linux/arm64,linux/arm" # Must be consistent with the matrix from the job above
-      S3_PATH: s3://nr-downloads-main/infrastructure_agent
     steps:
       - name: Generate docker image version from git tag
         run: |
@@ -48,13 +47,8 @@ jobs:
       - if: ${{ github.event.release.prerelease }}
         run: |
           echo "DOCKER_IMAGE_TAG=${DOCKER_IMAGE_TAG}-pre" >> $GITHUB_ENV
-          echo "S3_PATH=$S3_PATH/test" >> $GITHUB_ENV
 
       - uses: actions/checkout@v2
-
-      - name: Check consistency of deployment yaml
-        run: |
-          grep -e "image: ${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG/-pre/}" deploy/newrelic-metadata-injection.yaml
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
@@ -82,20 +76,3 @@ jobs:
           docker buildx build --push --platform=$DOCKER_PLATFORMS \
             -t $DOCKER_IMAGE_NAME:latest \
             .
-
-      - uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.COREINT_AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.COREINT_AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1
-      - name: Upload versioned manifests to S3
-        run: |
-          make deploy/combined.yaml
-          aws s3 cp deploy/combined.yaml $S3_PATH/integrations/kubernetes/k8s-metadata-injection-${DOCKER_IMAGE_TAG}.yaml
-          aws s3 cp deploy/newrelic-metadata-injection.yaml $S3_PATH/integrations/kubernetes/k8s-metadata-injection-custom-certs-${DOCKER_IMAGE_TAG}.yaml
-      - name: Upload latest manifests to S3
-        if: ${{ ! github.event.release.prerelease }}
-        run: |
-          make deploy/combined.yaml
-          aws s3 cp deploy/combined.yaml $S3_PATH/integrations/kubernetes/k8s-metadata-injection-latest.yaml
-          aws s3 cp deploy/newrelic-metadata-injection.yaml $S3_PATH/integrations/kubernetes/k8s-metadata-injection-custom-certs-latest.yaml
