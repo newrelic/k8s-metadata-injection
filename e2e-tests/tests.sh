@@ -27,17 +27,19 @@ finish() {
 
 # Set GOOS and GOARCH explicitly since Dockerfile expects them in the binary name
 (
-    cd ..
-    GOOS=linux GOARCH=amd64 make compile build-container
-    cd -
+    GOOS=linux GOARCH=amd64 docker build -t newrelic/k8s-metadata-injection:e2e-test ..
 )
 
 trap finish EXIT
 
 # install the metadata-injection webhook
 helm repo add newrelic https://helm-charts.newrelic.com
-helm upgrade --install nri-metadata-injection newrelic/nri-metadata-injection --set cluster=YOUR-CLUSTER-NAME --wait
-if [ $? -ne 0 ]; then
+helm upgrade --install nri-metadata-injection newrelic/nri-metadata-injection \
+             --wait \
+             --set cluster=YOUR-CLUSTER-NAME \
+             --set image.pullPolicy=Never \
+             --set image.tag=e2e-test
+if [ "$?" -ne 0 ]; then
     printf "Helm failed to install this release\n"
     exit 1
 fi
@@ -45,7 +47,7 @@ fi
 ### Testing
 
 # deploy a pod
-kubectl create deployment dummy-deployment --image=nginx --dry-run=client -o yaml | kubectl apply -f-
+kubectl create deployment dummy-deployment --image=nginx:latest --dry-run=client -o yaml | kubectl apply -f-
 
 pod_name="$(get_pod_name_by_label "$DUMMY_POD_LABEL")"
 if [ "$pod_name" = "" ]; then
@@ -72,8 +74,8 @@ for PAIR in \
            "NODE_NAME               minikube" \
            "NAMESPACE_NAME          default" \
            "POD_NAME                ${pod_name}" \
-           "CONTAINER_NAME          busybox" \
-           "CONTAINER_IMAGE_NAME    busybox:latest" \
+           "CONTAINER_NAME          nginx" \
+           "CONTAINER_IMAGE_NAME    nginx:latest" \
            "DEPLOYMENT_NAME         dummy-deployment"
 do
     k=$(echo "$PAIR" | awk '{ print $1 }')

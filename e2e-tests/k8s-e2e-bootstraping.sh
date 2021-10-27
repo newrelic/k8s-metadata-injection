@@ -1,8 +1,7 @@
 #!/usr/bin/env sh
 
-E2E_KUBERNETES_VERSION=${E2E_E2E_KUBERNETES_VERSION:-v1.16.0}
-E2E_START_MINIKUBE=${E2E_START_MINIKUBE:-}
-E2E_MINIKUBE_DRIVER=${E2E_MINIKUBE_DRIVER:-virtualbox}
+E2E_KUBERNETES_VERSION=${E2E_KUBERNETES_VERSION:-v1.22.0}
+E2E_MINIKUBE_DRIVER=${E2E_MINIKUBE_DRIVER:-docker}
 E2E_SUDO=${E2E_SUDO:-}
 
 start_minikube() {
@@ -13,7 +12,8 @@ start_minikube() {
     touch "$HOME"/.kube/config
     export KUBECONFIG=$HOME/.kube/config
 
-    $E2E_SUDO minikube start --driver="$E2E_MINIKUBE_DRIVER" --kubernetes-version="$E2E_KUBERNETES_VERSION" --logtostderr
+    printf "Starting Minikube with Kubernetes version %s...\n" "${E2E_KUBERNETES_VERSION}"
+    $E2E_SUDO minikube start --vm-driver="$E2E_MINIKUBE_DRIVER" --kubernetes-version="$E2E_KUBERNETES_VERSION"
 }
 
 get_pod_name_by_label() {
@@ -62,10 +62,8 @@ wait_for_pod() {
 
 cd "$(dirname "$0")"
 
+start_minikube
 minikube version
-
-[ -n "$E2E_START_MINIKUBE" ] && start_minikube
-
 minikube update-context
 
 is_kube_running="false"
