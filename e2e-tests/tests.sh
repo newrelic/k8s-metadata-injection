@@ -7,16 +7,17 @@ printf 'bootstrapping starts:\n'
 printf 'bootstrapping complete\n'
 
 WEBHOOK_LABEL="app.kubernetes.io/name=nri-metadata-injection,app.kubernetes.io/instance=nri-mdi"
-DEPLOYMENT_NAME="nri-mdi-nri-metadata-injection"
-DUMMY_POD_LABEL="app=dummy"
+DEPLOYMENT_NAME="nri-metadata-injection"
+DUMMY_POD_LABEL="app=dummy-deployment"
 DUMMY_DEPLOYMENT_NAME="dummy-deployment"
 ENV_VARS_PREFIX="NEW_RELIC_METADATA_KUBERNETES"
 
 finish() {
-    helm uninstall nri-mdi
-
     printf "webhook logs:\n"
-    kubectl logs "$webhook_pod_name"
+    kubectl logs "$webhook_pod_name" || true
+
+    helm uninstall nri-mdi
+    kubectl delete deployment dummy-deployment || true
 }
 
 # ensure that we build docker image in minikube
@@ -35,7 +36,7 @@ trap finish EXIT
 
 # install the metadata-injection webhook
 helm repo add newrelic https://helm-charts.newrelic.com
-helm install nri-mdi newrelic/nri-metadata-injection --set cluster=YOUR-CLUSTER-NAME --wait
+helm upgrade --install nri-metadata-injection newrelic/nri-metadata-injection --set cluster=YOUR-CLUSTER-NAME --wait
 if [ $? -ne 0 ]; then
     printf "Helm failed to install this release\n"
     exit 1
@@ -44,7 +45,7 @@ fi
 ### Testing
 
 # deploy a pod
-kubectl create -f manifests/deployment.yaml
+kubectl create deployment dummy-deployment --image=nginx --dry-run=client -o yaml | kubectl apply -f-
 
 pod_name="$(get_pod_name_by_label "$DUMMY_POD_LABEL")"
 if [ "$pod_name" = "" ]; then
@@ -59,9 +60,7 @@ kubectl describe pod "${pod_name}"
 
 printf "getting env vars for %s\n" "${pod_name}"
 set +e # This grep can be empty in the webhook is not correctly running and we want logs and a proper error
-printf "+ date"
 date
-printf "+ kubectl exec \"${pod_name}\" -- env | grep \"${ENV_VARS_PREFIX}\""
 env_vars="$(kubectl exec "${pod_name}" -- env | grep "${ENV_VARS_PREFIX}")"
 set -e
 printf "\nInjected environment variables:\n"
