@@ -8,16 +8,17 @@ printf 'bootstrapping complete\n'
 
 WEBHOOK_LABEL="app.kubernetes.io/name=nri-metadata-injection,app.kubernetes.io/instance=nri-mdi"
 DEPLOYMENT_NAME="nri-metadata-injection"
-DUMMY_POD_LABEL="app=dummy-deployment"
 DUMMY_DEPLOYMENT_NAME="dummy-deployment"
+DUMMY_POD_LABEL="app=${DUMMY_DEPLOYMENT_NAME}"
 ENV_VARS_PREFIX="NEW_RELIC_METADATA_KUBERNETES"
+HELM_RELEASE_NAME="nri-metadata-injection"
 
 finish() {
     printf "webhook logs:\n"
     kubectl logs "$webhook_pod_name" || true
 
-    helm uninstall nri-mdi
-    kubectl delete deployment dummy-deployment || true
+    helm uninstall "$HELM_RELEASE_NAME"
+    kubectl delete deployment ${DUMMY_DEPLOYMENT_NAME} || true
 }
 
 # ensure that we build docker image in minikube
@@ -34,7 +35,7 @@ trap finish EXIT
 
 # install the metadata-injection webhook
 helm repo add newrelic https://helm-charts.newrelic.com
-helm upgrade --install nri-metadata-injection newrelic/nri-metadata-injection \
+helm upgrade --install "$HELM_RELEASE_NAME" newrelic/nri-metadata-injection \
              --wait \
              --set cluster=YOUR-CLUSTER-NAME \
              --set image.pullPolicy=Never \
@@ -47,7 +48,7 @@ fi
 ### Testing
 
 # deploy a pod
-kubectl create deployment dummy-deployment --image=nginx:latest --dry-run=client -o yaml | kubectl apply -f-
+kubectl create deployment "$DUMMY_DEPLOYMENT_NAME" --image=nginx:latest --dry-run=client -o yaml | kubectl apply -f-
 
 pod_name="$(get_pod_name_by_label "$DUMMY_POD_LABEL")"
 if [ "$pod_name" = "" ]; then
@@ -76,7 +77,7 @@ for PAIR in \
            "POD_NAME                ${pod_name}" \
            "CONTAINER_NAME          nginx" \
            "CONTAINER_IMAGE_NAME    nginx:latest" \
-           "DEPLOYMENT_NAME         dummy-deployment"
+           "DEPLOYMENT_NAME         ${DUMMY_DEPLOYMENT_NAME}"
 do
     k=$(echo "$PAIR" | awk '{ print $1 }')
     v=$(echo "$PAIR" | awk '{ print $2 }')
