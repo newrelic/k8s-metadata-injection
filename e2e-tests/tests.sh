@@ -35,21 +35,11 @@ trap finish EXIT
 
 # install the metadata-injection webhook
 helm repo add newrelic https://helm-charts.newrelic.com
-helm install nri-mdi newrelic/nri-metadata-injection --set cluster=YOUR-CLUSTER-NAME
+helm install nri-mdi newrelic/nri-metadata-injection --set cluster=YOUR-CLUSTER-NAME --wait
 if [ $? -ne 0 ]; then
     printf "Helm failed to install this release\n"
-fi
-
-webhook_pod_name=$(get_pod_name_by_label "$WEBHOOK_LABEL")
-if [ "$webhook_pod_name" = "" ]; then
-    printf "not found any pod with label %s\n" "$WEBHOOK_LABEL"
-    kubectl get deployments
-    kubectl describe deployment "$DEPLOYMENT_NAME"
-    kubectl get pods
     exit 1
 fi
-wait_for_pod "$webhook_pod_name"
-sleep 10 # Wait 10 second more so the API Server can settle its cache 
 
 ### Testing
 
