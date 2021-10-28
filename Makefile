@@ -3,7 +3,7 @@ TOOLS_DIR := $(BIN_DIR)/dev-tools
 BINARY_NAME ?= $(BIN_DIR)/k8s-metadata-injection
 DOCKER_IMAGE_NAME ?= newrelic/k8s-metadata-injection
 # This default tag is used during e2e test execution in the ci
-DOCKER_IMAGE_TAG ?= 1.6.0
+DOCKER_IMAGE_TAG ?= local-dev
 
 GOLANGCILINT_VERSION = 1.33.0
 
@@ -45,6 +45,10 @@ compile:
 	@echo "=== $(INTEGRATION) === [ compile ]: Building $(INTEGRATION)..."
 	go mod download
 	CGO_ENABLED=$(CGO_ENABLED) go build -o $(BINARY_NAME) ./cmd/server
+
+.PHONY: build-container
+build-container:
+	docker build -t $(DOCKER_IMAGE_NAME):$(DOCKER_IMAGE_TAG) $$DOCKERARGS .
 
 .PHONY: test
 test:

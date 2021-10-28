@@ -27,19 +27,18 @@ finish() {
 # build webhook docker image
 
 # Set GOOS and GOARCH explicitly since Dockerfile expects them in the binary name
-GOOS=linux GOARCH=amd64 make -C .. compile
-GOOS=linux GOARCH=amd64 docker build -t newrelic/k8s-metadata-injection:e2e-test ..
+GOOS="linux" GOARCH="amd64" DOCKER_IMAGE_TAG="e2e-test" make -C .. compile build-container
 
 trap finish EXIT
 
 # install the metadata-injection webhook
 helm repo add newrelic https://helm-charts.newrelic.com
-helm upgrade --install "$HELM_RELEASE_NAME" newrelic/nri-metadata-injection \
-             --wait \
-             --set cluster=YOUR-CLUSTER-NAME \
-             --set image.pullPolicy=Never \
-             --set image.tag=e2e-test
-if [ "$?" -ne 0 ]; then
+if ! helm upgrade --install "$HELM_RELEASE_NAME" newrelic/nri-metadata-injection \
+                --wait \
+                --set cluster=YOUR-CLUSTER-NAME \
+                --set image.pullPolicy=Never \
+                --set image.tag=e2e-test
+then
     printf "Helm failed to install this release\n"
     exit 1
 fi
@@ -86,7 +85,7 @@ do
 done
 
 if [ -n "$errors" ]; then
-    printf "Test errors:$errors\n"
+    printf "Test errors:%s\n" "$errors"
     exit 1
 else
     printf "Tests are passing successfully\n\n"
