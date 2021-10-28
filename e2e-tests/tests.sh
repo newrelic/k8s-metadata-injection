@@ -6,17 +6,19 @@ printf 'bootstrapping starts:\n'
 . "$(dirname "$0")/k8s-e2e-bootstraping.sh"
 printf 'bootstrapping complete\n'
 
-WEBHOOK_LABEL="app=newrelic-metadata-injection"
-JOB_LABEL="job-name=newrelic-metadata-setup"
-DEPLOYMENT_NAME="newrelic-metadata-injection-deployment"
-DUMMY_POD_LABEL="app=dummy"
+HELM_RELEASE_NAME="nri-metadata-injection"
+WEBHOOK_LABEL="app.kubernetes.io/name=nri-metadata-injection,app.kubernetes.io/instance=${HELM_RELEASE_NAME}"
 DUMMY_DEPLOYMENT_NAME="dummy-deployment"
+DUMMY_POD_LABEL="app=${DUMMY_DEPLOYMENT_NAME}"
 ENV_VARS_PREFIX="NEW_RELIC_METADATA_KUBERNETES"
+NAMESPACE_NAME="$(kubectl config view --minify --output 'jsonpath={..namespace}')"
 
 finish() {
-    printf "calling cleanup function\n"
-    kubectl --ignore-not-found=true delete -f ../deploy/ || true
-    kubectl --ignore-not-found=true delete -f manifests/ || true
+    printf "webhook logs:\n"
+    kubectl logs "$(get_pod_name_by_label "$WEBHOOK_LABEL")" || true
+
+    helm uninstall "$HELM_RELEASE_NAME" || true
+    kubectl delete deployment ${DUMMY_DEPLOYMENT_NAME} || true
 }
 
 # ensure that we build docker image in minikube
@@ -25,69 +27,55 @@ finish() {
 # build webhook docker image
 
 # Set GOOS and GOARCH explicitly since Dockerfile expects them in the binary name
-(
-    cd ..
-    GOOS=linux GOARCH=amd64 make compile build-container
-    cd -
-)
+GOOS="linux" GOARCH="amd64" DOCKER_IMAGE_TAG="e2e-test" make -C .. compile build-container
 
 trap finish EXIT
 
 # install the metadata-injection webhook
-kubectl -n default create -f ../deploy/job.yaml
-awk '/image: / { print; print "        imagePullPolicy: Never"; next }1' ../deploy/newrelic-metadata-injection.yaml | kubectl -n default create -f -
-
-job_pod_name=$(get_pod_name_by_label "$JOB_LABEL")
-if [ "$job_pod_name" = "" ]; then
-    printf "not found any pod with label %s\n" "$JOB_LABEL"
-    kubectl -n default get jobs
+helm repo add newrelic https://helm-charts.newrelic.com
+if ! helm upgrade --install "$HELM_RELEASE_NAME" newrelic/nri-metadata-injection \
+                --wait \
+                --set cluster=YOUR-CLUSTER-NAME \
+                --set image.pullPolicy=Never \
+                --set image.tag=e2e-test
+then
+    printf "Helm failed to install this release\n"
     exit 1
 fi
-wait_for_pod "$job_pod_name" "Succeeded"
-
-webhook_pod_name=$(get_pod_name_by_label "$WEBHOOK_LABEL")
-if [ "$webhook_pod_name" = "" ]; then
-    printf "not found any pod with label %s\n" "$WEBHOOK_LABEL"
-    kubectl -n default get deployments
-    kubectl -n default describe deployment "$DEPLOYMENT_NAME"
-    kubectl -n default get pods
-    exit 1
-fi
-wait_for_pod "$webhook_pod_name"
 
 ### Testing
 
 # deploy a pod
-kubectl -n default create -f manifests/deployment.yaml
+kubectl create deployment "$DUMMY_DEPLOYMENT_NAME" --image=nginx:latest --dry-run=client -o yaml | kubectl apply -f-
 
 pod_name="$(get_pod_name_by_label "$DUMMY_POD_LABEL")"
 if [ "$pod_name" = "" ]; then
     printf "not found any pod with label %s\n" "$DUMMY_POD_LABEL"
-    kubectl -n default describe deployment "$DUMMY_DEPLOYMENT_NAME"
+    kubectl describe deployment "$DUMMY_DEPLOYMENT_NAME"
     exit 1
 fi
 wait_for_pod "$pod_name"
 
-printf "webhook logs:\n"
-kubectl -n default logs "$webhook_pod_name"
+kubectl get pods
+kubectl describe pod "${pod_name}"
 
-kubectl -n default get pods
-kubectl -n default describe pod "${pod_name}"
 printf "getting env vars for %s\n" "${pod_name}"
-kubectl -n default exec "${pod_name}" -- env
-env_vars="$(kubectl -n default exec "${pod_name}" -- env | grep "${ENV_VARS_PREFIX}")"
+set +e # This grep can be empty in the webhook is not correctly running and we want logs and a proper error
+date
+env_vars="$(kubectl exec "${pod_name}" -- env | grep "${ENV_VARS_PREFIX}")"
+set -e
 printf "\nInjected environment variables:\n"
 printf "%s\n" "$env_vars"
 
 errors=""
 for PAIR in \
-           "CLUSTER_NAME            <YOUR_CLUSTER_NAME>" \
+           "CLUSTER_NAME            YOUR-CLUSTER-NAME" \
            "NODE_NAME               minikube" \
-           "NAMESPACE_NAME          default" \
+           "NAMESPACE_NAME          ${NAMESPACE_NAME}" \
            "POD_NAME                ${pod_name}" \
-           "CONTAINER_NAME          busybox" \
-           "CONTAINER_IMAGE_NAME    busybox:latest" \
-           "DEPLOYMENT_NAME         dummy-deployment"
+           "CONTAINER_NAME          nginx" \
+           "CONTAINER_IMAGE_NAME    nginx:latest" \
+           "DEPLOYMENT_NAME         ${DUMMY_DEPLOYMENT_NAME}"
 do
     k=$(echo "$PAIR" | awk '{ print $1 }')
     v=$(echo "$PAIR" | awk '{ print $2 }')
@@ -97,7 +85,7 @@ do
 done
 
 if [ -n "$errors" ]; then
-    printf "Test errors:$errors\n"
+    printf "Test errors:%s\n" "$errors"
     exit 1
 else
     printf "Tests are passing successfully\n\n"

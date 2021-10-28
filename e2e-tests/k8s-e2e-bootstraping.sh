@@ -1,34 +1,19 @@
 #!/usr/bin/env sh
 
-E2E_KUBERNETES_VERSION=${E2E_E2E_KUBERNETES_VERSION:-v1.16.0}
-E2E_MINIKUBE_VERSION=${E2E_E2E_MINIKUBE_VERSION:-latest}
-E2E_SETUP_MINIKUBE=${E2E_SETUP_MINIKUBE:-}
-E2E_SETUP_KUBECTL=${E2E_SETUP_KUBECTL:-}
-E2E_START_MINIKUBE=${E2E_START_MINIKUBE:-}
-E2E_MINIKUBE_DRIVER=${E2E_MINIKUBE_DRIVER:-virtualbox}
+E2E_KUBERNETES_VERSION=${E2E_KUBERNETES_VERSION:-v1.22.0}
+E2E_MINIKUBE_DRIVER=${E2E_MINIKUBE_DRIVER:-docker}
 E2E_SUDO=${E2E_SUDO:-}
-
-setup_minikube() {
-    curl -sLo minikube https://storage.googleapis.com/minikube/releases/"$E2E_MINIKUBE_VERSION"/minikube-linux-amd64 \
-        && chmod +x minikube \
-        && $E2E_SUDO mv minikube /usr/local/bin/
-}
-
-setup_kubectl() {
-    curl -sLo kubectl https://storage.googleapis.com/kubernetes-release/release/"$E2E_KUBERNETES_VERSION"/bin/linux/amd64/kubectl \
-        && chmod +x kubectl \
-        && $E2E_SUDO mv kubectl /usr/local/bin/
-}
 
 start_minikube() {
     export MINIKUBE_WANTREPORTERRORPROMPT=false
     export MINIKUBE_HOME=$HOME
     export CHANGE_MINIKUBE_NONE_USER=true
-    mkdir "$HOME"/.kube || true
+    mkdir -p "$HOME"/.kube
     touch "$HOME"/.kube/config
     export KUBECONFIG=$HOME/.kube/config
 
-    $E2E_SUDO minikube start --driver="$E2E_MINIKUBE_DRIVER" --kubernetes-version="$E2E_KUBERNETES_VERSION" --logtostderr
+    printf "Starting Minikube with Kubernetes version %s...\n" "${E2E_KUBERNETES_VERSION}"
+    $E2E_SUDO minikube start --vm-driver="$E2E_MINIKUBE_DRIVER" --kubernetes-version="$E2E_KUBERNETES_VERSION"
 }
 
 get_pod_name_by_label() {
@@ -77,14 +62,8 @@ wait_for_pod() {
 
 cd "$(dirname "$0")"
 
-[ -n "$E2E_SETUP_MINIKUBE" ] && setup_minikube
-
+start_minikube
 minikube version
-
-[ -n "$E2E_SETUP_KUBECTL" ] && setup_kubectl
-
-[ -n "$E2E_START_MINIKUBE" ] && start_minikube
-
 minikube update-context
 
 is_kube_running="false"
@@ -111,5 +90,3 @@ if [ $is_kube_running = "false" ]; then
    exit 1
 fi
 set -e
-
-kubectl version
