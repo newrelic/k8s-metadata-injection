@@ -46,10 +46,6 @@ compile:
 	go mod download
 	CGO_ENABLED=$(CGO_ENABLED) go build -o $(BINARY_NAME) ./cmd/server
 
-.PHONY: build-container
-build-container:
-	docker build -t $(DOCKER_IMAGE_NAME):$(DOCKER_IMAGE_TAG) $$DOCKERARGS .
-
 .PHONY: test
 test:
 	@echo "[test] Running unit tests"

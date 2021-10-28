@@ -11,6 +11,7 @@ WEBHOOK_LABEL="app.kubernetes.io/name=nri-metadata-injection,app.kubernetes.io/i
 DUMMY_DEPLOYMENT_NAME="dummy-deployment"
 DUMMY_POD_LABEL="app=${DUMMY_DEPLOYMENT_NAME}"
 ENV_VARS_PREFIX="NEW_RELIC_METADATA_KUBERNETES"
+NAMESPACE_NAME="$(kubectl config view --minify --output 'jsonpath={..namespace}')"
 
 finish() {
     printf "webhook logs:\n"
@@ -71,7 +72,7 @@ errors=""
 for PAIR in \
            "CLUSTER_NAME            YOUR-CLUSTER-NAME" \
            "NODE_NAME               minikube" \
-           "NAMESPACE_NAME          default" \
+           "NAMESPACE_NAME          ${NAMESPACE_NAME}" \
            "POD_NAME                ${pod_name}" \
            "CONTAINER_NAME          nginx" \
            "CONTAINER_IMAGE_NAME    nginx:latest" \
