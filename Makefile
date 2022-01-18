@@ -5,7 +5,7 @@ DOCKER_IMAGE_NAME ?= newrelic/k8s-metadata-injection
 # This default tag is used during e2e test execution in the ci
 DOCKER_IMAGE_TAG ?= local-dev
 
-GOLANGCILINT_VERSION = 1.33.0
+GOLANGCILINT_VERSION = 1.43.0
 
 # required for enabling Go modules inside $GOPATH
 export GO111MODULE=on
