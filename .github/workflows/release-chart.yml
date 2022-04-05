@@ -1,4 +1,4 @@
-name: Release newrelic infrastructure chart
+name: Release k8s-metadata-injection chart
 on:
   push:
     branches:
