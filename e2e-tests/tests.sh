@@ -33,7 +33,8 @@ trap finish EXIT
 
 # install the metadata-injection webhook
 helm repo add newrelic https://helm-charts.newrelic.com
-if ! helm upgrade --install "$HELM_RELEASE_NAME" newrelic/nri-metadata-injection \
+helm dependency update ../charts/nri-metadata-injection
+if ! helm upgrade --install "$HELM_RELEASE_NAME" ../charts/nri-metadata-injection \
                 --wait \
                 --set cluster=YOUR-CLUSTER-NAME \
                 --set image.pullPolicy=Never \
