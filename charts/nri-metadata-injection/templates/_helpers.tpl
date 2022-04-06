@@ -8,26 +8,6 @@ Create chart name and version as used by the chart label.
 {{- end -}}
 
 {{/*
-Common app label
-*/}}
-{{- define "nri-metadata-injection.appLabel" -}}
-app.kubernetes.io/name: {{ include "common.naming.name" . }}
-{{- end -}}
-
-{{/*
-Common labels
-*/}}
-{{- define "nri-metadata-injection.labels" -}}
-{{ include "nri-metadata-injection.appLabel" . }}
-helm.sh/chart: {{ include "nri-metadata-injection.chart" . }}
-app.kubernetes.io/instance: {{ .Release.Name }}
-{{- if .Chart.AppVersion }}
-app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
-{{- end }}
-app.kubernetes.io/managed-by: {{ .Release.Service }}
-{{- end -}}
-
-{{/*
 Create the name of the service account to use
 */}}
 {{- define "nri-metadata-injection.serviceAccountName" -}}

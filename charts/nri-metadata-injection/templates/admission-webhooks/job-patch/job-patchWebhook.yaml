@@ -9,14 +9,14 @@ metadata:
     "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
   labels:
     app: {{ include "common.naming.name" $ }}-admission-patch
-{{ include "nri-metadata-injection.labels" $ | indent 4 }}
+{{ include "common.labels" $ | indent 4 }}
 spec:
   template:
     metadata:
       name: {{ include "common.naming.fullname" . }}-admission-patch
       labels:
         app: {{ include "common.naming.name" $ }}-admission-patch
-{{ include "nri-metadata-injection.labels" $ | indent 8 }}
+{{ include "common.labels" $ | indent 8 }}
     spec:
       {{- if .Values.jobImage.pullSecrets }}
       imagePullSecrets:
