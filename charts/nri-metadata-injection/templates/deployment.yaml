@@ -2,7 +2,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ template "nri-metadata-injection.fullname" . }}
+  name: {{ include "common.naming.fullname" . }}
   namespace: {{ .Release.Namespace }}
   labels:
     {{- include "nri-metadata-injection.labels" . | nindent 4 }}
@@ -35,7 +35,7 @@ spec:
 {{ toYaml .Values.image.pullSecrets | indent 8 }}
       {{- end }}
       containers:
-      - name: {{ template "nri-metadata-injection.name" . }}
+      - name: {{ include "common.naming.name" . }}
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
         imagePullPolicy: "{{ .Values.image.pullPolicy }}"
         env:
@@ -60,7 +60,7 @@ spec:
       volumes:
       - name: tls-key-cert-pair
         secret:
-          secretName: {{ template "nri-metadata-injection.fullname" . }}-admission
+          secretName: {{ include "common.naming.fullname" . }}-admission
       {{- if $.Values.priorityClassName }}
       priorityClassName: {{ $.Values.priorityClassName }}
       {{- end }}

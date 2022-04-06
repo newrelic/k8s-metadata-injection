@@ -1,11 +1,11 @@
 apiVersion: admissionregistration.k8s.io/v1
 kind: MutatingWebhookConfiguration
 metadata:
-  name: {{ template "nri-metadata-injection.fullname" . }}
+  name: {{ include "common.naming.fullname" . }}
 {{- if .Values.certManager.enabled }}
   annotations:
-    certmanager.k8s.io/inject-ca-from: {{ printf "%s/%s-root-cert" .Release.Namespace (include "nri-metadata-injection.fullname" .) | quote }}
-    cert-manager.io/inject-ca-from: {{ printf "%s/%s-root-cert" .Release.Namespace (include "nri-metadata-injection.fullname" .) | quote }}
+    certmanager.k8s.io/inject-ca-from: {{ printf "%s/%s-root-cert" .Release.Namespace (include "common.naming.fullname" .) | quote }}
+    cert-manager.io/inject-ca-from: {{ printf "%s/%s-root-cert" .Release.Namespace (include "common.naming.fullname" .) | quote }}
 {{- end }}
   labels:
     {{- include "nri-metadata-injection.labels" . | nindent 4 }}
@@ -13,7 +13,7 @@ webhooks:
 - name: metadata-injection.newrelic.com
   clientConfig:
     service:
-      name: {{ template "nri-metadata-injection.fullname" . }}
+      name: {{ include "common.naming.fullname" . }}
       namespace: {{ .Release.Namespace }}
       path: "/mutate"
 {{- if not .Values.certManager.enabled }}

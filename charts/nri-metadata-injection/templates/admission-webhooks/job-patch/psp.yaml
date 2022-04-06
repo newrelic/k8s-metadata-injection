@@ -2,12 +2,12 @@
 apiVersion: policy/v1beta1
 kind: PodSecurityPolicy
 metadata:
-  name: {{ template "nri-metadata-injection.fullname" . }}-admission
+  name: {{ include "common.naming.fullname" . }}-admission
   annotations:
     "helm.sh/hook": pre-install,pre-upgrade,post-install,post-upgrade
     "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
   labels:
-    app: {{ template "nri-metadata-injection.name" . }}-admission
+    app: {{ include "common.naming.name" . }}-admission
 {{ include "nri-metadata-injection.labels" . | indent 4 }}
 spec:
   privileged: false
