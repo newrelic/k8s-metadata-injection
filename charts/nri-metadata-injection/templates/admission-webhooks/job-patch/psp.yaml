@@ -8,7 +8,7 @@ metadata:
     "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
   labels:
     app: {{ include "common.naming.name" . }}-admission
-{{ include "nri-metadata-injection.labels" . | indent 4 }}
+{{ include "common.labels" . | indent 4 }}
 spec:
   privileged: false
   # Required to prevent escalations to root.
