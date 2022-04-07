@@ -76,11 +76,11 @@ jobs:
       - uses: actions/setup-go@v2
         if: steps.list-changed.outputs.changed == 'true'
         with:
-          go-version: '1.18'
+          go-version: '1.17'
       - name: Create image for chart testing
         if: steps.list-changed.outputs.changed == 'true'
         run: |
-          GOOS=linux GOARCH=amd64 make build # Set GOOS and GOARCH explicitly since Dockerfile expects them in the binary name
+          GOOS=linux GOARCH=amd64 make compile # Set GOOS and GOARCH explicitly since Dockerfile expects them in the binary name
           DOCKER_BUILDKIT=1 docker build -t e2e/metadata-injection:test  .
           minikube image load e2e/metadata-injection:test
           kubectl create ns ct
