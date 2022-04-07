@@ -19,21 +19,6 @@ Create the name of the service account to use
 {{- end -}}
 
 {{/*
-Return the cluster
-*/}}
-{{- define "nri-metadata-injection.cluster" -}}
-{{- if .Values.global -}}
-  {{- if .Values.global.cluster -}}
-      {{- .Values.global.cluster -}}
-  {{- else -}}
-      {{- .Values.cluster | default "" -}}
-  {{- end -}}
-{{- else -}}
-  {{- .Values.cluster | default "" -}}
-{{- end -}}
-{{- end -}}
-
-{{/*
 Renders a value that contains template.
 Usage:
 {{ include "tplvalues.render" ( dict "value" .Values.path.to.the.Value "context" $) }}

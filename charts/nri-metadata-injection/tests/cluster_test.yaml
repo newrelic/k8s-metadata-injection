@@ -1,0 +1,21 @@
+suite: test cluster environment variable setup
+templates:
+  - templates/deployment.yaml
+release:
+  name: release
+  namespace: ns
+tests:
+  - it: clusterName env is properly set
+    set:
+      cluster: my-cluster
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].env[0].name
+          value: clusterName
+      - equal:
+          path: spec.template.spec.containers[0].env[0].value
+          value: my-cluster
+  - it: fail when cluster is not defined
+    asserts:
+      - failedTemplate:
+          errorMessage: There is not cluster name definition set neither in `.global.cluster' nor `.cluster' in your values.yaml. Cluster name is required.
