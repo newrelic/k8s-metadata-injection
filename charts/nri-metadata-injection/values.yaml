@@ -1,5 +1,6 @@
 # IMPORTANT: The Kubernetes cluster name
 # https://docs.newrelic.com/docs/kubernetes-monitoring-integration
+# It can also be set as global so that it is shared by other newrelic product's charts.
 # cluster: ""
 
 # Enable the metadata decoration only for pods living in namespaces labeled
