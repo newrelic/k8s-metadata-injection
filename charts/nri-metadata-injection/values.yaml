@@ -8,6 +8,7 @@
 injectOnlyLabeledNamespaces: false
 
 image:
+  registry:
   repository: newrelic/k8s-metadata-injection
   tag: ""  # Defaults to chart's appVersion
   pullPolicy: IfNotPresent
@@ -17,6 +18,7 @@ image:
     # - name: regsecret
 
 jobImage:
+  registry:
   repository: k8s.gcr.io/ingress-nginx/kube-webhook-certgen
   tag: v1.1.1
   pullPolicy: IfNotPresent
