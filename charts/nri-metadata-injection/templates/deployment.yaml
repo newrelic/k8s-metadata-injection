@@ -23,11 +23,9 @@ spec:
       # done explicitly, otherwise upgrade fails, trying to use old
       # service account.
       serviceAccount: default
-      {{- if .Values.podSecurityContext.enabled }}
+      {{- with include "common.securityContext.pod" . }}
       securityContext:
-        runAsUser: {{ .Values.podSecurityContext.runAsUser }}
-        runAsGroup: {{ .Values.podSecurityContext.runAsGroup }}
-        fsGroup: {{ .Values.podSecurityContext.fsGroup }}
+        {{- . | nindent 8 -}}
       {{- end }}
       {{- if .Values.image.pullSecrets }}
       imagePullSecrets:
@@ -37,6 +35,10 @@ spec:
       - name: {{ include "common.naming.name" . }}
         image: {{ include "common.images.image" ( dict "imageRoot" .Values.image "context" .) }}
         imagePullPolicy: "{{ .Values.image.pullPolicy }}"
+        {{- with include "common.securityContext.container" . }}
+        securityContext:
+          {{- . | nindent 10 }}
+        {{- end }}
         env:
         - name: clusterName
           value: {{ include "common.cluster" . }}
