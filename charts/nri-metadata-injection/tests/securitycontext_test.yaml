@@ -1,0 +1,42 @@
+suite: test securityContext setup
+templates:
+  - templates/deployment.yaml
+release:
+  name: release
+  namespace: ns
+tests:
+  - it: default pod security context is not set by default
+    set:
+      cluster: my-cluster
+    asserts:
+      - isNull:
+          path: spec.template.spec.securityContext
+  - it: custom pod security context values
+    set:
+      cluster: my-cluster
+      podSecurityContext:
+        fsGroup: 1002
+        runAsUser: 1002
+        runAsGroup: 1002
+    asserts:
+      - equal:
+          path: spec.template.spec.securityContext
+          value:
+            fsGroup: 1002
+            runAsUser: 1002
+            runAsGroup: 1002
+  - it: container security context is not set by default
+    set:
+      cluster: my-cluster
+      asserts:
+        - isNull:
+            path: spec.template.spec.containers[0].securityContext
+  - it: container security context custom values
+    set:
+      cluster: my-cluster
+      containerSecurityContext:
+        allowPrivilegeEscalation: false
+      asserts:
+        - equal:
+            path: spec.template.spec.containers[0].securityContext.allowPrivilegeEscalation
+            value: false
