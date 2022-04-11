@@ -62,8 +62,9 @@ spec:
       - name: tls-key-cert-pair
         secret:
           secretName: {{ include "common.naming.fullname" . }}-admission
-      {{- if $.Values.priorityClassName }}
-      priorityClassName: {{ $.Values.priorityClassName }}
+      {{- with include "common.priorityClassName" . }}
+      priorityClassName:
+        {{- . | nindent 8 -}}
       {{- end }}
       {{- with include "common.nodeSelector" . }}
       nodeSelector:
