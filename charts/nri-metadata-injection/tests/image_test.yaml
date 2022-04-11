@@ -1,17 +1,17 @@
 suite: test docker images references
-chart:
-  appVersion: 1.7.0
 release:
   name: release
   namespace: ns
 tests:
   - it: deployment image defaults to chart's appVersion
+    chart:
+      appVersion: 9.9.9-mock # override chart's appVersion to keep test independent.
     set:
       cluster: my-cluster
     asserts:
       - equal:
           path: spec.template.spec.containers[0].image
-          value: newrelic/k8s-metadata-injection:1.7.0
+          value: newrelic/k8s-metadata-injection:9.9.9-mock
         template: templates/deployment.yaml
   - it: deployment image uses specified tag
     set:
