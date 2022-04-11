@@ -8,15 +8,15 @@ metadata:
     "helm.sh/hook": post-install,post-upgrade
     "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
   labels:
-    app: {{ include "common.naming.name" $ }}-admission-patch
-{{ include "common.labels" $ | indent 4 }}
+    {{- include "common.labels" . | nindent 4 }}
+    app: {{ include "common.naming.name" . }}-admission-patch
 spec:
   template:
     metadata:
       name: {{ include "common.naming.fullname" . }}-admission-patch
       labels:
-        app: {{ include "common.naming.name" $ }}-admission-patch
-{{ include "common.labels" $ | indent 8 }}
+        {{- include "common.labels" . | nindent 8 }}
+        app: {{ include "common.naming.name" . }}-admission-patch
     spec:
       {{- if .Values.jobImage.pullSecrets }}
       imagePullSecrets:
