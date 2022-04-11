@@ -24,7 +24,7 @@ spec:
       {{- end }}
       containers:
         - name: patch
-          image: {{ .Values.jobImage.repository }}:{{ .Values.jobImage.tag }}
+          image: {{ include "common.images.image" ( dict "imageRoot" .Values.jobImage "context" .) }}
           imagePullPolicy: {{ .Values.jobImage.pullPolicy }}
           args:
             - patch
