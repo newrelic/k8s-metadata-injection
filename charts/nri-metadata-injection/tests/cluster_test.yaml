@@ -9,12 +9,11 @@ tests:
     set:
       cluster: my-cluster
     asserts:
-      - equal:
-          path: spec.template.spec.containers[0].env[0].name
-          value: clusterName
-      - equal:
-          path: spec.template.spec.containers[0].env[0].value
-          value: my-cluster
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: clusterName
+            value: my-cluster
   - it: fail when cluster is not defined
     asserts:
       - failedTemplate:
