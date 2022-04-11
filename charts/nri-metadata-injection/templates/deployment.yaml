@@ -65,9 +65,9 @@ spec:
       {{- if $.Values.priorityClassName }}
       priorityClassName: {{ $.Values.priorityClassName }}
       {{- end }}
-      {{- if $.Values.nodeSelector }}
+      {{- with include "common.nodeSelector" . }}
       nodeSelector:
-{{ toYaml $.Values.nodeSelector | indent 8 }}
+        {{- . | nindent 8 -}}
       {{- end }}
       {{- if .Values.tolerations }}
       tolerations:
