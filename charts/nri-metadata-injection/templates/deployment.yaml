@@ -19,10 +19,6 @@ spec:
       labels:
         {{- include "common.labels" . | nindent 8 }}
     spec:
-      # Switching from dedicated service account to default one must be
-      # done explicitly, otherwise upgrade fails, trying to use old
-      # service account.
-      serviceAccount: default
       {{- with include "common.securityContext.pod" . }}
       securityContext:
         {{- . | nindent 8 -}}

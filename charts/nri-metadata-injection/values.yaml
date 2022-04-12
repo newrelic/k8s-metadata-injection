@@ -44,17 +44,6 @@ resources:
     cpu: 100m
     memory: 30M
 
-serviceAccount:
-  # Specifies whether a ServiceAccount should be created for the job and
-  # the deployment.
-  #
-  # When `customTLSCertificate` is set to true, the service account is not
-  # necessary and it's not created in the case of `create=true`.
-  create: true
-  # The name of the ServiceAccount to use.
-  # If not set and create is true, a name is generated using the fullname template
-  name:
-
 # Configure podSecurityContext
 podSecurityContext:
 
