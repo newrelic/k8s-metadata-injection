@@ -10,15 +10,17 @@ engine: gotpl
 icon: https://newrelic.com/assets/newrelic/source/NewRelic-logo-square.svg
 dependencies:
   - name: common-library
-    version: 0.17.0
+    version: 1.0.0
     repository: "https://helm-charts.newrelic.com"
 maintainers:
   - name: alvarocabanas
   - name: carlossscastro
   - name: gsanchezgavier
   - name: kang-makes
+  - name: marcsanmi
   - name: paologallinaharbur
   - name: roobre
+  - name: sigilioso
 keywords:
   - infrastructure
   - newrelic

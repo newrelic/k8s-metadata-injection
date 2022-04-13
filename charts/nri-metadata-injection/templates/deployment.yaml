@@ -1,15 +1,15 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "common.naming.fullname" . }}
+  name: {{ include "newrelic.common.naming.fullname" . }}
   namespace: {{ .Release.Namespace }}
   labels:
-    {{- include "common.labels" . | nindent 4 }}
+    {{- include "newrelic.common.labels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.replicas }}
   selector:
     matchLabels:
-      {{- include "common.labels.selectorLabels" . | nindent 6 }}
+      {{- include "newrelic.common.labels.selectorLabels" . | nindent 6 }}
   template:
     metadata:
 {{- if .Values.podAnnotations }}
@@ -17,27 +17,27 @@ spec:
 {{ toYaml .Values.podAnnotations | indent 8}}
 {{- end }}
       labels:
-        {{- include "common.labels" . | nindent 8 }}
+        {{- include "newrelic.common.labels" . | nindent 8 }}
     spec:
-      {{- with include "common.securityContext.pod" . }}
+      {{- with include "newrelic.common.securityContext.pod" . }}
       securityContext:
         {{- . | nindent 8 -}}
       {{- end }}
       {{- if .Values.image.pullSecrets }}
       imagePullSecrets:
-        {{- include "common.images.renderPullSecrets" ( dict "pullSecrets" ( list .Values.image.pullSecrets ) "context" .) | nindent 8 -}}
+        {{- include "newrelic.common.images.renderPullSecrets" ( dict "pullSecrets" ( list .Values.image.pullSecrets ) "context" .) | nindent 8 -}}
       {{- end }}
       containers:
-      - name: {{ include "common.naming.name" . }}
-        image: {{ include "common.images.image" ( dict "imageRoot" .Values.image "context" .) }}
+      - name: {{ include "newrelic.common.naming.name" . }}
+        image: {{ include "newrelic.common.images.image" ( dict "imageRoot" .Values.image "context" .) }}
         imagePullPolicy: "{{ .Values.image.pullPolicy }}"
-        {{- with include "common.securityContext.container" . }}
+        {{- with include "newrelic.common.securityContext.container" . }}
         securityContext:
           {{- . | nindent 10 }}
         {{- end }}
         env:
         - name: clusterName
-          value: {{ include "common.cluster" . }}
+          value: {{ include "newrelic.common.cluster" . }}
         ports:
           - containerPort: 8443
             protocol: TCP
@@ -57,20 +57,20 @@ spec:
       volumes:
       - name: tls-key-cert-pair
         secret:
-          secretName: {{ include "common.naming.fullname" . }}-admission
-      {{- with include "common.priorityClassName" . }}
+          secretName: {{ include "newrelic.common.naming.fullname" . }}-admission
+      {{- with include "newrelic.common.priorityClassName" . }}
       priorityClassName:
         {{- . | nindent 8 -}}
       {{- end }}
-      {{- with include "common.nodeSelector" . }}
+      {{- with include "newrelic.common.nodeSelector" . }}
       nodeSelector:
         {{- . | nindent 8 -}}
       {{- end }}
-      {{- with include "common.tolerations" . }}
+      {{- with include "newrelic.common.tolerations" . }}
       tolerations:
         {{- . | nindent 8 -}}
       {{- end }}
-      {{- with include "common.affinity" . }}
+      {{- with include "newrelic.common.affinity" . }}
       affinity:
         {{- . | nindent 8 -}}
       {{- end }}

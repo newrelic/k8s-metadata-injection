@@ -2,21 +2,21 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: {{ include "common.naming.fullname" . }}-admission-patch
+  name: {{ include "newrelic.common.naming.fullname" . }}-admission-patch
   namespace: {{ .Release.Namespace }}
   annotations:
     "helm.sh/hook": post-install,post-upgrade
     "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
   labels:
-    {{- include "common.labels" . | nindent 4 }}
-    app: {{ include "common.naming.name" . }}-admission-patch
+    {{- include "newrelic.common.labels" . | nindent 4 }}
+    app: {{ include "newrelic.common.naming.name" . }}-admission-patch
 spec:
   template:
     metadata:
-      name: {{ include "common.naming.fullname" . }}-admission-patch
+      name: {{ include "newrelic.common.naming.fullname" . }}-admission-patch
       labels:
-        {{- include "common.labels" . | nindent 8 }}
-        app: {{ include "common.naming.name" . }}-admission-patch
+        {{- include "newrelic.common.labels" . | nindent 8 }}
+        app: {{ include "newrelic.common.naming.name" . }}-admission-patch
     spec:
       {{- if .Values.jobImage.pullSecrets }}
       imagePullSecrets:
@@ -24,13 +24,13 @@ spec:
       {{- end }}
       containers:
         - name: patch
-          image: {{ include "common.images.image" ( dict "imageRoot" .Values.jobImage "context" .) }}
+          image: {{ include "newrelic.common.images.image" ( dict "imageRoot" .Values.jobImage "context" .) }}
           imagePullPolicy: {{ .Values.jobImage.pullPolicy }}
           args:
             - patch
-            - --webhook-name={{ include "common.naming.fullname" . }}
+            - --webhook-name={{ include "newrelic.common.naming.fullname" . }}
             - --namespace={{ .Release.Namespace }}
-            - --secret-name={{ include "common.naming.fullname" . }}-admission
+            - --secret-name={{ include "newrelic.common.naming.fullname" . }}-admission
             - --patch-failure-policy=Ignore
             - --patch-validating=false
           {{- if .Values.jobImage.volumeMounts }}
@@ -42,7 +42,7 @@ spec:
       {{- include "tplvalues.render" ( dict "value" .Values.jobImage.volumes "context" $ ) | nindent 8 }}
       {{- end }}
       restartPolicy: OnFailure
-      serviceAccountName: {{ include "common.naming.fullname" . }}-admission
+      serviceAccountName: {{ include "newrelic.common.naming.fullname" . }}-admission
       securityContext:
         runAsGroup: 2000
         runAsNonRoot: true
