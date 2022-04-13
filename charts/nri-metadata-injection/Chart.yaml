@@ -1,27 +1,41 @@
 apiVersion: v2
-description: A Helm chart to deploy the New Relic metadata injection webhook.
+
 name: nri-metadata-injection
-version: 2.3.0
-appVersion: 1.7.0
+description: A Helm chart to deploy the New Relic metadata injection webhook.
+
 home: https://hub.docker.com/r/newrelic/k8s-metadata-injection
+icon: https://newrelic.com/assets/newrelic/source/NewRelic-logo-square.svg
 sources:
   - https://github.com/newrelic/k8s-metadata-injection
-engine: gotpl
-icon: https://newrelic.com/assets/newrelic/source/NewRelic-logo-square.svg
-dependencies:
-  - name: common-library
-    version: 1.0.0
-    repository: "https://helm-charts.newrelic.com"
-maintainers:
-  - name: alvarocabanas
-  - name: carlossscastro
-  - name: gsanchezgavier
-  - name: kang-makes
-  - name: marcsanmi
-  - name: paologallinaharbur
-  - name: roobre
-  - name: sigilioso
+
+
+version: 2.3.0
+appVersion: 1.7.0
+
 keywords:
   - infrastructure
   - newrelic
   - monitoring
+
+dependencies:
+  - name: common-library
+    version: 1.0.0
+    repository: "https://helm-charts.newrelic.com"
+
+maintainers:
+  - name: alvarocabanas
+    url: https://github.com/alvarocabanas
+  - name: carlossscastro
+    url: https://github.com/carlossscastro
+  - name: gsanchezgavier
+    url: https://github.com/gsanchezgavier
+  - name: kang-makes
+    url: https://github.com/kang-makes
+  - name: marcsanmi
+    url: https://github.com/marcsanmi
+  - name: paologallinaharbur
+    url: https://github.com/paologallinaharbur
+  - name: roobre
+    url: https://github.com/roobre
+  - name: sigilioso
+    url: https://github.com/sigilioso
