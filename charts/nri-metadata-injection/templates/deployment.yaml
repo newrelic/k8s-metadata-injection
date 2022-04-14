@@ -59,8 +59,7 @@ spec:
         secret:
           secretName: {{ include "newrelic.common.naming.fullname" . }}-admission
       {{- with include "newrelic.common.priorityClassName" . }}
-      priorityClassName:
-        {{- . | nindent 8 -}}
+      priorityClassName: {{ . }}
       {{- end }}
       {{- with include "newrelic.common.nodeSelector" . }}
       nodeSelector:
