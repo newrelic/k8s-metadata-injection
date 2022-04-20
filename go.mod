@@ -36,4 +36,5 @@ require (
 	sigs.k8s.io/yaml v1.3.0 // indirect
 )
 
+// To avoid CVE-2022-27191 triggering a security scan
 replace golang.org/x/crypto => golang.org/x/crypto v0.0.0-20220315160706-3147a52a75dd
