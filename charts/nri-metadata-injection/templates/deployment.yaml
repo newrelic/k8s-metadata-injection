@@ -57,7 +57,7 @@ spec:
       volumes:
       - name: tls-key-cert-pair
         secret:
-          secretName: {{ include "newrelic.common.naming.fullname" . }}-admission
+          secretName: {{ include "nri-metadata-injection.fullname.admission" . }}
       {{- with include "newrelic.common.priorityClassName" . }}
       priorityClassName: {{ . }}
       {{- end }}

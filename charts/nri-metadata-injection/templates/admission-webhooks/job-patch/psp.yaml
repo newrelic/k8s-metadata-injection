@@ -2,13 +2,13 @@
 apiVersion: policy/v1beta1
 kind: PodSecurityPolicy
 metadata:
-  name: {{ include "newrelic.common.naming.fullname" . }}-admission
+  name: {{ include "nri-metadata-injection.fullname.admission" . }}
   annotations:
     "helm.sh/hook": pre-install,pre-upgrade,post-install,post-upgrade
     "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
   labels:
     {{- include "newrelic.common.labels" . | nindent 4 }}
-    app: {{ include "newrelic.common.naming.name" . }}-admission
+    app: {{ include "nri-metadata-injection.name.admission" . }}
 spec:
   privileged: false
   # Required to prevent escalations to root.

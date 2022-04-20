@@ -2,7 +2,7 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: {{ include "newrelic.common.naming.fullname" . }}-admission
+  name: {{ include "nri-metadata-injection.fullname.admission" . }}
   annotations:
     "helm.sh/hook": pre-install,pre-upgrade,post-install,post-upgrade
     "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
@@ -21,5 +21,5 @@ rules:
     resources: ['podsecuritypolicies']
     verbs: ['use']
     resourceNames:
-    - {{ include "newrelic.common.naming.fullname" . }}-admission
+    - {{ include "nri-metadata-injection.fullname.admission" . }}
 {{- end }}
