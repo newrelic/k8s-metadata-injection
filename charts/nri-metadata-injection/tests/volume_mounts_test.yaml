@@ -13,9 +13,18 @@ tests:
         volumeMounts:
           - name: test-volume
             volumePath: /test-volume
+        volumes:
+          - name: test-volume-container
+            emptyDir: {}
+
     asserts:
       - contains:
           path: spec.template.spec.containers[0].volumeMounts
           content:
             name: test-volume
             volumePath: /test-volume
+      - contains:
+          path: spec.template.spec.volumes
+          content:
+            name: test-volume-container
+            emptyDir: {}
