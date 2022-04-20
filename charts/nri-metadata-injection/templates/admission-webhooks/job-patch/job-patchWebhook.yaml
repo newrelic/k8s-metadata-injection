@@ -35,7 +35,7 @@ spec:
             - --patch-validating=false
           {{- if .Values.jobImage.volumeMounts }}
           volumeMounts:
-          {{- include "tplvalues.render" ( dict "value" .Values.jobImage.volumeMounts "context" $ ) | nindent 10 }}
+          {{- .Values.jobImage.volumeMounts | toYaml | nindent 10 }}
           {{- end }}
       {{- if .Values.jobImage.volumes }}
       volumes:
