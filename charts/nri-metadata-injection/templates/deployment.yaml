@@ -30,7 +30,7 @@ spec:
       containers:
       - name: {{ include "newrelic.common.naming.name" . }}
         image: {{ include "newrelic.common.images.image" ( dict "imageRoot" .Values.image "context" .) }}
-        imagePullPolicy: "{{ .Values.image.pullPolicy }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
         {{- with include "newrelic.common.securityContext.container" . }}
         securityContext:
           {{- . | nindent 10 }}
