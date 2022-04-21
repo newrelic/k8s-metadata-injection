@@ -19,7 +19,7 @@ spec:
       labels:
         {{- include "newrelic.common.labels" . | nindent 8 }}
     spec:
-      {{- with include "newrelic.common.securityContext.pod" . }}
+      {{- with include "nri-metadata-injection.securityContext.pod" . }}
       securityContext:
         {{- . | nindent 8 -}}
       {{- end }}
