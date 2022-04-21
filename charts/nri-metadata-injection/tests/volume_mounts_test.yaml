@@ -1,7 +1,7 @@
 suite: check volume mounts is properly set
 templates:
   - templates/admission-webhooks/job-patch/job-createSecret.yaml
-  - templates/admission-webhooks/job-patch/job-createSecret.yaml
+  - templates/admission-webhooks/job-patch/job-patchWebhook.yaml
 release:
   name: release
   namespace: ns
