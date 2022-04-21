@@ -8,15 +8,15 @@ metadata:
     "helm.sh/hook": post-install,post-upgrade
     "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
   labels:
-    {{- include "newrelic.common.labels" . | nindent 4 }}
     app: {{ include "nri-metadata-injection.name.admission-patch" . }}
+    {{- include "newrelic.common.labels" . | nindent 4 }}
 spec:
   template:
     metadata:
       name: {{ include "nri-metadata-injection.fullname.admission-patch" . }}
       labels:
-        {{- include "newrelic.common.labels" . | nindent 8 }}
         app: {{ include "nri-metadata-injection.name.admission-patch" . }}
+        {{- include "newrelic.common.labels" . | nindent 8 }}
     spec:
       {{- if .Values.jobImage.pullSecrets }}
       imagePullSecrets:
