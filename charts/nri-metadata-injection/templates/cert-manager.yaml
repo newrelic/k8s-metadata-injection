@@ -5,7 +5,7 @@
 apiVersion: cert-manager.io/v1
 kind: Issuer
 metadata:
-  name: {{ template "nri-metadata-injection.fullname" . }}-self-signed-issuer
+  name: {{ include "nri-metadata-injection.fullname.self-signed-issuer" . }}
   namespace: {{ .Release.Namespace }}
 spec:
   selfSigned: {}
@@ -14,13 +14,13 @@ spec:
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
-  name: {{ template "nri-metadata-injection.fullname" . }}-root-cert
+  name: {{ include "newrelic.common.naming.fullname" . }}-root-cert
   namespace: {{ .Release.Namespace }}
 spec:
-  secretName: {{ template "nri-metadata-injection.fullname" . }}-root-cert
+  secretName: {{ include "newrelic.common.naming.fullname" . }}-root-cert
   duration: 43800h # 5y
   issuerRef:
-    name: {{ template "nri-metadata-injection.fullname" . }}-self-signed-issuer
+    name: {{ include "nri-metadata-injection.fullname.self-signed-issuer" . }}
   commonName: "ca.webhook.nri"
   isCA: true
 ---
@@ -28,26 +28,26 @@ spec:
 apiVersion: cert-manager.io/v1
 kind: Issuer
 metadata:
-  name: {{ template "nri-metadata-injection.fullname" . }}-root-issuer
+  name: {{ include "nri-metadata-injection.fullname.root-issuer" . }}
   namespace: {{ .Release.Namespace }}
 spec:
   ca:
-    secretName: {{ template "nri-metadata-injection.fullname" . }}-root-cert
+    secretName: {{ include "newrelic.common.naming.fullname" . }}-root-cert
 ---
 
 # Finally, generate a serving certificate for the webhook to use
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
-  name: {{ template "nri-metadata-injection.fullname" . }}-webhook-cert
+  name: {{ include "nri-metadata-injection.fullname.webhook-cert" . }}
   namespace: {{ .Release.Namespace }}
 spec:
-  secretName: {{ template "nri-metadata-injection.fullname" . }}-admission
+  secretName: {{ include "nri-metadata-injection.fullname.admission" . }}
   duration: 8760h # 1y
   issuerRef:
-    name: {{ template "nri-metadata-injection.fullname" . }}-root-issuer
+    name: {{ include "nri-metadata-injection.fullname.root-issuer" . }}
   dnsNames:
-  - {{ template "nri-metadata-injection.fullname" . }}
-  - {{ template "nri-metadata-injection.fullname" . }}.{{ .Release.Namespace }}
-  - {{ template "nri-metadata-injection.fullname" . }}.{{ .Release.Namespace }}.svc
+  - {{ include "newrelic.common.naming.fullname" . }}
+  - {{ include "newrelic.common.naming.fullname" . }}.{{ .Release.Namespace }}
+  - {{ include "newrelic.common.naming.fullname" . }}.{{ .Release.Namespace }}.svc
 {{ end }}

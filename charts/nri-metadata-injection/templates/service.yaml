@@ -1,13 +1,13 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ template "nri-metadata-injection.fullname" . }}
+  name: {{ include "newrelic.common.naming.fullname" . }}
   namespace: {{ .Release.Namespace }}
   labels:
-    {{- include "nri-metadata-injection.labels" . | nindent 4 }}
+    {{- include "newrelic.common.labels" . | nindent 4 }}
 spec:
   ports:
   - port: 443
     targetPort: 8443
   selector:
-    {{- include "nri-metadata-injection.appLabel" . | nindent 4 }}
+    {{- include "newrelic.common.labels.selectorLabels" . | nindent 4 }}

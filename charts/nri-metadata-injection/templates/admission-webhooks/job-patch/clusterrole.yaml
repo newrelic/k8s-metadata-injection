@@ -2,13 +2,13 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: {{ template "nri-metadata-injection.fullname" . }}-admission
+  name: {{ include "nri-metadata-injection.fullname.admission" . }}
   annotations:
     "helm.sh/hook": pre-install,pre-upgrade,post-install,post-upgrade
     "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
   labels:
-    app: {{ template "nri-metadata-injection.name" $ }}-admission
-{{ include "nri-metadata-injection.labels" $ | indent 4 }}
+    app: {{ include "newrelic.common.naming.name" $ }}-admission
+    {{- include "newrelic.common.labels" . | nindent 4 }}
 rules:
   - apiGroups:
       - admissionregistration.k8s.io
@@ -21,5 +21,5 @@ rules:
     resources: ['podsecuritypolicies']
     verbs: ['use']
     resourceNames:
-    - {{ template "nri-metadata-injection.fullname" . }}-admission
+    - {{ include "nri-metadata-injection.fullname.admission" . }}
 {{- end }}
