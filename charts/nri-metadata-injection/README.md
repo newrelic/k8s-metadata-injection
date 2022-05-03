@@ -1,64 +1,82 @@
-# newrelic-metadata-injection
+# nri-metadata-injection
 
-## Chart Details
+![Version: 3.0.0](https://img.shields.io/badge/Version-3.0.0-informational?style=flat-square) ![AppVersion: 1.7.0](https://img.shields.io/badge/AppVersion-1.7.0-informational?style=flat-square)
 
-This chart will deploy the [New Relic Infrastructure metadata injection webhook][1].
+A Helm chart to deploy the New Relic metadata injection webhook.
 
-## Configuration
+**Homepage:** <https://hub.docker.com/r/newrelic/k8s-metadata-injection>
 
-| Parameter                       | Description                                                                                                                                                                                                                                                                                                                               | Default                             |
-| ------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------- |
-| `cluster`                       | The cluster name for the Kubernetes cluster.                                                                                                                                                                                                                                                                                              |                                     |
-| `injectOnlyLabeledNamespaces`   | Limit the injection of metadata only to specific namespaces that match the label `newrelic-metadata-injection: enabled`.                                                                                                                                                                                                                  | false                               |
-| `image.repository`              | The container to pull.                                                                                                                                                                                                                                                                                                                    | `newrelic/k8s-metadata-injection`   |
-| `image.pullPolicy`              | The pull policy.                                                                                                                                                                                                                                                                                                                          | `IfNotPresent`                      |
-| `image.pullSecrets`             | Image pull secrets.                                                                                                                                                                                                                                                                                                                       | `nil`                               |
-| `image.tag`                     | The version of the container to pull.                                                                                                                                                                                                                                                                                                     | `1.7.0`                             |
-| `jobImage.repository`           | The job container to pull.                                                                                                                                                                                                                                                                                                                | `newrelic/k8s-webhook-cert-manager` |
-| `jobImage.pullPolicy`           | The job pull policy.                                                                                                                                                                                                                                                                                                                      | `IfNotPresent`                      |
-| `jobImage.pullSecrets`          | The job pull secrets.                                                                                                                                                                                                                                                                                                                     | `nil`                               |
-| `jobImage.tag`                  | The job version of the container to pull.                                                                                                                                                                                                                                                                                                 | `v1.1.1`                             |
-| `jobImage.volumeMounts`         | Additional Volume mounts for Cert Job                                                                                                                                                                                                                                                                                                     | `[]`                                |
-| `jobImage.volumes`              | Additional Volumes for Cert Job                                                                                                                                                                                                                                                                                                           | `[]`                                |
-| `replicas`                      | Number of replicas in the deployment                                                                                                                                                                                                                                                                                                      | `1`                                 |
-| `resources`                     | Any resources you wish to assign to the pod.                                                                                                                                                                                                                                                                                              | See Resources below                 |
-| `serviceAccount.create`         | If true a service account would be created and assigned for the webhook and the job.                                                                                                                                                                                                                                                      | `true`                              |
-| `serviceAccount.name`           | The service account to assign to the webhook and the job. If `serviceAccount.create` is true then this name will be used when creating the service account; if this value is not set or it evaluates to false, then when creating the account the returned value from the template `nr-metadata-injection.fullname` will be used as name. |                                     |
-| `customTLSCertificate`          | Use custom TLS certificate. Setting this options means that you will have to do some post install work as detailed in the *Manage custom certificates* section of the [official docs][1].                                                                                                                                                 | `false`                             |
-| `certManager.enabled`           | Use cert-manager to provision the MutatingWebhookConfiguration certs.                                                                                                                                                                                                                                                                     | `false`                             |
-| `containerSecurityContext`    | Set custom securityContext for a container                                                                                                                                                                                                                                                                                                          | `nil`                              |
-| `podSecurityContext.fsGroup`    | fsGroup for Pod Security Context                                                                                                                                                                                                                                                                                                          | `1001`                              |
-| `podSecurityContext.runAsUser`  | runAsUser UID for Pod Security Context                                                                                                                                                                                                                                                                                                    | `1001`                              |
-| `podSecurityContext.runAsGroup` | runAsUser GID for Pod Security Context                                                                                                                                                                                                                                                                                                    | `1001`                              |
-| `podAnnotations`                | If you wish to provide additional annotations to apply to the pod(s), specify them here.                                                                                                                                                                                                                                                  |                                     |
-| `priorityClassName`             | Scheduling priority of the pod                                                                                                                                                                                                                                                                                                            | `nil`                               |
-| `nodeSelector`                  | Node label to use for scheduling                                                                                                                                                                                                                                                                                                          | `{}`                                |
-| `timeoutSeconds`                | Seconds to wait for a webhook to respond. The timeout value must be between 1 and 30 seconds                                                                                                                                                                                                                                              | `10`                                |
-| `tolerations`                   | List of node taints to tolerate (requires Kubernetes >= 1.6)                                                                                                                                                                                                                                                                              | `[]`                                |
-| `affinity`                      | Node affinity to use for scheduling                                                                                                                                                                                                                                                                                                       | `{}`                                |
-| `hostNetwork`                      | Enable hostNetwork                                                                                                                                                                                                                                                                                                      | `false`                                |
-| `dnsConfig`                      | Set DNS settings                                                                                                                                                                                                                                                                                                      | `{}`                                |
+## Source Code
 
-## Example
+* <https://github.com/newrelic/k8s-metadata-injection>
 
-Make sure you have [added the New Relic chart repository.](../../README.md#installing-charts)
+## Requirements
 
-Then, to install this chart, run the following command:
+| Repository | Name | Version |
+|------------|------|---------|
+| https://helm-charts.newrelic.com | common-library | 1.0.2 |
 
-```sh
-helm install newrelic/nri-metadata-injection --set cluster=my_cluster_name --generate-name
+# Helm installation
+
+You can install this integration using [`nri-bundle` helm chart](https://github.com/newrelic/helm-charts/tree/master/charts/nri-bundle) located in the
+[helm-charts repository](https://github.com/newrelic/helm-charts) or directly from this repository by adding this Helm repository:
+
+```shell
+helm repo add nri-metadata-injection https://newrelic.github.io/k8s-metadata-injection
+helm upgrade --install nri-metadata-injection/nri-metadata-injection -f your-custom-values.yaml
 ```
 
-## Resources
+## Values managed globally
 
-The default set of resources assigned to the pods is shown below:
+This chart implements the [New Relic's common Helm library](https://github.com/newrelic/helm-charts/tree/master/library/common-library) which
+means that is has a seamless UX between things that are configurable across different Helm charts. So there are behaviours that could be
+changed globally if you install this chart from `nri-bundle` or your own umbrella chart.
 
-    resources:
-      limits:
-        memory: 80M
-      requests:
-        cpu: 100m
-        memory: 30M
+A really broad list of global managed values are `affinity`, `nodeSelector`, `tolerations`, `proxy` and many more.
 
-[1]: https://docs.newrelic.com/docs/integrations/kubernetes-integration/link-your-applications/link-your-applications-kubernetes#configure-injection
-[2]: https://cert-manager.io/
+For more information go to the [user's guide of the common library](https://github.com/newrelic/helm-charts/blob/master/library/common-library/README.md)
+
+## Values
+
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+| affinity | object | `{}` | Sets pod/node affinities. Can be configured also with `global.affinity` |
+| certManager.enabled | bool | `false` | Use cert manager for webhook certs |
+| cluster | string | `""` | Name of the Kubernetes cluster monitored. Can be configured also with `global.cluster` |
+| containerSecurityContext | object | `{}` | Sets security context (at container level). Can be configured also with `global.containerSecurityContext` |
+| customSecretLicenseKey | string | `""` | In case you don't want to have the license key in you values, this allows you to point to which secret key is the license key located. Can be configured also with `global.customSecretLicenseKey` |
+| customSecretName | string | `""` | In case you don't want to have the license key in you values, this allows you to point to a user created secret to get the key from there. Can be configured also with `global.customSecretName` |
+| customTLSCertificate | bool | `false` | Use custom tls certificates for the webhook, or let the chart handle it automatically. Ref: https://docs.newrelic.com/docs/integrations/kubernetes-integration/link-your-applications/link-your-applications-kubernetes#configure-injection |
+| dnsConfig | object | `{}` | Sets pod's dnsConfig. Can be configured also with `global.dnsConfig` |
+| fullnameOverride | string | `""` | Override the full name of the release |
+| hostNetwork | bool | false | Sets pod's hostNetwork. Can be configured also with `global.hostNetwork` |
+| image | object | See `values.yaml` | Image for the New Relic Metadata Injector |
+| image.pullSecrets | string | `nil` | The secrets that are needed to pull images from a custom registry. |
+| injectOnlyLabeledNamespaces | bool | `false` | Enable the metadata decoration only for pods living in namespaces labeled with 'newrelic-metadata-injection=enabled'. |
+| jobImage | object | See `values.yaml` | Image for creating the needed certificates of this webhook to work |
+| jobImage.pullSecrets | string | `nil` | The secrets that are needed to pull images from a custom registry. |
+| jobImage.volumeMounts | list | `[]` | Volume mounts to add to the job, you might want to mount tmp if Pod Security Policies Enforce a read-only root. |
+| jobImage.volumes | list | `[]` | Volumes to add to the job container |
+| labels | object | `{}` | Additional labels for chart objects. Can be configured also with `global.labels` |
+| licenseKey | string | `""` | This set this license key to use. Can be configured also with `global.licenseKey` |
+| nameOverride | string | `""` | Override the name of the chart |
+| nodeSelector | object | `{}` | Sets pod's node selector. Can be configured also with `global.nodeSelector` |
+| podAnnotations | object | `{}` | Annotations to be added to all pods created by the integration. |
+| podLabels | object | `{}` | Additional labels for chart pods. Can be configured also with `global.podLabels` |
+| podSecurityContext | object | `{}` | Sets security context (at pod level). Can be configured also with `global.podSecurityContext` |
+| priorityClassName | string | `""` | Sets pod's priorityClassName. Can be configured also with `global.priorityClassName` |
+| replicas | int | `1` |  |
+| resources | object | 100m/30M -/80M | Image for creating the needed certificates of this webhook to work |
+| timeoutSeconds | int | `28` | Webhook timeout Ref: https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#timeouts |
+| tolerations | list | `[]` | Sets pod's tolerations to node taints. Can be configured also with `global.tolerations` |
+
+## Maintainers
+
+* [alvarocabanas](https://github.com/alvarocabanas)
+* [carlossscastro](https://github.com/carlossscastro)
+* [gsanchezgavier](https://github.com/gsanchezgavier)
+* [kang-makes](https://github.com/kang-makes)
+* [marcsanmi](https://github.com/marcsanmi)
+* [paologallinaharbur](https://github.com/paologallinaharbur)
+* [roobre](https://github.com/roobre)
+* [sigilioso](https://github.com/sigilioso)

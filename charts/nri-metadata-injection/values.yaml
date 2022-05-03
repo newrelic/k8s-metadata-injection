@@ -1,42 +1,45 @@
-# IMPORTANT: The Kubernetes cluster name
-# https://docs.newrelic.com/docs/kubernetes-monitoring-integration
-# It can also be set as global so that it is shared by other newrelic product's charts.
-# cluster: ""
+# -- Override the name of the chart
+nameOverride: ""
+# -- Override the full name of the release
+fullnameOverride: ""
 
-# Enable the metadata decoration only for pods living in namespaces labeled
-# with 'newrelic-metadata-injection=enabled'.
-injectOnlyLabeledNamespaces: false
-
+# -- Image for the New Relic Metadata Injector
+# @default -- See `values.yaml`
 image:
   registry:
   repository: newrelic/k8s-metadata-injection
   tag: ""  # Defaults to chart's appVersion
   pullPolicy: IfNotPresent
-  ## It is possible to specify docker registry credentials
-  ## See https://kubernetes.io/docs/concepts/containers/images/#specifying-imagepullsecrets-on-a-pod
-  # pullSecrets:
-    # - name: regsecret
+  # -- The secrets that are needed to pull images from a custom registry.
+  pullSecrets:
+  # - name: regsecret
 
+# -- Image for creating the needed certificates of this webhook to work
+# @default -- See `values.yaml`
 jobImage:
   registry: k8s.gcr.io
   repository: ingress-nginx/kube-webhook-certgen
   tag: v1.1.1
   pullPolicy: IfNotPresent
-  # pullSecrets:
+  # -- The secrets that are needed to pull images from a custom registry.
+  pullSecrets:
   # - name: regsecret
-  # Volume mounts to add to the job, you might want to mount tmp if Pod Security Policies
+
+  # -- Volume mounts to add to the job, you might want to mount tmp if Pod Security Policies
   # Enforce a read-only root.
   volumeMounts: []
   #  - name: tmp
   #    mountPath: /tmp
 
-  # Volumes to add to the job container
+  # -- Volumes to add to the job container
   volumes: []
   #  - name: tmp
   #    emptyDir: {}
 
 replicas: 1
 
+# -- Image for creating the needed certificates of this webhook to work
+# @default -- 100m/30M -/80M
 resources:
   limits:
     memory: 80M
@@ -44,38 +47,54 @@ resources:
     cpu: 100m
     memory: 30M
 
-# Configure podSecurityContext
-podSecurityContext:
+# -- Enable the metadata decoration only for pods living in namespaces labeled
+# with 'newrelic-metadata-injection=enabled'.
+injectOnlyLabeledNamespaces: false
 
-# Configure containerSecurityContext
-containerSecurityContext:
-
-# Use custom tls certificates for the webhook, or let the chart handle it
+# -- Use custom tls certificates for the webhook, or let the chart handle it
 # automatically.
-#
-# Make sure to read the 'Manage custom certificates' section of the official
-# docs when using custom certificates.
-#
-# https://docs.newrelic.com/docs/integrations/kubernetes-integration/link-your-applications/link-your-applications-kubernetes#configure-injection
+# Ref: https://docs.newrelic.com/docs/integrations/kubernetes-integration/link-your-applications/link-your-applications-kubernetes#configure-injection
 customTLSCertificate: false
 
-# If you wish to provide additional annotations to apply to the pod(s), specify
-# them here
-# podAnnotations:
+# -- Annotations to be added to all pods created by the integration.
+podAnnotations: {}
 
-# Pod scheduling priority
-# Ref: https://kubernetes.io/docs/concepts/configuration/pod-priority-preemption/
-# priorityClassName: high-priority
-
-# Webhook timeout
-#
-# Configure how long the API server should wait for a webhook to respond before treating the call as a failure
-#
+# -- Webhook timeout
 # Ref: https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#timeouts
-timeoutSeconds: 30
+timeoutSeconds: 28
 
-# Use cert manager for webhook certs
 certManager:
+  # certManager.enabled -- Use cert manager for webhook certs
   enabled: false
 
+
+# These values are managed by the common-library
+# -- Name of the Kubernetes cluster monitored. Can be configured also with `global.cluster`
+cluster: ""
+# -- This set this license key to use. Can be configured also with `global.licenseKey`
+licenseKey: ""
+# -- In case you don't want to have the license key in you values, this allows you to point to a user created secret to get the key from there. Can be configured also with `global.customSecretName`
+customSecretName: ""
+# -- In case you don't want to have the license key in you values, this allows you to point to which secret key is the license key located. Can be configured also with `global.customSecretLicenseKey`
+customSecretLicenseKey: ""
+# -- Additional labels for chart pods. Can be configured also with `global.podLabels`
+podLabels: {}
+# -- Additional labels for chart objects. Can be configured also with `global.labels`
+labels: {}
+# -- Sets pod's priorityClassName. Can be configured also with `global.priorityClassName`
+priorityClassName: ""
+# -- (bool) Sets pod's hostNetwork. Can be configured also with `global.hostNetwork`
+# @default -- false
+hostNetwork:
+# -- Sets pod's dnsConfig. Can be configured also with `global.dnsConfig`
+dnsConfig: {}
+# -- Sets security context (at pod level). Can be configured also with `global.podSecurityContext`
+podSecurityContext: {}
+# -- Sets security context (at container level). Can be configured also with `global.containerSecurityContext`
+containerSecurityContext: {}
+# -- Sets pod/node affinities. Can be configured also with `global.affinity`
+affinity: {}
+# -- Sets pod's node selector. Can be configured also with `global.nodeSelector`
+nodeSelector: {}
+# -- Sets pod's tolerations to node taints. Can be configured also with `global.tolerations`
 tolerations: []
