@@ -73,7 +73,7 @@ jobs:
       - name: Build and push docker image
         if: ${{ github.event.release.prerelease }}
         run: |
-          DOCKER_IMAGE_TAG=${DOCKER_IMAGE_TAG}-pre"
+          DOCKER_IMAGE_TAG=${DOCKER_IMAGE_TAG}-pre
           docker buildx build --push --platform=$DOCKER_PLATFORMS \
             -t $DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG \
             .
