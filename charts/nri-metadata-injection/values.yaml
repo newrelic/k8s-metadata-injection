@@ -3,6 +3,9 @@ nameOverride: ""
 # -- Override the full name of the release
 fullnameOverride: ""
 
+# -- Name of the Kubernetes cluster monitored. Can be configured also with `global.cluster`
+cluster: ""
+
 # -- Image for the New Relic Metadata Injector
 # @default -- See `values.yaml`
 image:
