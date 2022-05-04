@@ -12,8 +12,8 @@ You can install this chart using [`nri-bundle`](https://github.com/newrelic/helm
 [helm-charts repository](https://github.com/newrelic/helm-charts) or directly from this repository by adding this Helm repository:
 
 ```shell
-helm repo add nri-kube-events https://newrelic.github.io/nri-kube-events
-helm upgrade --install nri-kube-events/nri-kube-events -f your-custom-values.yaml
+helm repo add nri-metadata-injection https://newrelic.github.io/k8s-metadata-injection
+helm upgrade --install nri-metadata-injection/nri-metadata-injection -f your-custom-values.yaml
 ```
 
 ## Source Code
@@ -35,10 +35,7 @@ Options that can be defined globally include `affinity`, `nodeSelector`, `tolera
 |-----|------|---------|-------------|
 | affinity | object | `{}` | Sets pod/node affinities. Can be configured also with `global.affinity` |
 | certManager.enabled | bool | `false` | Use cert manager for webhook certs |
-| cluster | string | `""` | Name of the Kubernetes cluster monitored. Can be configured also with `global.cluster` |
 | containerSecurityContext | object | `{}` | Sets security context (at container level). Can be configured also with `global.containerSecurityContext` |
-| customSecretLicenseKey | string | `""` | In case you don't want to have the license key in you values, this allows you to point to which secret key is the license key located. Can be configured also with `global.customSecretLicenseKey` |
-| customSecretName | string | `""` | In case you don't want to have the license key in you values, this allows you to point to a user created secret to get the key from there. Can be configured also with `global.customSecretName` |
 | customTLSCertificate | bool | `false` | Use custom tls certificates for the webhook, or let the chart handle it automatically. Ref: https://docs.newrelic.com/docs/integrations/kubernetes-integration/link-your-applications/link-your-applications-kubernetes#configure-injection |
 | dnsConfig | object | `{}` | Sets pod's dnsConfig. Can be configured also with `global.dnsConfig` |
 | fullnameOverride | string | `""` | Override the full name of the release |
@@ -51,7 +48,6 @@ Options that can be defined globally include `affinity`, `nodeSelector`, `tolera
 | jobImage.volumeMounts | list | `[]` | Volume mounts to add to the job, you might want to mount tmp if Pod Security Policies Enforce a read-only root. |
 | jobImage.volumes | list | `[]` | Volumes to add to the job container |
 | labels | object | `{}` | Additional labels for chart objects. Can be configured also with `global.labels` |
-| licenseKey | string | `""` | This set this license key to use. Can be configured also with `global.licenseKey` |
 | nameOverride | string | `""` | Override the name of the chart |
 | nodeSelector | object | `{}` | Sets pod's node selector. Can be configured also with `global.nodeSelector` |
 | podAnnotations | object | `{}` | Annotations to be added to all pods created by the integration. |
