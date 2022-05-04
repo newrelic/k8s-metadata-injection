@@ -3,6 +3,15 @@ nameOverride: ""
 # -- Override the full name of the release
 fullnameOverride: ""
 
+# -- Name of the Kubernetes cluster monitored. Can be configured also with `global.cluster`
+cluster: ""
+# -- This set this license key to use. Can be configured also with `global.licenseKey`
+licenseKey: ""
+# -- In case you don't want to have the license key in you values, this allows you to point to a user created secret to get the key from there. Can be configured also with `global.customSecretName`
+customSecretName: ""
+# -- In case you don't want to have the license key in you values, this allows you to point to which secret key is the license key located. Can be configured also with `global.customSecretLicenseKey`
+customSecretLicenseKey: ""
+
 # -- Image for the New Relic Metadata Injector
 # @default -- See `values.yaml`
 image:
@@ -38,6 +47,13 @@ jobImage:
 
 replicas: 1
 
+# -- Additional labels for chart objects. Can be configured also with `global.labels`
+labels: {}
+# -- Annotations to be added to all pods created by the integration.
+podAnnotations: {}
+# -- Additional labels for chart pods. Can be configured also with `global.podLabels`
+podLabels: {}
+
 # -- Image for creating the needed certificates of this webhook to work
 # @default -- 100m/30M -/80M
 resources:
@@ -47,40 +63,6 @@ resources:
     cpu: 100m
     memory: 30M
 
-# -- Enable the metadata decoration only for pods living in namespaces labeled
-# with 'newrelic-metadata-injection=enabled'.
-injectOnlyLabeledNamespaces: false
-
-# -- Use custom tls certificates for the webhook, or let the chart handle it
-# automatically.
-# Ref: https://docs.newrelic.com/docs/integrations/kubernetes-integration/link-your-applications/link-your-applications-kubernetes#configure-injection
-customTLSCertificate: false
-
-# -- Annotations to be added to all pods created by the integration.
-podAnnotations: {}
-
-# -- Webhook timeout
-# Ref: https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#timeouts
-timeoutSeconds: 28
-
-certManager:
-  # certManager.enabled -- Use cert manager for webhook certs
-  enabled: false
-
-
-# These values are managed by the common-library
-# -- Name of the Kubernetes cluster monitored. Can be configured also with `global.cluster`
-cluster: ""
-# -- This set this license key to use. Can be configured also with `global.licenseKey`
-licenseKey: ""
-# -- In case you don't want to have the license key in you values, this allows you to point to a user created secret to get the key from there. Can be configured also with `global.customSecretName`
-customSecretName: ""
-# -- In case you don't want to have the license key in you values, this allows you to point to which secret key is the license key located. Can be configured also with `global.customSecretLicenseKey`
-customSecretLicenseKey: ""
-# -- Additional labels for chart pods. Can be configured also with `global.podLabels`
-podLabels: {}
-# -- Additional labels for chart objects. Can be configured also with `global.labels`
-labels: {}
 # -- Sets pod's priorityClassName. Can be configured also with `global.priorityClassName`
 priorityClassName: ""
 # -- (bool) Sets pod's hostNetwork. Can be configured also with `global.hostNetwork`
@@ -92,9 +74,27 @@ dnsConfig: {}
 podSecurityContext: {}
 # -- Sets security context (at container level). Can be configured also with `global.containerSecurityContext`
 containerSecurityContext: {}
+
+certManager:
+  # certManager.enabled -- Use cert manager for webhook certs
+  enabled: false
+
 # -- Sets pod/node affinities. Can be configured also with `global.affinity`
 affinity: {}
 # -- Sets pod's node selector. Can be configured also with `global.nodeSelector`
 nodeSelector: {}
 # -- Sets pod's tolerations to node taints. Can be configured also with `global.tolerations`
 tolerations: []
+
+# -- Enable the metadata decoration only for pods living in namespaces labeled
+# with 'newrelic-metadata-injection=enabled'.
+injectOnlyLabeledNamespaces: false
+
+# -- Use custom tls certificates for the webhook, or let the chart handle it
+# automatically.
+# Ref: https://docs.newrelic.com/docs/integrations/kubernetes-integration/link-your-applications/link-your-applications-kubernetes#configure-injection
+customTLSCertificate: false
+
+# -- Webhook timeout
+# Ref: https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#timeouts
+timeoutSeconds: 28

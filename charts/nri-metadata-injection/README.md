@@ -1,40 +1,33 @@
 # nri-metadata-injection
 
-![Version: 3.0.0](https://img.shields.io/badge/Version-3.0.0-informational?style=flat-square) ![AppVersion: 1.7.0](https://img.shields.io/badge/AppVersion-1.7.0-informational?style=flat-square)
+![Version: 3.0.1](https://img.shields.io/badge/Version-3.0.1-informational?style=flat-square) ![AppVersion: 1.7.0](https://img.shields.io/badge/AppVersion-1.7.0-informational?style=flat-square)
 
 A Helm chart to deploy the New Relic metadata injection webhook.
 
 **Homepage:** <https://hub.docker.com/r/newrelic/k8s-metadata-injection>
 
-## Source Code
-
-* <https://github.com/newrelic/k8s-metadata-injection>
-
-## Requirements
-
-| Repository | Name | Version |
-|------------|------|---------|
-| https://helm-charts.newrelic.com | common-library | 1.0.2 |
-
 # Helm installation
 
-You can install this integration using [`nri-bundle` helm chart](https://github.com/newrelic/helm-charts/tree/master/charts/nri-bundle) located in the
+You can install this chart using [`nri-bundle`](https://github.com/newrelic/helm-charts/tree/master/charts/nri-bundle) located in the
 [helm-charts repository](https://github.com/newrelic/helm-charts) or directly from this repository by adding this Helm repository:
 
 ```shell
-helm repo add nri-metadata-injection https://newrelic.github.io/k8s-metadata-injection
-helm upgrade --install nri-metadata-injection/nri-metadata-injection -f your-custom-values.yaml
+helm repo add nri-kube-events https://newrelic.github.io/nri-kube-events
+helm upgrade --install nri-kube-events/nri-kube-events -f your-custom-values.yaml
 ```
+
+## Source Code
+
+* <https://github.com/newrelic/k8s-metadata-injection>
+* <https://github.com/newrelic/k8s-metadata-injection/tree/master/charts/nri-metadata-injection>
 
 ## Values managed globally
 
 This chart implements the [New Relic's common Helm library](https://github.com/newrelic/helm-charts/tree/master/library/common-library) which
-means that is has a seamless UX between things that are configurable across different Helm charts. So there are behaviours that could be
-changed globally if you install this chart from `nri-bundle` or your own umbrella chart.
+means that it honors a wide range of defaults and globals common to most New Relic Helm charts.
 
-A really broad list of global managed values are `affinity`, `nodeSelector`, `tolerations`, `proxy` and many more.
-
-For more information go to the [user's guide of the common library](https://github.com/newrelic/helm-charts/blob/master/library/common-library/README.md)
+Options that can be defined globally include `affinity`, `nodeSelector`, `tolerations`, `proxy` and others. The full list can be found at
+[user's guide of the common library](https://github.com/newrelic/helm-charts/blob/master/library/common-library/README.md).
 
 ## Values
 
