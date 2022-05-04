@@ -7,9 +7,9 @@ home: https://hub.docker.com/r/newrelic/k8s-metadata-injection
 icon: https://newrelic.com/assets/newrelic/source/NewRelic-logo-square.svg
 sources:
   - https://github.com/newrelic/k8s-metadata-injection
+  - https://github.com/newrelic/k8s-metadata-injection/tree/master/charts/nri-metadata-injection
 
-
-version: 3.0.0
+version: 3.0.1
 appVersion: 1.7.0
 
 keywords:

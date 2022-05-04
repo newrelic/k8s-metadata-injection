@@ -43,6 +43,18 @@ These environment variables are automatically injected in the pods using a Mutat
 
 Please refer to the [official documentation](https://docs.newrelic.com/docs/integrations/kubernetes-integration/metadata-injection/kubernetes-apm-metadata-injection) to learn more about the reasoning behind this project.
 
+## Helm chart
+
+You can install this integration using [`nri-bundle` helm chart](https://github.com/newrelic/helm-charts/tree/master/charts/nri-bundle) located in the
+[helm-charts repository](https://github.com/newrelic/helm-charts) or directly from this repository by adding this Helm repository:
+
+```shell
+helm repo add nri-metadata-injection https://newrelic.github.io/k8s-metadata-injection
+helm upgrade --install nri-metadata-injection/nri-metadata-injection -f your-custom-values.yaml
+```
+
+For further information of the configuration needed for the chart just read the [chart's README](/charts/nri-metadata-injection/README.md).
+
 ## Development
 
 ### Prerequisites
