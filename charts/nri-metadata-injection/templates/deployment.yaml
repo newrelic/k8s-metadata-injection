@@ -9,7 +9,9 @@ spec:
   replicas: {{ .Values.replicas }}
   selector:
     matchLabels:
-      {{- include "newrelic.common.labels.selectorLabels" . | nindent 6 }}
+      {{- /* We cannot use the common library here because of a legacy issue */}}
+      {{- /* `selector` is mnmutable and the previous chart did not have all the idiomatic labels */}}
+      app.kubernetes.io/name: {{ include "newrelic.common.naming.name" . }}
   template:
     metadata:
 {{- if .Values.podAnnotations }}
