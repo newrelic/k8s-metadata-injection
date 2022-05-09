@@ -10,7 +10,7 @@ spec:
   selector:
     matchLabels:
       {{- /* We cannot use the common library here because of a legacy issue */}}
-      {{- /* `selector` is mnmutable and the previous chart did not have all the idiomatic labels */}}
+      {{- /* `selector` is immutable  and the previous chart did not have all the idiomatic labels */}}
       app.kubernetes.io/name: {{ include "newrelic.common.naming.name" . }}
   template:
     metadata:
