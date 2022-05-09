@@ -91,4 +91,4 @@ customTLSCertificate: false
 
 # -- Webhook timeout
 # Ref: https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#timeouts
-timeoutSeconds: 28
+timeoutSeconds: 3

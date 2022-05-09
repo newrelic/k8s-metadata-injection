@@ -56,7 +56,7 @@ Options that can be defined globally include `affinity`, `nodeSelector`, `tolera
 | priorityClassName | string | `""` | Sets pod's priorityClassName. Can be configured also with `global.priorityClassName` |
 | replicas | int | `1` |  |
 | resources | object | 100m/30M -/80M | Image for creating the needed certificates of this webhook to work |
-| timeoutSeconds | int | `28` | Webhook timeout Ref: https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#timeouts |
+| timeoutSeconds | int | `3` | Webhook timeout Ref: https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#timeouts |
 | tolerations | list | `[]` | Sets pod's tolerations to node taints. Can be configured also with `global.tolerations` |
 
 ## Maintainers
