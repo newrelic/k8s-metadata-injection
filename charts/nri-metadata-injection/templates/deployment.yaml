@@ -25,6 +25,18 @@ spec:
       securityContext:
         {{- . | nindent 8 -}}
       {{- end }}
+      {{- with include "newrelic.common.priorityClassName" . }}
+      priorityClassName: {{ . }}
+      {{- end }}
+      {{- with include "newrelic.common.dnsConfig" . }}
+      dnsConfig:
+        {{- . | nindent 8 }}
+      {{- end }}
+      hostNetwork: {{ include "newrelic.common.hostNetwork.value" . }}
+      {{- if include "newrelic.common.hostNetwork" . }}
+      dnsPolicy: ClusterFirstWithHostNet
+      {{- end }}
+
       {{- if .Values.image.pullSecrets }}
       imagePullSecrets:
         {{- include "newrelic.common.images.renderPullSecrets" ( dict "pullSecrets" ( list .Values.image.pullSecrets ) "context" .) | nindent 8 -}}
@@ -54,15 +66,12 @@ spec:
           periodSeconds: 1
         {{- if .Values.resources }}
         resources:
-{{ toYaml .Values.resources | indent 10 }}
+          {{ toYaml .Values.resources | nindent 10 }}
         {{- end }}
       volumes:
       - name: tls-key-cert-pair
         secret:
           secretName: {{ include "nri-metadata-injection.fullname.admission" . }}
-      {{- with include "newrelic.common.priorityClassName" . }}
-      priorityClassName: {{ . }}
-      {{- end }}
       {{- with include "newrelic.common.nodeSelector" . }}
       nodeSelector:
         {{- . | nindent 8 -}}
@@ -74,9 +83,4 @@ spec:
       {{- with include "newrelic.common.affinity" . }}
       affinity:
         {{- . | nindent 8 -}}
-      {{- end }}
-      hostNetwork: {{ include "newrelic.common.hostNetwork.value" . }}
-      {{- with include "newrelic.common.dnsConfig" . }}
-      dnsConfig:
-        {{- . | nindent 8 }}
       {{- end }}
