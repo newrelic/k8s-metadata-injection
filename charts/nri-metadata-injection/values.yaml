@@ -14,7 +14,7 @@ image:
   tag: ""  # Defaults to chart's appVersion
   pullPolicy: IfNotPresent
   # -- The secrets that are needed to pull images from a custom registry.
-  pullSecrets:
+  pullSecrets: []
   # - name: regsecret
 
 # -- Image for creating the needed certificates of this webhook to work
@@ -25,7 +25,7 @@ jobImage:
   tag: v1.1.1
   pullPolicy: IfNotPresent
   # -- The secrets that are needed to pull images from a custom registry.
-  pullSecrets:
+  pullSecrets: []
   # - name: regsecret
 
   # -- Volume mounts to add to the job, you might want to mount tmp if Pod Security Policies

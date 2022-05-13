@@ -1,6 +1,6 @@
 # nri-metadata-injection
 
-![Version: 3.0.1](https://img.shields.io/badge/Version-3.0.1-informational?style=flat-square) ![AppVersion: 1.7.0](https://img.shields.io/badge/AppVersion-1.7.0-informational?style=flat-square)
+![Version: 3.0.4](https://img.shields.io/badge/Version-3.0.4-informational?style=flat-square) ![AppVersion: 1.7.0](https://img.shields.io/badge/AppVersion-1.7.0-informational?style=flat-square)
 
 A Helm chart to deploy the New Relic metadata injection webhook.
 
@@ -35,16 +35,17 @@ Options that can be defined globally include `affinity`, `nodeSelector`, `tolera
 |-----|------|---------|-------------|
 | affinity | object | `{}` | Sets pod/node affinities. Can be configured also with `global.affinity` |
 | certManager.enabled | bool | `false` | Use cert manager for webhook certs |
+| cluster | string | `""` | Name of the Kubernetes cluster monitored. Can be configured also with `global.cluster` |
 | containerSecurityContext | object | `{}` | Sets security context (at container level). Can be configured also with `global.containerSecurityContext` |
 | customTLSCertificate | bool | `false` | Use custom tls certificates for the webhook, or let the chart handle it automatically. Ref: https://docs.newrelic.com/docs/integrations/kubernetes-integration/link-your-applications/link-your-applications-kubernetes#configure-injection |
 | dnsConfig | object | `{}` | Sets pod's dnsConfig. Can be configured also with `global.dnsConfig` |
 | fullnameOverride | string | `""` | Override the full name of the release |
 | hostNetwork | bool | false | Sets pod's hostNetwork. Can be configured also with `global.hostNetwork` |
 | image | object | See `values.yaml` | Image for the New Relic Metadata Injector |
-| image.pullSecrets | string | `nil` | The secrets that are needed to pull images from a custom registry. |
+| image.pullSecrets | list | `[]` | The secrets that are needed to pull images from a custom registry. |
 | injectOnlyLabeledNamespaces | bool | `false` | Enable the metadata decoration only for pods living in namespaces labeled with 'newrelic-metadata-injection=enabled'. |
 | jobImage | object | See `values.yaml` | Image for creating the needed certificates of this webhook to work |
-| jobImage.pullSecrets | string | `nil` | The secrets that are needed to pull images from a custom registry. |
+| jobImage.pullSecrets | list | `[]` | The secrets that are needed to pull images from a custom registry. |
 | jobImage.volumeMounts | list | `[]` | Volume mounts to add to the job, you might want to mount tmp if Pod Security Policies Enforce a read-only root. |
 | jobImage.volumes | list | `[]` | Volumes to add to the job container |
 | labels | object | `{}` | Additional labels for chart objects. Can be configured also with `global.labels` |
