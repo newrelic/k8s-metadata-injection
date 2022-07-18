@@ -1,5 +1,4 @@
 BIN_DIR = ./bin
-TOOLS_DIR := $(BIN_DIR)/dev-tools
 BINARY_NAME ?= $(BIN_DIR)/k8s-metadata-injection
 DOCKER_IMAGE_NAME ?= newrelic/k8s-metadata-injection
 # This default tag is used during e2e test execution in the ci
@@ -27,19 +26,7 @@ endif
 all: build
 
 .PHONY: build
-build: lint test compile
-
-$(TOOLS_DIR):
-	@mkdir -p $@
-
-$(TOOLS_DIR)/golangci-lint: $(TOOLS_DIR)
-	@echo "[tools] Downloading 'golangci-lint'"
-	@wget -O - -q https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | BINDIR=$(@D) sh -s v$(GOLANGCILINT_VERSION) > /dev/null 2>&1
-
-.PHONY: lint
-lint: $(TOOLS_DIR)/golangci-lint
-	@echo "[validate] Validating source code running golangci-lint"
-	@$(TOOLS_DIR)/golangci-lint run
+build: test compile
 
 compile:
 	@echo "=== $(INTEGRATION) === [ compile ]: Building $(INTEGRATION)..."
