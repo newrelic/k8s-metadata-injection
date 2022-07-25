@@ -16,6 +16,6 @@ roleRef:
   name: {{ include "nri-metadata-injection.fullname.admission" . }}
 subjects:
   - kind: ServiceAccount
-    name: {{ include "nri-metadata-injection.fullname.admission" . }}
+    name: {{ include "nri-metadata-injection.fullname.admission.serviceAccount" . }}
     namespace: {{ .Release.Namespace }}
 {{- end }}
