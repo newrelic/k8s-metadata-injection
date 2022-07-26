@@ -23,6 +23,14 @@ Naming helpers
 {{ include "newrelic.common.naming.truncateToDNSWithSuffix" (dict "name" (include "newrelic.common.naming.fullname" .) "suffix" "admission") }}
 {{- end -}}
 
+{{- define "nri-metadata-injection.fullname.admission.serviceAccount" -}}
+{{- if include "newrelic.common.serviceAccount.create" . -}}
+  {{ include "newrelic.common.naming.truncateToDNSWithSuffix" (dict "name" (include "newrelic.common.naming.fullname" .) "suffix" "admission") }}
+{{- else -}}
+  {{ include "newrelic.common.serviceAccount.name" . }}
+{{- end -}}
+{{- end -}}
+
 {{- define "nri-metadata-injection.name.admission-create" -}}
 {{ include "newrelic.common.naming.truncateToDNSWithSuffix" (dict "name" (include "newrelic.common.naming.name" .) "suffix" "admission-create") }}
 {{- end -}}
