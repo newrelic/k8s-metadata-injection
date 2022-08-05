@@ -69,7 +69,7 @@ jobs:
           format: 'table'
           exit-code: '1'
           ignore-unfixed: true
-          severity: 'CRITICAL'
+          severity: 'HIGH,CRITICAL'
       - name: Build and push docker image
         if: ${{ github.event.release.prerelease }}
         run: |
