@@ -9,7 +9,7 @@ sources:
   - https://github.com/newrelic/k8s-metadata-injection
   - https://github.com/newrelic/k8s-metadata-injection/tree/master/charts/nri-metadata-injection
 
-version: 3.0.6
+version: 3.0.7
 appVersion: 1.7.0
 
 keywords:
@@ -19,7 +19,7 @@ keywords:
 
 dependencies:
   - name: common-library
-    version: 1.0.5
+    version: 1.0.6
     repository: "https://helm-charts.newrelic.com"
 
 maintainers:
