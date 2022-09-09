@@ -20,9 +20,9 @@ image:
 # -- Image for creating the needed certificates of this webhook to work
 # @default -- See `values.yaml`
 jobImage:
-  registry: k8s.gcr.io
+  registry:  # Defaults to k8s.gcr.io
   repository: ingress-nginx/kube-webhook-certgen
-  tag: v1.1.1
+  tag: v1.3.0
   pullPolicy: IfNotPresent
   # -- The secrets that are needed to pull images from a custom registry.
   pullSecrets: []
