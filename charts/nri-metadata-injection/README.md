@@ -1,7 +1,5 @@
 # nri-metadata-injection
 
-![Version: 3.0.5](https://img.shields.io/badge/Version-3.0.5-informational?style=flat-square) ![AppVersion: 1.7.0](https://img.shields.io/badge/AppVersion-1.7.0-informational?style=flat-square)
-
 A Helm chart to deploy the New Relic metadata injection webhook.
 
 **Homepage:** <https://hub.docker.com/r/newrelic/k8s-metadata-injection>
