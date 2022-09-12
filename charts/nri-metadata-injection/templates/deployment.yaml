@@ -14,12 +14,12 @@ spec:
       app.kubernetes.io/name: {{ include "newrelic.common.naming.name" . }}
   template:
     metadata:
-{{- if .Values.podAnnotations }}
+      {{- if .Values.podAnnotations }}
       annotations:
-{{ toYaml .Values.podAnnotations | indent 8}}
-{{- end }}
+        {{- toYaml .Values.podAnnotations | nindent 8 }}
+      {{- end }}
       labels:
-        {{- include "newrelic.common.labels" . | nindent 8 }}
+        {{- include "newrelic.common.labels.podLabels" . | nindent 8 }}
     spec:
       {{- with include "nri-metadata-injection.securityContext.pod" . }}
       securityContext:
