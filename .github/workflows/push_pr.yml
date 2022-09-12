@@ -34,7 +34,7 @@ jobs:
       matrix:
         kubernetes-version: [ "v1.16.15", "v1.22.0" ]
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 0
       - uses: helm/chart-testing-action@v2.2.1
@@ -102,7 +102,7 @@ jobs:
     name: Static analysis and linting
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: newrelic/newrelic-infra-checkers@v1
       - name: Semgrep
         uses: returntocorp/semgrep-action@v1
