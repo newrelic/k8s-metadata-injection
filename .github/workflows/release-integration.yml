@@ -17,12 +17,16 @@ jobs:
       - uses: actions/setup-go@v2
         with:
           go-version: '1.18'
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v3
+        with:
+          only-new-issues: true
       - name: Build integration
         env:
           GOOS: ${{ matrix.goos }}
           GOARCH: ${{ matrix.goarch }}
         run: |
-          make lint compile
+          make compile
       - name: Upload artifact for docker build step
         uses: actions/upload-artifact@v2
         with:
