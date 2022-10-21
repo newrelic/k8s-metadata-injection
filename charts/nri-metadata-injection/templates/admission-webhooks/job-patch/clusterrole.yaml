@@ -17,9 +17,11 @@ rules:
     verbs:
       - get
       - update
+{{- if .Values.rbac.pspEnabled }}
   - apiGroups: ['policy']
     resources: ['podsecuritypolicies']
     verbs: ['use']
     resourceNames:
     - {{ include "nri-metadata-injection.fullname.admission" . }}
+{{- end }}
 {{- end }}
