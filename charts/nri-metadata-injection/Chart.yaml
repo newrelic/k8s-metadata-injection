@@ -9,8 +9,8 @@ sources:
   - https://github.com/newrelic/k8s-metadata-injection
   - https://github.com/newrelic/k8s-metadata-injection/tree/master/charts/nri-metadata-injection
 
-version: 3.0.9
-appVersion: 1.7.3
+version: 3.0.10
+appVersion: 1.7.4
 
 keywords:
   - infrastructure
