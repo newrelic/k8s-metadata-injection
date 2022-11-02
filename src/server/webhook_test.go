@@ -4,7 +4,9 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
+	"os"
+
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -18,7 +20,7 @@ import (
 )
 
 func TestServeHTTP(t *testing.T) {
-	patchForValidBody, err := ioutil.ReadFile("testdata/expectedAdmissionReviewPatch.json")
+	patchForValidBody, err := os.ReadFile("testdata/expectedAdmissionReviewPatch.json")
 	if err != nil {
 		t.Fatalf("cannot read testdata file: %v", err)
 	}
@@ -121,7 +123,7 @@ func TestServeHTTP(t *testing.T) {
 			assert.NoError(t, err)
 			assert.Equal(t, c.expectedStatusCode, resp.StatusCode)
 
-			gotBody, err := ioutil.ReadAll(resp.Body)
+			gotBody, err := io.ReadAll(resp.Body)
 			if err != nil {
 				t.Fatalf("could not read body: %v", err)
 			}
