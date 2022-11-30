@@ -28,7 +28,7 @@ jobs:
 
   chart-lint:
     name: Helm chart Lint
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     timeout-minutes: 10
     strategy:
       matrix:
@@ -61,7 +61,7 @@ jobs:
             fi
           done
       - name: Setup Minikube
-        uses: manusa/actions-setup-minikube@v2.4.3
+        uses: manusa/actions-setup-minikube@v2.7.1
         if: steps.list-changed.outputs.changed == 'true'
         with:
           minikube version: v1.20.0
@@ -120,7 +120,7 @@ jobs:
   e2e-kubernetes:
     name: Kubernetes E2E tests
     needs: [ test ]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     env:
       E2E_KUBERNETES_VERSION: ${{ matrix.k8s-version }}
       DOCKER_BUILDKIT: '1' # Setting DOCKER_BUILDKIT=1 ensures TARGETOS and TARGETARCH are populated
