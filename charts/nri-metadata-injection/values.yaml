@@ -39,6 +39,10 @@ jobImage:
   #  - name: tmp
   #    emptyDir: {}
 
+rbac:
+  # rbac.pspEnabled -- Whether the chart should create Pod Security Policy objects.
+  pspEnabled: false
+
 replicas: 1
 
 # -- Additional labels for chart objects. Can be configured also with `global.labels`

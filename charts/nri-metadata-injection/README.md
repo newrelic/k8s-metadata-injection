@@ -53,6 +53,7 @@ Options that can be defined globally include `affinity`, `nodeSelector`, `tolera
 | podLabels | object | `{}` | Additional labels for chart pods. Can be configured also with `global.podLabels` |
 | podSecurityContext | object | `{}` | Sets security context (at pod level). Can be configured also with `global.podSecurityContext` |
 | priorityClassName | string | `""` | Sets pod's priorityClassName. Can be configured also with `global.priorityClassName` |
+| rbac.pspEnabled | bool | `false` | Whether the chart should create Pod Security Policy objects. |
 | replicas | int | `1` |  |
 | resources | object | 100m/30M -/80M | Image for creating the needed certificates of this webhook to work |
 | timeoutSeconds | int | `28` | Webhook timeout Ref: https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#timeouts |

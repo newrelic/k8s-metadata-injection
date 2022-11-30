@@ -1,4 +1,4 @@
-{{- if (and (not .Values.customTLSCertificate) (not .Values.certManager.enabled)) }}
+{{- if (and (not .Values.customTLSCertificate) (not .Values.certManager.enabled) (.Values.rbac.pspEnabled)) }}
 apiVersion: policy/v1beta1
 kind: PodSecurityPolicy
 metadata:
