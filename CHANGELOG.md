@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## 1.7.5
 
-- Bump dependencies (#245)
+- Updated dependencies
 
 ## 1.7.4
 
