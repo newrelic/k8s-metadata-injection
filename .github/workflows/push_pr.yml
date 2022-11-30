@@ -120,7 +120,7 @@ jobs:
   e2e-kubernetes:
     name: Kubernetes E2E tests
     needs: [ test ]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     env:
       E2E_KUBERNETES_VERSION: ${{ matrix.k8s-version }}
       DOCKER_BUILDKIT: '1' # Setting DOCKER_BUILDKIT=1 ensures TARGETOS and TARGETARCH are populated
