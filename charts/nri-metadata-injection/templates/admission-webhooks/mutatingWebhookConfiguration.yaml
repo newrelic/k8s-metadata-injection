@@ -32,4 +32,4 @@ webhooks:
   failurePolicy: Ignore
   timeoutSeconds: {{ .Values.timeoutSeconds }}
   sideEffects: None
-  admissionReviewVersions: ["v1"]
+  admissionReviewVersions: ["v1", "v1beta1"]
