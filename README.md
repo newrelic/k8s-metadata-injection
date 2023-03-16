@@ -1,5 +1,4 @@
-[![Community Plus header](https://github.com/newrelic/opensource-website/raw/main/src/images/categories/Community_Plus.png)](https://opensource.newrelic.com/oss-category/#community-plus)
-
+<a href="https://opensource.newrelic.com/oss-category/#community-plus"><picture><source media="(prefers-color-scheme: dark)" srcset="https://github.com/newrelic/opensource-website/raw/main/src/images/categories/dark/Community_Plus.png"><source media="(prefers-color-scheme: light)" srcset="https://github.com/newrelic/opensource-website/raw/main/src/images/categories/Community_Plus.png"><img alt="New Relic Open Source community plus project banner." src="https://github.com/newrelic/opensource-website/raw/main/src/images/categories/Community_Plus.png"></picture></a>
 
 # Kubernetes Metadata injection for New Relic APM agents
 
@@ -61,8 +60,8 @@ For further information of the configuration needed for the chart just read the 
 
 For the development process [Minikube](https://kubernetes.io/docs/getting-started-guides/minikube) and [Skaffold](https://github.com/GoogleCloudPlatform/skaffold) tools are used.
 
-* [Install Minikube](https://kubernetes.io/docs/tasks/tools/install-minikube/).
-* [Install Skaffold](https://github.com/GoogleCloudPlatform/skaffold#installation).
+- [Install Minikube](https://kubernetes.io/docs/tasks/tools/install-minikube/).
+- [Install Skaffold](https://github.com/GoogleCloudPlatform/skaffold#installation).
 
 Currently the project compiles with **Go 1.11.4**.
 
@@ -74,9 +73,9 @@ Currently for K8s libraries it uses version 1.13.1. Only couple of libraries are
 
 ### Configuration
 
-* Copy the deployment file `deploy/newrelic-metadata-injection.yaml` to `deploy/local.yaml`.
-* Edit the file and set the following value as container image: `internal/k8s-metadata-injector`.
-* Make sure that `imagePullPolicy: Always` is not present in the file (otherwise, the image won't be pulled).
+- Copy the deployment file `deploy/newrelic-metadata-injection.yaml` to `deploy/local.yaml`.
+- Edit the file and set the following value as container image: `internal/k8s-metadata-injector`.
+- Make sure that `imagePullPolicy: Always` is not present in the file (otherwise, the image won't be pulled).
 
 ### Run
 
@@ -137,11 +136,11 @@ For the automatic certificate management, the [k8s-webhook-cert-manager](https:/
 
 The manifest file at [deploy/job.yaml](./deploy/job.yaml) contains a service account that has the following **cluster** permissions (**RBAC based**) to be capable of automatically manage the certificates:
 
-* `MutatingWebhookConfiguration` - **get**, **create** and **patch**: to be able to create the webhook and patch its CA bundle.
-* `CertificateSigningRequests` - **create**, **get** and **delete**: to be able to sign the certificate required for the webhook server without leaving duplicates.
-* `CertificateSigningRequests/Approval` - **update**: to be able to approve CertificateSigningRequests.
-* `Secrets` - **create**, **get** and **patch**: to be able to manage the TLS secret used to store the key/cert pair used in the webhook server.
-* `ConfigMaps` - **get**: to be able go get the k8s api server's CA bundle, used in the MutatingWebhookConfiguration.
+- `MutatingWebhookConfiguration` - **get**, **create** and **patch**: to be able to create the webhook and patch its CA bundle.
+- `CertificateSigningRequests` - **create**, **get** and **delete**: to be able to sign the certificate required for the webhook server without leaving duplicates.
+- `CertificateSigningRequests/Approval` - **update**: to be able to approve CertificateSigningRequests.
+- `Secrets` - **create**, **get** and **patch**: to be able to manage the TLS secret used to store the key/cert pair used in the webhook server.
+- `ConfigMaps` - **get**: to be able go get the k8s api server's CA bundle, used in the MutatingWebhookConfiguration.
 
 If you wish to learn more about TLS certificates management inside Kubernetes, check out [the official documentation for Managing TLS Certificates in a Cluster](https://kubernetes.io/docs/tasks/tls/managing-tls-in-a-cluster/#create-a-certificate-signing-request-object-to-send-to-the-kubernetes-api).
 
@@ -159,6 +158,7 @@ $ kubectl create secret tls newrelic-metadata-injection-secret \
 $ caBundle=$(cat caBundle.pem | base64 | td -d '\n')
 $ kubectl patch mutatingwebhookconfiguration newrelic-metadata-injection-cfg --type='json' -p "[{'op': 'replace', 'path': '/webhooks/0/clientConfig/caBundle', 'value':'${caBundle}'}]"
 ```
+
 ## Release a new version
 
 - Update the version in `deploy/newrelic-metadata-injection.yaml`.
@@ -176,11 +176,11 @@ If the issue has been confirmed as a bug or is a feature request, file a GitHub 
 
 **Support Channels**
 
-* [New Relic Documentation](https://docs.newrelic.com): Comprehensive guidance for using our platform
-* [New Relic Community](https://discuss.newrelic.com/t/new-relic-kubernetes-open-source-integration/109093): The best place to engage in troubleshooting questions
-* [New Relic Developer](https://developer.newrelic.com/): Resources for building a custom observability applications
-* [New Relic University](https://learn.newrelic.com/): A range of online training for New Relic users of every level
-* [New Relic Technical Support](https://support.newrelic.com/) 24/7/365 ticketed support. Read more about our [Technical Support Offerings](https://docs.newrelic.com/docs/licenses/license-information/general-usage-licenses/support-plan).
+- [New Relic Documentation](https://docs.newrelic.com): Comprehensive guidance for using our platform
+- [New Relic Community](https://discuss.newrelic.com/t/new-relic-kubernetes-open-source-integration/109093): The best place to engage in troubleshooting questions
+- [New Relic Developer](https://developer.newrelic.com/): Resources for building a custom observability applications
+- [New Relic University](https://learn.newrelic.com/): A range of online training for New Relic users of every level
+- [New Relic Technical Support](https://support.newrelic.com/) 24/7/365 ticketed support. Read more about our [Technical Support Offerings](https://docs.newrelic.com/docs/licenses/license-information/general-usage-licenses/support-plan).
 
 ## Privacy
 
@@ -207,4 +207,5 @@ If you would like to contribute to this project, review [these guidelines](./CON
 To all contributors, we thank you!  Without your contribution, this project would not be what it is today.
 
 ## License
+
 Kubernetes Metadata injection is licensed under the [Apache 2.0](http://apache.org/licenses/LICENSE-2.0.txt) License.
