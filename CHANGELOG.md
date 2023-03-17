@@ -7,7 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## 1.9.0
 
-- Updated dependencies
+- Update dependencies
+- Update chart maintainers
+- Add support for Pod annotations in batch job pods (#261)
 
 ## 1.8.0
 
