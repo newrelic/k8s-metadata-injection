@@ -1,10 +1,18 @@
 # Changelog
+
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 1.9.0
+
+- Update dependencies
+- Update chart maintainers
+- Add support for Pod annotations in batch job pods (#261)
+
 ## 1.8.0
+
 - Updated dependencies
 - Fix: Resolve the issue about MutatingWebhookConfiguration being not supported in v1beta1
 
@@ -35,7 +43,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## 1.6.0
 
-- Adds support for Kubernetes 1.22 
+- Adds support for Kubernetes 1.22
 
 ## 1.5.0
 
@@ -61,8 +69,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## 1.2.0
 
-- Update deployment apiVersion to apps/v1 
-- Add kubernetes.io/legacy-unknown signer with approve permission to rbac for 1.18 compatibility 
+- Update deployment apiVersion to apps/v1
+- Add kubernetes.io/legacy-unknown signer with approve permission to rbac for 1.18 compatibility
 
 ## 1.1.4
 
@@ -92,4 +100,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - The webhook server now listens on a non-root port by default: 8443.
 
 ## 1.0.0
+
 - Initial version of the webhook.
