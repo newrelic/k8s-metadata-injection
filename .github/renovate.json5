@@ -9,5 +9,5 @@
     "helm-values",
     "helmv3"
   ],
-  "ignoreDeps": ["ingress-nginx/kube-webhook-certgen", "kube-webhook-certgen"]
+  "ignoreDeps": ["ingress-nginx/kube-webhook-certgen"]
 }
