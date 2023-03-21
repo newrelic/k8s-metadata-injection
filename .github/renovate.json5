@@ -8,5 +8,6 @@
     // Managers for helm and helm-values. Go dependencies are managed by Dependabot.
     "helm-values",
     "helmv3"
-  ]
+  ],
+  "ignoreDeps": ["ingress-nginx/kube-webhook-certgen"]
 }
