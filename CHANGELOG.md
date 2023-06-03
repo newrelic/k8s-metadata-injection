@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 1.10.1
+
+## What's Changed
+* Fix helm unittests by @htroisi in https://github.com/newrelic/k8s-metadata-injection/pull/292
+* Bump app and chart versions by @juanjjaramillo in https://github.com/newrelic/k8s-metadata-injection/pull/293
+* Update Helm unit test reference by @juanjjaramillo in https://github.com/newrelic/k8s-metadata-injection/pull/294
+* chore(deps): bump alpine from 3.17.3 to 3.18.0 by @dependabot in https://github.com/newrelic/k8s-metadata-injection/pull/295
+* chore(deps): bump k8s.io/api from 0.27.1 to 0.27.2 by @dependabot in https://github.com/newrelic/k8s-metadata-injection/pull/296
+* chore(deps): bump github.com/stretchr/testify from 1.8.2 to 1.8.4 by @dependabot in https://github.com/newrelic/k8s-metadata-injection/pull/301
+
+
+**Full Changelog**: https://github.com/newrelic/k8s-metadata-injection/compare/v1.10.0...v1.10.1
+
 ## 1.10.0
 
 - Update dependencies
