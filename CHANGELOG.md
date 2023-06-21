@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 1.10.2
+## What's Changed
+* Update CHANGELOG.md by @juanjjaramillo in https://github.com/newrelic/k8s-metadata-injection/pull/302
+* Bump versions by @juanjjaramillo in https://github.com/newrelic/k8s-metadata-injection/pull/303
+* chore(deps): bump aquasecurity/trivy-action from 0.10.0 to 0.11.2 by @dependabot in https://github.com/newrelic/k8s-metadata-injection/pull/304
+* chore(deps): bump alpine from 3.18.0 to 3.18.2 by @dependabot in https://github.com/newrelic/k8s-metadata-injection/pull/305
+* chore(deps): bump k8s.io/apimachinery from 0.27.2 to 0.27.3 by @dependabot in https://github.com/newrelic/k8s-metadata-injection/pull/306
+* chore(deps): bump k8s.io/api from 0.27.2 to 0.27.3 by @dependabot in https://github.com/newrelic/k8s-metadata-injection/pull/307
+* upgrade go version by @xqi-nr in https://github.com/newrelic/k8s-metadata-injection/pull/308
+
+**Full Changelog**: https://github.com/newrelic/k8s-metadata-injection/compare/v1.10.1...v1.10.2
+
 ## 1.10.1
 
 ## What's Changed
