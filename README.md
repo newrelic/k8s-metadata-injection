@@ -103,7 +103,7 @@ There are also some basic E2E tests, they are prepared to run using
 [Minikube](https://github.com/kubernetes/minikube). To run them, execute:
 
 ``` bash
-make e2e-test
+make compile-multiarch && make e2e-test
 ```
 
 You can specify against which version of K8s you want to execute the tests:
