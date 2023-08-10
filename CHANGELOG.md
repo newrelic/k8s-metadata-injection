@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### enhancement
+- Add changelog workflow @svetlanabrennan [#316](https://github.com/newrelic/k8s-metadata-injection/pull/316)
+
 ## 1.10.2
 ## What's Changed
 * Update CHANGELOG.md by @juanjjaramillo in https://github.com/newrelic/k8s-metadata-injection/pull/302
