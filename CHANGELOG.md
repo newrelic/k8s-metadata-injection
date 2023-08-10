@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 
 ### enhancement
+- Add changelog workflow @svetlanabrennan [#316](https://github.com/newrelic/k8s-metadata-injection/pull/316)
 - Add pull request template @svetlanabrennan [#317](https://github.com/newrelic/k8s-metadata-injection/pull/317)
 
 ## 1.10.2
