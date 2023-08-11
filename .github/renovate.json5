@@ -4,6 +4,8 @@
     // Disable the creation of this issue that renovate updates with the pending issue we follow with Zenhub:
     ":disableDependencyDashboard"
   ],
+  // Label PRs with `dependencies`.
+  "labels": ["dependencies"],
   "enabledManagers": [
     // Managers for helm and helm-values. Go dependencies are managed by Dependabot.
     "helm-values",
