@@ -1,0 +1,19 @@
+suite: check resources are properly set
+templates:
+  - templates/deployment.yaml
+release:
+  name: release
+  namespace: ns
+tests:
+  - it: resources are properly set
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].resources.requests
+          content:
+            cpu: 100m
+            memory: 30Mi
+      - contains:
+          path: spec.template.spec.containers[0].resources.limits
+          content:
+            cpu: 150m
+            memory: 80Mi

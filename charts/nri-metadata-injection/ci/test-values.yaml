@@ -3,3 +3,11 @@ cluster: test-cluster
 image:
   repository: e2e/metadata-injection
   tag: test  # Defaults to AppVersion
+
+resources:
+  limits:
+    cpu: 150m
+    memory: 80Mi
+  requests:
+    cpu: 100m
+    memory: 30Mi
