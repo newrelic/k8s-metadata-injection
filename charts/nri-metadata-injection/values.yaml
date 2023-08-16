@@ -54,12 +54,12 @@ podLabels: {}
 
 # -- Image for creating the needed certificates of this webhook to work
 # @default -- 100m/30M -/80M
-resources:
-  limits:
-    memory: 80M
-  requests:
-    cpu: 100m
-    memory: 30M
+resources: {}
+#  limits:
+#    memory: 80M
+#  requests:
+#    cpu: 100m
+#    memory: 30M
 
 # -- Sets pod's priorityClassName. Can be configured also with `global.priorityClassName`
 priorityClassName: ""
