@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add changelog workflow @svetlanabrennan [#316](https://github.com/newrelic/k8s-metadata-injection/pull/316)
 - Update code owners @jjaramillo [#318](https://github.com/newrelic/k8s-metadata-injection/pull/318)
 - Add pull request template @svetlanabrennan [#317](https://github.com/newrelic/k8s-metadata-injection/pull/317)
+- Add More Logs for NEW_RELIC_METADATA_KUBERNETES_CLUSTER_NAME Injection @xqi-nr [#325](https://github.com/newrelic/k8s-metadata-injection/pull/325)
 
 ## 1.10.2
 ## What's Changed

@@ -50,6 +50,7 @@ func (whsvr *Webhook) getEnvVarsToInject(pod *corev1.Pod, container *corev1.Cont
 		createEnvVarFromString("NEW_RELIC_METADATA_KUBERNETES_CONTAINER_IMAGE_NAME", container.Image),
 	}
 
+	whsvr.Logger.Infow("creating env variables", "cluster_name", whsvr.ClusterName, "container_name", container.Name, "container_image", container.Image)
 	// Guess the name of the deployment. We check whether the Pod is Owned by a ReplicaSet and confirms with the
 	// naming convention for a Deployment. This can give a false positive if the user uses ReplicaSets directly.
 	if len(pod.OwnerReferences) == 1 && pod.OwnerReferences[0].Kind == "ReplicaSet" {
