@@ -61,6 +61,5 @@ rt-update-changelog:
 
 # Include thematic Makefiles
 include $(CURDIR)/build/ci.mk
-include $(CURDIR)/build/release.mk
 
 .PHONY: compile rt-update-changelog
