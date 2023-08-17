@@ -7,7 +7,7 @@ name: Trigger prerelease creation
 on:
   workflow_dispatch:
   schedule:
-    - cron: "0 12 * * 4" # Thursday at 12pm UTC or 5am PT
+    - cron: "0 12 * * 1" # Monday at 12pm UTC or 5am PT
 
 jobs:
   prerelease:
@@ -15,6 +15,6 @@ jobs:
     with:
       rt-included-files: go.mod,go.sum,build/Dockerfile
     secrets:
-      bot_token: ${{ secrets.COREINT_BOT_TOKEN }}
-      slack_channel:  ${{ secrets.COREINT_SLACK_CHANNEL }}
-      slack_token: ${{ secrets.COREINT_SLACK_TOKEN }}
+      bot_token: ${{ secrets.K8S_BOT_TOKEN }}
+      slack_channel:  ${{ secrets.K8S_SLACK_CHANNEL }}
+      slack_token: ${{ secrets.K8S_SLACK_TOKEN }}

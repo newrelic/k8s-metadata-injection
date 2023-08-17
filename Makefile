@@ -59,4 +59,8 @@ benchmark-test:
 rt-update-changelog:
 	curl "https://raw.githubusercontent.com/newrelic/release-toolkit/v1/contrib/ohi-release-notes/run.sh" | bash -s -- $(filter-out $@,$(MAKECMDGOALS))
 
+# Include thematic Makefiles
+include $(CURDIR)/build/ci.mk
+include $(CURDIR)/build/release.mk
+
 .PHONY: compile rt-update-changelog
