@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### bugfix
+- Add configuration of certmanager durations @cdobbyn [#323](https://github.com/newrelic/k8s-metadata-injection/pull/323)
+
 
 ### enhancement
 - Add changelog workflow @svetlanabrennan [#316](https://github.com/newrelic/k8s-metadata-injection/pull/316)
