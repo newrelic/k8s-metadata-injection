@@ -15,6 +15,6 @@ jobs:
     with:
       rt-included-files: go.mod,go.sum,build/Dockerfile
     secrets:
-      bot_token: ${{ secrets.K8S_BOT_TOKEN }}
-      slack_channel:  ${{ secrets.K8S_SLACK_CHANNEL }}
-      slack_token: ${{ secrets.K8S_SLACK_TOKEN }}
+      bot_token: ${{ secrets.K8S_AGENTS_BOT_TOKEN }}
+      slack_channel:  ${{ secrets.K8S_AGENTS_SLACK_CHANNEL }}
+      slack_token: ${{ secrets.K8S_AGENTS_SLACK_TOKEN }}
