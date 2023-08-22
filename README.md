@@ -106,6 +106,13 @@ There are also some basic E2E tests, they are prepared to run using
 make e2e-test
 ```
 
+The e2e tests make the assumption that you are running on an AMD system so in case the test doesn't generate the needed binary, run the below command. 
+For instance if you run on an M2 mac arm64 is the target arch but it is not made by default. 
+
+```bash
+make compile-multiarch
+```
+
 You can specify against which version of K8s you want to execute the tests:
 
 ``` bash

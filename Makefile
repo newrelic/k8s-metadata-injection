@@ -33,6 +33,12 @@ compile:
 	go mod download
 	CGO_ENABLED=$(CGO_ENABLED) go build -o $(BINARY_NAME) ./cmd/server
 
+.PHONY: compile-multiarch
+compile-multiarch:
+	$(MAKE) compile GOOS=linux GOARCH=amd64
+	$(MAKE) compile GOOS=linux GOARCH=arm64
+	$(MAKE) compile GOOS=linux GOARCH=arm
+
 .PHONY: build-container
 build-container:
 	docker build -t $(DOCKER_IMAGE_NAME):$(DOCKER_IMAGE_TAG) $$DOCKERARGS .
