@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### security
+- Meet internal security standards @jjaramillo [#334](https://github.com/newrelic/k8s-metadata-injection/pull/334)
+
 ## 1.11.0
 ## What's Changed
 - Add configuration of certmanager durations @cdobbyn [#323](https://github.com/newrelic/k8s-metadata-injection/pull/323)
