@@ -3,3 +3,6 @@ bin
 
 # Downloaded chart dependencies
 **/charts/*.tgz
+
+# Release toolkit
+CHANGELOG.partial.md
