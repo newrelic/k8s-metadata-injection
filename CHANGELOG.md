@@ -7,7 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
-### security
+## v1.12.0 - 2023-08-23
+
+### 🛡️ Security notices
 - Meet internal security standards @jjaramillo [#334](https://github.com/newrelic/k8s-metadata-injection/pull/334)
 
 ## 1.11.0
