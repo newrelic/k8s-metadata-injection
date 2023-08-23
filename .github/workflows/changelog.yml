@@ -13,6 +13,11 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+      - name: Debug Labels
+        run: |
+          echo "${{ toJson(github.event.pull_request.labels[*].name) }}"
+          echo "Should Run: ${{ !contains(github.event.pull_request.labels.*.name, 'dependencies') && !contains(github.event.pull_request.labels.*.name, 'Skip Changelog')}}"
+
       - name: Check for CHANGELOG file changes
         run: |
           # Only the latest commit of the feature branch is available
