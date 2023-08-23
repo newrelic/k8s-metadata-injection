@@ -104,4 +104,4 @@ jobs:
         with:
           slack-bot-user-oauth-access-token: ${{ secrets.K8S_AGENTS_SLACK_TOKEN }}
           slack-channel: ${{ secrets.K8S_AGENTS_SLACK_CHANNEL }}
-          slack-text: "❌ `${{ env.ORIGINAL_REPO_NAME }}`: [release pipeline failed](${{ github.server_url }}/${{ env.ORIGINAL_REPO_NAME }}/actions/runs/${{ github.run_id }})."
+          slack-text: "❌ `${{ env.ORIGINAL_REPO_NAME }}`: <${{ github.server_url }}/${{ env.ORIGINAL_REPO_NAME }}/actions/runs/${{ github.run_id }}|release pipeline failed>."
