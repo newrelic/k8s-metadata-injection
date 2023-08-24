@@ -6,8 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
-### enhancement
+
+## v1.13.0 - 2023-08-24
+
+### 🚀 Enhancements
 - Define GitHub bot name and email @juanjjaramillo [#343](https://github.com/newrelic/k8s-metadata-injection/pull/343)
+
+### ⛓️ Dependencies
+- Updated alpine to v3.18.3
 
 ## v1.12.0 - 2023-08-23
 
