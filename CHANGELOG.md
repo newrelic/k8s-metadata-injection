@@ -6,17 +6,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### enhancement
+- Define GitHub bot name and email @juanjjaramillo [#343](https://github.com/newrelic/k8s-metadata-injection/pull/343)
 
 ## v1.12.0 - 2023-08-23
 
 ### 🛡️ Security notices
-- Meet internal security standards @jjaramillo [#334](https://github.com/newrelic/k8s-metadata-injection/pull/334)
+- Meet internal security standards @juanjjaramillo [#334](https://github.com/newrelic/k8s-metadata-injection/pull/334)
 
 ## 1.11.0
 ## What's Changed
 - Add configuration of certmanager durations @cdobbyn [#323](https://github.com/newrelic/k8s-metadata-injection/pull/323)
 - Add changelog workflow @svetlanabrennan [#316](https://github.com/newrelic/k8s-metadata-injection/pull/316)
-- Update code owners @jjaramillo [#318](https://github.com/newrelic/k8s-metadata-injection/pull/318)
+- Update code owners @juanjjaramillo [#318](https://github.com/newrelic/k8s-metadata-injection/pull/318)
 - Add pull request template @svetlanabrennan [#317](https://github.com/newrelic/k8s-metadata-injection/pull/317)
 - Add More Logs for NEW_RELIC_METADATA_KUBERNETES_CLUSTER_NAME Injection @xqi-nr [#325](https://github.com/newrelic/k8s-metadata-injection/pull/325)
 
