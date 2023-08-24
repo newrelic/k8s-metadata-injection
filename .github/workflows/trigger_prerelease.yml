@@ -14,6 +14,8 @@ jobs:
     uses: newrelic/coreint-automation/.github/workflows/trigger_prerelease.yaml@v1
     with:
       rt-included-files: go.mod,go.sum,build/Dockerfile
+      bot_email: '${{ vars.K8S_AGENTS_BOT_EMAIL }}'
+      bot_name: '${{ vars.K8S_AGENTS_BOT_NAME }}'
     secrets:
       bot_token: ${{ secrets.K8S_AGENTS_BOT_TOKEN }}
       slack_channel:  ${{ secrets.K8S_AGENTS_SLACK_CHANNEL }}
