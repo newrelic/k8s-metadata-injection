@@ -9,7 +9,7 @@ on:
 jobs:
   changelog-entry:
     runs-on: ubuntu-latest
-    if: ${{ !contains(github.event.pull_request.labels.*.name, 'dependencies') && !contains(github.event.pull_request.labels.*.name, 'Skip Changelog')}}
+    if: ${{ !contains(github.event.pull_request.labels.*.name, 'dependencies') && !contains(github.event.pull_request.labels.*.name, 'Skip Changelog') && !startsWith(github.head_ref, 'renovate/')}}
 
     steps:
       - uses: actions/checkout@v3
