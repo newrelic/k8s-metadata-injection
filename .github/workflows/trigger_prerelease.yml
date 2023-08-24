@@ -13,7 +13,7 @@ jobs:
   prerelease:
     uses: newrelic/coreint-automation/.github/workflows/trigger_prerelease.yaml@v1
     with:
-      rt-included-files: go.mod,go.sum,build/Dockerfile
+      rt-included-files: go.mod,go.sum,Dockerfile
       bot_email: '${{ vars.K8S_AGENTS_BOT_EMAIL }}'
       bot_name: '${{ vars.K8S_AGENTS_BOT_NAME }}'
     secrets:
