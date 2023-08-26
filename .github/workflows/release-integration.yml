@@ -156,8 +156,6 @@ jobs:
 
       - name: Push Changes
         run: git push origin update-chart-version-${{ github.sha }}
-        env:
-          PAT: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
 
       - name: Open pull request
         run: gh pr create -B main -H update-chart-version-${{ github.sha }} --title 'Bump appVersion' --body 'Bumping appVersion'
