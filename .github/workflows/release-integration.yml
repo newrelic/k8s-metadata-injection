@@ -51,6 +51,7 @@ jobs:
       DOCKER_PLATFORMS: "linux/amd64,linux/arm64,linux/arm" # Must be consistent with the matrix from the job above
     steps:
       - name: Generate docker image version from git tag
+        id: set-new-version
         run: |
           echo "${{ github.event.release.tag_name }}" | grep -E '^[v]?[0-9.]*[0-9]$'
           DOCKER_IMAGE_TAG=$(echo "${{ github.event.release.tag_name }}" | sed 's/^v//')
@@ -109,7 +110,8 @@ jobs:
       - name: Find new helm chart version
         id: find-version
         run: |
-          echo "TEST_VERSION=${{ needs.find-chart-version.outputs.new-version }}" >> $GITHUB_ENV
+          echo "TEST_VERSION=${{ needs.docker-integration.outputs.new-version }}" >> $GITHUB_ENV
+          echo "new app version is: $TEST_VERSION"
 
       - name: Current appVersion
         run: |
