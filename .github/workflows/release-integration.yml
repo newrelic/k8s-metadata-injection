@@ -161,7 +161,10 @@ jobs:
         run: git push origin update-chart-version-${{ github.sha }}
 
       - name: Open pull request
-        run: gh pr create -B main -H update-chart-version-${{ github.sha }} --title 'Bump appVersion' --body 'Bumping appVersion'
+        run: |
+          pr_url=$(gh pr create -B main -H update-chart-version-${{ github.sha }} --title 'Bump appVersion' --body 'Bumping appVersion')
+          pr_number=$(basename $pr_url)
+          gh pr merge $pr_number --squash --auto --delete-branch --body "Merged by github bot."
         env:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   
