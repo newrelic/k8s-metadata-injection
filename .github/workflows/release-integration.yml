@@ -5,6 +5,7 @@ on:
     types: [prereleased, released]
     tags:
       - 'v*'
+  workflow_dispatch:
 
 env:
   ORIGINAL_REPO_NAME: ${{ github.event.repository.full_name }}
@@ -151,7 +152,7 @@ jobs:
 
       - name: Commit Changes
         run: |
-          git checkout -b update-chart-version-${{ github.sha }} origin/main
+          git checkout -b update-chart-version-${{ github.sha }}
           git branch -a
           git add ${{ env.CHART_DIRECTORY }}/Chart.yaml
           git commit -m "Update version and appVersion"
