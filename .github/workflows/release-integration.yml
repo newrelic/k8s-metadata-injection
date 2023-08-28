@@ -104,7 +104,7 @@ jobs:
     name: Update version and appVersion and open pr
     needs: [ docker-integration ]
     runs-on: ubuntu-latest
-    if: ${{ github.event.release.type == 'released' }}
+    if: ${{ ! github.event.release.prerelease }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
