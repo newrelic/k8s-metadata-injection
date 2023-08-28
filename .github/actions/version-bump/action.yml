@@ -27,7 +27,7 @@ runs:
         node-version: 14
 
     - name: Checkout code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
     - name: Run Version Update
       shell: bash
