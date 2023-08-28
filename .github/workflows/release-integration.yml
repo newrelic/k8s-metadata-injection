@@ -159,7 +159,7 @@ jobs:
           git commit -m "Update version and appVersion"
 
       - name: Push Changes
-        run: git push origin update-chart-version-${{ github.sha }}
+        run: git push origin k8s-agent-bot/update-chart-version-${{ github.sha }}
 
       - name: Open pull request
         run: gh pr create -B main -H k8s-agent-bot/update-chart-version-${{ github.sha }} --title 'Bump appVersion' --body 'Bumping appVersion'
