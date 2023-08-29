@@ -121,7 +121,6 @@ jobs:
           ORIGINAL_APP_VERSION=$(yq eval '.appVersion' ${{ env.CHART_DIRECTORY }}/Chart.yaml)
           echo "original app version: $ORIGINAL_APP_VERSION"
           echo "ORIGINAL_APP_VERSION=$ORIGINAL_APP_VERSION" >> $GITHUB_ENV
-       
 
       - name: Find current helm chart version
         run: |
