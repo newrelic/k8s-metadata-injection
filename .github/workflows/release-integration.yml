@@ -153,7 +153,7 @@ jobs:
 
       - name: Commit Changes
         run: |
-          git checkout -b k8s-agent-bot/update-chart-version-${{ github.sha }}
+          git checkout -b k8s-agent-bot/update-chart-version-${{ github.sha }} origin/main
           git branch -a
           git add ${{ env.CHART_DIRECTORY }}/Chart.yaml
           git commit -m "Update version and appVersion"
