@@ -9,7 +9,6 @@ on:
 
 env:
   ORIGINAL_REPO_NAME: ${{ github.event.repository.full_name }}
-  CHART_DIRECTORY: 'charts/nri-metadata-injection'
 
 jobs:
   build:
@@ -45,8 +44,6 @@ jobs:
     name: Release docker
     needs: [ build ]
     runs-on: ubuntu-latest
-    outputs:
-      new-version: ${{ steps.set-new-version.outputs.new-version }}
     env:
       DOCKER_IMAGE_NAME: newrelic/k8s-metadata-injection
       DOCKER_PLATFORMS: "linux/amd64,linux/arm64,linux/arm" # Must be consistent with the matrix from the job above
@@ -57,7 +54,6 @@ jobs:
           echo "${{ github.event.release.tag_name }}" | grep -E '^[v]?[0-9.]*[0-9]$'
           DOCKER_IMAGE_TAG=$(echo "${{ github.event.release.tag_name }}" | sed 's/^v//')
           echo "DOCKER_IMAGE_TAG=$DOCKER_IMAGE_TAG" >> $GITHUB_ENV
-          echo "new-version=$DOCKER_IMAGE_TAG" >> $GITHUB_OUTPUT
       - uses: actions/checkout@v3
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
@@ -99,6 +95,7 @@ jobs:
             -t $DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG \
             -t $DOCKER_IMAGE_NAME:latest \
             .
+
   open-pr:
     name: Update version and appVersion and open pr
     needs: [ docker-integration ]
@@ -168,10 +165,10 @@ jobs:
         run: gh pr create -B main -H update-chart-version-${{ github.sha }} --title 'Bump version and appVersion' --body 'Bump version and appVersion as part of release automation.'
         env:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  
+
   notify-failure:
     if: ${{ always() && failure() }}
-    needs: [docker-integration, open-pr]
+    needs: [docker-integration]
     runs-on: ubuntu-latest
     steps:
       - name: Notify failure via Slack
