@@ -6,7 +6,6 @@ on:
       - main
       - master
       - renovate/**
-      - k8s-agent-bot/**
   pull_request:
 
 jobs:

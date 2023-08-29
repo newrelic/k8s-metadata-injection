@@ -9,7 +9,6 @@ on:
 
 env:
   ORIGINAL_REPO_NAME: ${{ github.event.repository.full_name }}
-  CHART_DIRECTORY: 'charts/nri-metadata-injection'
 
 jobs:
   build:
@@ -45,8 +44,6 @@ jobs:
     name: Release docker
     needs: [ build ]
     runs-on: ubuntu-latest
-    outputs:
-      new-version: ${{ steps.set-new-version.outputs.new-version }}
     env:
       DOCKER_IMAGE_NAME: newrelic/k8s-metadata-injection
       DOCKER_PLATFORMS: "linux/amd64,linux/arm64,linux/arm" # Must be consistent with the matrix from the job above
@@ -57,7 +54,6 @@ jobs:
           echo "${{ github.event.release.tag_name }}" | grep -E '^[v]?[0-9.]*[0-9]$'
           DOCKER_IMAGE_TAG=$(echo "${{ github.event.release.tag_name }}" | sed 's/^v//')
           echo "DOCKER_IMAGE_TAG=$DOCKER_IMAGE_TAG" >> $GITHUB_ENV
-          echo "new-version=$DOCKER_IMAGE_TAG" >> $GITHUB_OUTPUT
       - uses: actions/checkout@v3
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
@@ -99,76 +95,10 @@ jobs:
             -t $DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG \
             -t $DOCKER_IMAGE_NAME:latest \
             .
-
-  open-pr:
-    name: Update version and appVersion and open pr
-    needs: [ docker-integration ]
-    runs-on: ubuntu-latest
-    if: ${{ ! github.event.release.prerelease }}
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-      
-      - name: Find new helm chart version
-        id: find-version
-        run: |
-          echo "TEST_VERSION=${{ needs.docker-integration.outputs.new-version }}" >> $GITHUB_ENV
-          echo "new app version is: $TEST_VERSION"
-
-      - name: Current appVersion
-        run: |
-          ORIGINAL_APP_VERSION=$(yq eval '.appVersion' ${{ env.CHART_DIRECTORY }}/Chart.yaml)
-          echo "original app version is: $ORIGINAL_APP_VERSION"
-          echo "ORIGINAL_APP_VERSION=$ORIGINAL_APP_VERSION" >> $GITHUB_ENV
-        id: original_version
-
-      - name: Capture helm chart version
-        run: |
-          APP_VERSION=$(yq eval '.version' ${{ env.CHART_DIRECTORY }}/Chart.yaml)
-          echo "version: $APP_VERSION"
-          echo "APP_VERSION=$APP_VERSION" >> $GITHUB_ENV
-
-      - name: Run version update reusable workflow
-        id: run-reusable
-        uses: ./.github/actions/version-bump
-        with:
-          currentVersion: $APP_VERSION
-          currentAppVersion: $ORIGINAL_APP_VERSION
-          updatedAppVersion: $TEST_VERSION
-
-      - name: Set new version
-        run: |
-          echo "new version to set is: ${{ steps.run-reusable.outputs.newVersion }}"
-
-      - name: Update version helm chart
-        run: |
-          yq e -i ".appVersion=\"${TEST_VERSION}\"" "${{ env.CHART_DIRECTORY }}/Chart.yaml"
-          yq e -i '.version="${{ steps.run-reusable.outputs.newVersion }}"' ${{ env.CHART_DIRECTORY }}/Chart.yaml
-          echo $(yq eval '.appVersion' ${{ env.CHART_DIRECTORY }}/Chart.yaml)
-
-      - name: Configure Git
-        run: |
-          git config user.name "${{ github.actor }}"
-          git config user.email "${{ github.actor }}@users.noreply.github.com"
-
-      - name: Commit Changes
-        run: |
-          git checkout -b k8s-agent-bot/update-chart-version-${{ github.sha }} origin/main
-          git branch -a
-          git add ${{ env.CHART_DIRECTORY }}/Chart.yaml
-          git commit -m "Update version and appVersion"
-
-      - name: Push Changes
-        run: git push origin k8s-agent-bot/update-chart-version-${{ github.sha }}
-
-      - name: Open pull request
-        run: gh pr create -B main -H k8s-agent-bot/update-chart-version-${{ github.sha }} --title 'Bump appVersion' --body 'Bumping appVersion'
-        env:
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   
   notify-failure:
     if: ${{ always() && failure() }}
-    needs: [docker-integration, open-pr]
+    needs: [docker-integration]
     runs-on: ubuntu-latest
     steps:
       - name: Notify failure via Slack
