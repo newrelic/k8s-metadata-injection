@@ -116,11 +116,12 @@ jobs:
           echo "new app version: $NEW_APP_VERSION"
 
       - name: Find current appVersion
+        id: original_version
         run: |
           ORIGINAL_APP_VERSION=$(yq eval '.appVersion' ${{ env.CHART_DIRECTORY }}/Chart.yaml)
           echo "original app version: $ORIGINAL_APP_VERSION"
           echo "ORIGINAL_APP_VERSION=$ORIGINAL_APP_VERSION" >> $GITHUB_ENV
-        id: original_version
+       
 
       - name: Find current helm chart version
         run: |
@@ -156,7 +157,7 @@ jobs:
       
       - name: Commit Changes
         run: |
-          git checkout -b update-chart-version-${{ github.sha }} origin/main
+          git checkout -b update-chart-version-${{ github.sha }}
           git branch -a
           git add ${{ env.CHART_DIRECTORY }}/Chart.yaml
           git commit -m "Bump version and appVersion"
