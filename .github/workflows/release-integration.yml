@@ -95,6 +95,31 @@ jobs:
             -t $DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG \
             -t $DOCKER_IMAGE_NAME:latest \
             .
+
+      - name: TEST - Update version helm chart
+        run: |
+          yq e -i '.version="test"' ${{ env.CHART_DIRECTORY }}/Chart.yaml
+          echo $(yq eval '.appVersion' ${{ env.CHART_DIRECTORY }}/Chart.yaml)
+      
+      - name: TEST - Configure Git
+        run: |
+          git config user.name "${{ github.actor }}"
+          git config user.email "${{ github.actor }}@users.noreply.github.com"
+      - name: Commit Changes
+        run: |
+          git checkout -b k8s-agent-bot/update-chart-version-${{ github.sha }} origin/main
+          git branch -a
+          git add ${{ env.CHART_DIRECTORY }}/Chart.yaml
+          git commit -m "Update version and appVersion"
+
+      - name: TEST - Push Changes
+        run: git push origin k8s-agent-bot/update-chart-version-${{ github.sha }}
+
+      - name: Open pull request
+        run: gh pr create -B main -H k8s-agent-bot/update-chart-version-${{ github.sha }} --title 'Bump appVersion' --body 'Bumping appVersion'
+        env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
   
   notify-failure:
     if: ${{ always() && failure() }}
