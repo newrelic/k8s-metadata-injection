@@ -7,7 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
-### enhancement
+## v1.14.0 - 2023-08-31
+
+### 🚀 Enhancements
 - Remove old maintainers @svetlanabrennan [#355](https://github.com/newrelic/k8s-metadata-injection/pull/355)
 
 ## v1.13.0 - 2023-08-28
