@@ -9,6 +9,7 @@ on:
 
 env:
   ORIGINAL_REPO_NAME: ${{ github.event.repository.full_name }}
+  CHART_DIRECTORY: 'charts/nri-metadata-injection'
 
 jobs:
   build:
@@ -44,6 +45,8 @@ jobs:
     name: Release docker
     needs: [ build ]
     runs-on: ubuntu-latest
+    outputs:
+      new-version: ${{ steps.set-new-version.outputs.new-version }}
     env:
       DOCKER_IMAGE_NAME: newrelic/k8s-metadata-injection
       DOCKER_PLATFORMS: "linux/amd64,linux/arm64,linux/arm" # Must be consistent with the matrix from the job above
@@ -54,6 +57,7 @@ jobs:
           echo "${{ github.event.release.tag_name }}" | grep -E '^[v]?[0-9.]*[0-9]$'
           DOCKER_IMAGE_TAG=$(echo "${{ github.event.release.tag_name }}" | sed 's/^v//')
           echo "DOCKER_IMAGE_TAG=$DOCKER_IMAGE_TAG" >> $GITHUB_ENV
+          echo "new-version=$DOCKER_IMAGE_TAG" >> $GITHUB_OUTPUT
       - uses: actions/checkout@v3
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
@@ -95,35 +99,93 @@ jobs:
             -t $DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG \
             -t $DOCKER_IMAGE_NAME:latest \
             .
+  open-pr:
+    name: Update version and appVersion and open pr
+    needs: [ docker-integration ]
+    runs-on: ubuntu-latest
+    # run only for releases (not prereleases)
+    if: ${{ ! github.event.release.prerelease }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-      - name: TEST - Update version helm chart
+      - name: Find new appVersion
+        id: find-version
         run: |
-          yq e -i '.version="test"' ${{ env.CHART_DIRECTORY }}/Chart.yaml
-          echo $(yq eval '.appVersion' ${{ env.CHART_DIRECTORY }}/Chart.yaml)
-      
-      - name: TEST - Configure Git
+          echo "NEW_APP_VERSION=${{ needs.docker-integration.outputs.new-version }}" >> $GITHUB_ENV
+          echo "new app version: $NEW_APP_VERSION"
+
+      - name: Find current appVersion
+        id: original_version
+        run: |
+          ORIGINAL_APP_VERSION=$(yq eval '.appVersion' ${{ env.CHART_DIRECTORY }}/Chart.yaml)
+          echo "original app version: $ORIGINAL_APP_VERSION"
+          echo "ORIGINAL_APP_VERSION=$ORIGINAL_APP_VERSION" >> $GITHUB_ENV
+
+      - name: Find current helm chart version
+        run: |
+          CURRENT_VERSION=$(yq eval '.version' ${{ env.CHART_DIRECTORY }}/Chart.yaml)
+          echo "version: $CURRENT_VERSION"
+          echo "CURRENT_VERSION=$CURRENT_VERSION" >> $GITHUB_ENV
+
+      - name: Set up Golang
+        uses: actions/setup-go@v4
+        with:
+          go-version: 1.19.11
+
+      - name: Find next helm chart version
+        run: |
+          NEXT_VERSION=$(go run version-update-3.go "CURRENT_VERSION" "$ORIGINAL_APP_VERSION" "$NEW_APP_VERSION")
+          echo "Next helm chart version: $NEXT_VERSION"
+          echo "NEXT_VERSION=$NEXT_VERSION" >> $GITHUB_ENV
+
+      - name: Update version helm chart
+        # fail the workflow if newVersion is "error", otherwise set the new versions and continue with opening pr
+        run: |
+          if [ "${NEXT_VERSION}" != 'error' ]; then
+            echo "new appVersion to set: ${NEW_APP_VERSION}"
+            echo "new version to set: $NEXT_VERSION}"
+            yq e -i ".appVersion=\"${NEW_APP_VERSION}\"" "${{ env.CHART_DIRECTORY }}/Chart.yaml"
+            yq e -i ".version=\"${NEXT_VERSION}\"" "${{ env.CHART_DIRECTORY }}/Chart.yaml"
+          else
+            echo "Error: newVersion is 'error'."
+            exit 1
+          fi
+
+      - name: Install Helm Docs
+        run: |
+          wget https://github.com/norwoodj/helm-docs/releases/download/v1.11.0/helm-docs_1.11.0_Linux_x86_64.tar.gz
+          tar -xvf helm-docs_1.11.0_Linux_x86_64.tar.gz
+          sudo mv helm-docs /usr/local/sbin
+
+      - name: Run Helm Docs
+        run: |
+          helm-docs
+
+      - name: Configure Git
         run: |
           git config user.name "${{ github.actor }}"
           git config user.email "${{ github.actor }}@users.noreply.github.com"
+      
       - name: Commit Changes
         run: |
-          git checkout -b k8s-agent-bot/update-chart-version-${{ github.sha }} origin/main
+          git checkout -b update-chart-version-${{ github.sha }}
           git branch -a
           git add ${{ env.CHART_DIRECTORY }}/Chart.yaml
-          git commit -m "Update version and appVersion"
-
-      - name: TEST - Push Changes
-        run: git push origin k8s-agent-bot/update-chart-version-${{ github.sha }}
+          git add ${{ env.CHART_DIRECTORY }}/README.md
+          git commit -m "Bump versions and update docs"
+      
+      - name: Push Changes
+        run: git push origin update-chart-version-${{ github.sha }}
 
       - name: Open pull request
-        run: gh pr create -B main -H k8s-agent-bot/update-chart-version-${{ github.sha }} --title 'Bump appVersion' --body 'Bumping appVersion'
+        run: gh pr create -B main -H update-chart-version-${{ github.sha }} --title 'Bump version and update docs' --body 'Bump version and appVersion and results of running helm docs as part of release automation.'
         env:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
   
   notify-failure:
     if: ${{ always() && failure() }}
-    needs: [docker-integration]
+    needs: [docker-integration, open-pr]
     runs-on: ubuntu-latest
     steps:
       - name: Notify failure via Slack
