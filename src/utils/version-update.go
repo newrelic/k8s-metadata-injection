@@ -1,6 +1,6 @@
 // nolint
 // Used in the release-integration workflow
-package versionUpdate
+package main
 
 import (
 	"fmt"
