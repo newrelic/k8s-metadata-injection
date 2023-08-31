@@ -28,6 +28,7 @@ jobs:
         uses: golangci/golangci-lint-action@v3
         with:
           only-new-issues: true
+          skip-cache: true
       - name: Build integration
         env:
           GOOS: ${{ matrix.goos }}
