@@ -28,6 +28,7 @@ jobs:
         uses: golangci/golangci-lint-action@v3
         with:
           only-new-issues: true
+          skip-cache: true
       - name: Build integration
         env:
           GOOS: ${{ matrix.goos }}
@@ -128,26 +129,39 @@ jobs:
           echo "version: $CURRENT_VERSION"
           echo "CURRENT_VERSION=$CURRENT_VERSION" >> $GITHUB_ENV
 
-      - name: Run version update custom action
-        id: run-reusable
-        uses: ./.github/actions/version-bump
+      - name: Set up Golang
+        uses: actions/setup-go@v4
         with:
-          currentVersion: $CURRENT_VERSION
-          currentAppVersion: $ORIGINAL_APP_VERSION
-          updatedAppVersion: $NEW_APP_VERSION
+          go-version: 1.19.11
+
+      - name: Find next helm chart version
+        run: |
+          NEXT_VERSION=$(go run ./src/utils/version-update.go "$CURRENT_VERSION" "$ORIGINAL_APP_VERSION" "$NEW_APP_VERSION")
+          echo "Next helm chart version: $NEXT_VERSION"
+          echo "NEXT_VERSION=$NEXT_VERSION" >> $GITHUB_ENV
 
       - name: Update version helm chart
         # fail the workflow if newVersion is "error", otherwise set the new versions and continue with opening pr
         run: |
-          if [ "${{ steps.run-reusable.outputs.newVersion }}" != 'error' ]; then
+          if [ "${NEXT_VERSION}" != 'error' ]; then
             echo "new appVersion to set: ${NEW_APP_VERSION}"
-            echo "new version to set: ${{ steps.run-reusable.outputs.newVersion }}"
+            echo "new version to set: $NEXT_VERSION}"
             yq e -i ".appVersion=\"${NEW_APP_VERSION}\"" "${{ env.CHART_DIRECTORY }}/Chart.yaml"
-            yq e -i '.version="${{ steps.run-reusable.outputs.newVersion }}"' ${{ env.CHART_DIRECTORY }}/Chart.yaml
+            yq e -i ".version=\"${NEXT_VERSION}\"" "${{ env.CHART_DIRECTORY }}/Chart.yaml"
           else
             echo "Error: newVersion is 'error'."
             exit 1
           fi
+
+      - name: Install Helm Docs
+        run: |
+          wget https://github.com/norwoodj/helm-docs/releases/download/v1.11.0/helm-docs_1.11.0_Linux_x86_64.tar.gz
+          tar -xvf helm-docs_1.11.0_Linux_x86_64.tar.gz
+          sudo mv helm-docs /usr/local/sbin
+
+      - name: Run Helm Docs
+        run: |
+          helm-docs
 
       - name: Configure Git
         run: |
@@ -159,13 +173,14 @@ jobs:
           git checkout -b update-chart-version-${{ github.sha }}
           git branch -a
           git add ${{ env.CHART_DIRECTORY }}/Chart.yaml
-          git commit -m "Bump version and appVersion"
+          git add ${{ env.CHART_DIRECTORY }}/README.md
+          git commit -m "Bump versions and update docs"
       
       - name: Push Changes
         run: git push origin update-chart-version-${{ github.sha }}
 
       - name: Open pull request
-        run: gh pr create -B main -H update-chart-version-${{ github.sha }} --title 'Bump version and appVersion' --body 'Bump version and appVersion as part of release automation.'
+        run: gh pr create -B main -H update-chart-version-${{ github.sha }} --title 'Bump version and update docs' --body 'Bump version and appVersion and results of running helm docs as part of release automation.'
         env:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   
