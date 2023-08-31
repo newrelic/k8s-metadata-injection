@@ -30,7 +30,7 @@ jobs:
 
   chart-lint:
     name: Helm chart Lint
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     timeout-minutes: 10
     strategy:
       matrix:
@@ -122,7 +122,7 @@ jobs:
   e2e-kubernetes:
     name: Kubernetes E2E tests
     needs: [ test ]
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     env:
       E2E_KUBERNETES_VERSION: ${{ matrix.k8s-version }}
       DOCKER_BUILDKIT: '1' # Setting DOCKER_BUILDKIT=1 ensures TARGETOS and TARGETARCH are populated
