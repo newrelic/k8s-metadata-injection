@@ -12,7 +12,7 @@ jobs:
     if: ${{ !contains(github.event.pull_request.labels.*.name, 'dependencies') && !contains(github.event.pull_request.labels.*.name, 'Skip Changelog') && !startsWith(github.head_ref, 'renovate/')}}
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Debug Labels
         run: |
           echo "${{ toJson(github.event.pull_request.labels[*].name) }}"
@@ -38,6 +38,6 @@ jobs:
     needs: changelog-entry
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Check if CHANGELOG is valid
         uses: newrelic/release-toolkit/validate-markdown@v1
