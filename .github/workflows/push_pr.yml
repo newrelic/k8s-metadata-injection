@@ -34,7 +34,7 @@ jobs:
     timeout-minutes: 10
     strategy:
       matrix:
-        kubernetes-version: [ "v1.16.15", "v1.22.0", "v1.25.3" ]
+        kubernetes-version: [ "v1.22.0", "v1.25.3" ]
     steps:
       - uses: actions/checkout@v3
         with:
@@ -130,7 +130,7 @@ jobs:
       fail-fast: false
       max-parallel: 5
       matrix:
-        k8s-version: [ "v1.16.15", "v1.22.0", "v1.25.3" ]
+        k8s-version: [ "v1.22.0", "v1.25.3" ]
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-go@v4
