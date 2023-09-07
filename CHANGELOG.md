@@ -6,7 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
-
+### tests update
+- Update K8s Versions in E2E Tests by @xqi-nr in https://github.com/newrelic/k8s-metadata-injection/pull/369
 ## v1.14.1 - 2023-09-04
 
 ### ⛓️ Dependencies
