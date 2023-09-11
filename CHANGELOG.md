@@ -7,7 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
-### Enhancement
+## v1.15.0 - 2023-09-11
+
+### 🚀 Enhancements
 - Update K8s Versions in E2E Tests by @xqi-nr in [#369](https://github.com/newrelic/k8s-metadata-injection/pull/369)
 
 ## v1.14.1 - 2023-09-04
