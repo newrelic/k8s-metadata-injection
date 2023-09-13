@@ -145,9 +145,9 @@ jobs:
         run: |
           if [ "${NEXT_VERSION}" != 'error' ]; then
             echo "new appVersion to set: ${NEW_APP_VERSION}"
-            echo "new version to set: $NEXT_VERSION}"
-            yq e -i ".appVersion=\"${NEW_APP_VERSION}\"" "${{ env.CHART_DIRECTORY }}/Chart.yaml"
-            yq e -i ".version=\"${NEXT_VERSION}\"" "${{ env.CHART_DIRECTORY }}/Chart.yaml"
+            echo "new version to set: ${NEXT_VERSION}"
+            yq eval --inplace ".appVersion=\"${NEW_APP_VERSION}\"" "${{ env.CHART_DIRECTORY }}/Chart.yaml"
+            yq eval --inplace ".version=\"${NEXT_VERSION}\"" "${{ env.CHART_DIRECTORY }}/Chart.yaml"
           else
             echo "Error: newVersion is 'error'."
             exit 1
@@ -156,7 +156,7 @@ jobs:
       - name: Install Helm Docs
         run: |
           wget https://github.com/norwoodj/helm-docs/releases/download/v1.11.0/helm-docs_1.11.0_Linux_x86_64.tar.gz
-          tar -xvf helm-docs_1.11.0_Linux_x86_64.tar.gz
+          tar --extract --verbose --file helm-docs_1.11.0_Linux_x86_64.tar.gz
           sudo mv helm-docs /usr/local/sbin
 
       - name: Run Helm Docs
@@ -171,10 +171,10 @@ jobs:
       - name: Commit Changes
         run: |
           git checkout -b update-chart-version-${{ github.sha }}
-          git branch -a
+          git branch --all
           git add ${{ env.CHART_DIRECTORY }}/Chart.yaml
           git add ${{ env.CHART_DIRECTORY }}/README.md
-          git commit -m "Bump versions and update docs"
+          git commit --message="Bump versions and update docs"
       
       - name: Push Changes
         run: git push origin update-chart-version-${{ github.sha }}
