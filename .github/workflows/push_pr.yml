@@ -33,6 +33,7 @@ jobs:
     runs-on: ubuntu-22.04
     timeout-minutes: 10
     strategy:
+      max-parallel: 5
       matrix:
         kubernetes-version: [ "v1.23.17", "v1.24.17", "v1.25.13", "v1.26.8", "v1.27.5" ]
     steps:
