@@ -145,7 +145,7 @@ jobs:
         run: |
           if [ "${NEXT_VERSION}" != 'error' ]; then
             echo "new appVersion to set: ${NEW_APP_VERSION}"
-            echo "new version to set: $NEXT_VERSION}"
+            echo "new version to set: ${NEXT_VERSION}"
             yq e -i ".appVersion=\"${NEW_APP_VERSION}\"" "${{ env.CHART_DIRECTORY }}/Chart.yaml"
             yq e -i ".version=\"${NEXT_VERSION}\"" "${{ env.CHART_DIRECTORY }}/Chart.yaml"
           else
