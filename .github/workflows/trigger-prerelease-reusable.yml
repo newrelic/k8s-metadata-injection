@@ -1,13 +1,11 @@
-name: Trigger prerelease creation
+name: Reusable Trigger Prerelease Creation
 
 # This workflow triggers a prerelease creation with changelog and the release notes created by the release toolkit.
 # This workflow should be triggered merely from the default branch.
 # For more details about how to release follow https://github.com/newrelic/coreint-automation/blob/main/docs/release_runbook.md
 
 on:
-  workflow_dispatch:
-  schedule:
-    - cron: "0 12 * * 1" # Monday at 12pm UTC or 5am PT
+  workflow_call:
 
 jobs:
   prerelease:

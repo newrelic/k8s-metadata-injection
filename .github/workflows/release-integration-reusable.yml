@@ -1,0 +1,205 @@
+name: Reusable Pre-release and Release pipeline
+
+on:
+  workflow_call:
+    inputs:
+      repo_name:
+        description: Name of the repo
+        type: string
+        required: true
+      docker_image_name:
+        description: Docker image name
+        type: string
+        required: true
+      chart_directory:
+        description: Location of Chart
+        type: string
+        required: true
+
+env:
+  ORIGINAL_REPO_NAME: ${{ github.event.repository.full_name }}
+
+jobs:
+  build:
+    name: Build integration for
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        goos: [ linux ]
+        goarch: [ amd64, arm64, arm ]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v4
+        with:
+          go-version-file: 'go.mod'
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v3
+        with:
+          only-new-issues: true
+          skip-cache: true
+      - name: Build integration
+        env:
+          GOOS: ${{ matrix.goos }}
+          GOARCH: ${{ matrix.goarch }}
+        run: |
+          make compile
+      - name: Upload artifact for docker build step
+        uses: actions/upload-artifact@v3
+        with:
+          retention-days: 1
+          name: ${{ inputs.repo_name }}-${{ matrix.goos }}-${{ matrix.goarch }}
+          path: bin/${{ inputs.repo_name }}-${{ matrix.goos }}-${{ matrix.goarch }}
+
+  docker-integration:
+    name: Release docker
+    needs: [ build ]
+    runs-on: ubuntu-latest
+    outputs:
+      new-version: ${{ steps.set-new-version.outputs.new-version }}
+    env:
+      DOCKER_IMAGE_NAME: ${{ inputs.docker_image_name }}
+      DOCKER_PLATFORMS: "linux/amd64,linux/arm64,linux/arm" # Must be consistent with the matrix from the job above
+    steps:
+      - name: Generate docker image version from git tag
+        id: set-new-version
+        run: |
+          echo "${{ github.event.release.tag_name }}" | grep -E '^[v]?[0-9.]*[0-9]$'
+          DOCKER_IMAGE_TAG=$(echo "${{ github.event.release.tag_name }}" | sed 's/^v//')
+          echo "DOCKER_IMAGE_TAG=$DOCKER_IMAGE_TAG" >> $GITHUB_ENV
+          echo "new-version=$DOCKER_IMAGE_TAG" >> $GITHUB_OUTPUT
+      - uses: actions/checkout@v4
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Download all artifacts from build job
+        uses: actions/download-artifact@v3
+        with:
+          path: bin
+      - uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.FSI_DOCKERHUB_USERNAME }}
+          password: ${{ secrets.FSI_DOCKERHUB_TOKEN }}
+      - name: Build and load x64 image for security scanning
+        # We need to build a single-arch image again to be able to --load it into the host
+        run: |
+          docker buildx build --load --platform=linux/amd64 \
+            -t $DOCKER_IMAGE_NAME:ci-scan \
+            .
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@0.12.0
+        with:
+          image-ref: '${{ env.DOCKER_IMAGE_NAME }}:ci-scan'
+          format: 'table'
+          exit-code: '1'
+          ignore-unfixed: true
+          severity: 'HIGH,CRITICAL'
+      - name: Build and push docker image
+        if: ${{ github.event.release.prerelease }}
+        run: |
+          DOCKER_IMAGE_TAG=${DOCKER_IMAGE_TAG}-pre
+          docker buildx build --push --platform=$DOCKER_PLATFORMS \
+            -t $DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG \
+            .
+      - name: Push release image
+        if: ${{ ! github.event.release.prerelease }}
+        run: |
+          docker buildx build --push --platform=$DOCKER_PLATFORMS \
+            -t $DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG \
+            -t $DOCKER_IMAGE_NAME:latest \
+            .
+  open-pr:
+    name: Update version and appVersion and open pr
+    needs: [ docker-integration ]
+    runs-on: ubuntu-latest
+    # run only for releases (not prereleases)
+    if: ${{ ! github.event.release.prerelease }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Find new appVersion
+        id: find-version
+        run: |
+          echo "NEW_APP_VERSION=${{ needs.docker-integration.outputs.new-version }}" >> $GITHUB_ENV
+          echo "new app version: $NEW_APP_VERSION"
+
+      - name: Find current appVersion
+        id: original_version
+        run: |
+          ORIGINAL_APP_VERSION=$(yq eval '.appVersion' ${{ inputs.chart_directory }}/Chart.yaml)
+          echo "original app version: $ORIGINAL_APP_VERSION"
+          echo "ORIGINAL_APP_VERSION=$ORIGINAL_APP_VERSION" >> $GITHUB_ENV
+
+      - name: Find current helm chart version
+        run: |
+          CURRENT_VERSION=$(yq eval '.version' ${{ inputs.chart_directory }}/Chart.yaml)
+          echo "version: $CURRENT_VERSION"
+          echo "CURRENT_VERSION=$CURRENT_VERSION" >> $GITHUB_ENV
+
+      - name: Set up Golang
+        uses: actions/setup-go@v4
+        with:
+          go-version: 1.19.11
+
+      - name: Find next helm chart version
+        run: |
+          NEXT_VERSION=$(go run ./src/utils/version-update.go "$CURRENT_VERSION" "$ORIGINAL_APP_VERSION" "$NEW_APP_VERSION")
+          echo "Next helm chart version: $NEXT_VERSION"
+          echo "NEXT_VERSION=$NEXT_VERSION" >> $GITHUB_ENV
+
+      - name: Update version helm chart
+        # fail the workflow if newVersion is "error", otherwise set the new versions and continue with opening pr
+        run: |
+          if [ "${NEXT_VERSION}" != 'error' ]; then
+            echo "new appVersion to set: ${NEW_APP_VERSION}"
+            echo "new version to set: ${NEXT_VERSION}"
+            yq eval --inplace ".appVersion=\"${NEW_APP_VERSION}\"" "${{ inputs.chart_directory }}/Chart.yaml"
+            yq eval --inplace ".version=\"${NEXT_VERSION}\"" "${{ inputs.chart_directory }}/Chart.yaml"
+          else
+            echo "Error: newVersion is 'error'."
+            exit 1
+          fi
+
+      - name: Install Helm Docs
+        run: |
+          wget https://github.com/norwoodj/helm-docs/releases/download/v1.11.0/helm-docs_1.11.0_Linux_x86_64.tar.gz
+          tar --extract --verbose --file helm-docs_1.11.0_Linux_x86_64.tar.gz
+          sudo mv helm-docs /usr/local/sbin
+
+      - name: Run Helm Docs
+        run: |
+          helm-docs
+
+      - name: Configure Git
+        run: |
+          git config user.name "${{ github.actor }}"
+          git config user.email "${{ github.actor }}@users.noreply.github.com"
+      
+      - name: Commit Changes
+        run: |
+          git checkout -b update-chart-version-${{ github.sha }}
+          git branch --all
+          git add ${{ inputs.chart_directory }}/Chart.yaml
+          git add ${{ inputs.chart_directory }}/README.md
+          git commit --message="Bump versions and update docs"
+      
+      - name: Push Changes
+        run: git push origin update-chart-version-${{ github.sha }}
+
+      - name: Open pull request
+        run: gh pr create -B main -H update-chart-version-${{ github.sha }} --title 'Bump version and update docs' --body 'Bump version and appVersion and results of running helm docs as part of release automation.'
+        env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  
+  notify-failure:
+    if: ${{ always() && failure() }}
+    needs: [docker-integration, open-pr]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Notify failure via Slack
+        uses: archive/github-actions-slack@b91c7e2ff3852411ad4fbdad441a8133221ac86e
+        with:
+          slack-bot-user-oauth-access-token: ${{ secrets.K8S_AGENTS_SLACK_TOKEN }}
+          slack-channel: ${{ secrets.K8S_AGENTS_SLACK_CHANNEL }}
+          slack-text: "❌ `${{ env.ORIGINAL_REPO_NAME }}`: <${{ github.server_url }}/${{ env.ORIGINAL_REPO_NAME }}/actions/runs/${{ github.run_id }}|release pipeline failed>."
