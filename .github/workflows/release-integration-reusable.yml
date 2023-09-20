@@ -15,6 +15,7 @@ on:
         description: Location of Chart
         type: string
         required: true
+    # secrets need to be passed in for reusable workflows
     secrets:
       dockerhub_username:
         description: dockerhub username
@@ -31,7 +32,6 @@ on:
       slack_token: 
         description: slack token for slack channel
         required: true
-
 
 env:
   ORIGINAL_REPO_NAME: ${{ github.event.repository.full_name }}
