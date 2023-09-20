@@ -1,6 +1,10 @@
 name: Reusable Release chart
 on:
   workflow_call:
+    secrets:
+      gh_token:
+        description: github token
+        required: true
 
 jobs:
   #   Sometimes chart-releaser might fetch an outdated index.yaml from gh-pages, causing a WAW hazard on the repo
@@ -37,4 +41,4 @@ jobs:
         uses: helm/chart-releaser-action@v1.5.0
         env:
           CR_SKIP_EXISTING: true
-          CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+          CR_TOKEN: ${{ secrets.gh_token }}
