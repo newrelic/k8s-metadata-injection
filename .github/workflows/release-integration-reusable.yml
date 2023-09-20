@@ -15,6 +15,23 @@ on:
         description: Location of Chart
         type: string
         required: true
+    # secrets need to be passed in for reusable workflows
+    secrets:
+      dockerhub_username:
+        description: dockerhub username
+        required: true
+      dockerhub_token:
+        description: dockerhub token
+        required: true
+      github_token:
+        description: github token
+        required: true
+      slack_channel: 
+        description: slack channel for notifications
+        required: true
+      slack_token: 
+        description: slack token for slack channel
+        required: true
 
 env:
   ORIGINAL_REPO_NAME: ${{ github.event.repository.full_name }}
@@ -78,8 +95,8 @@ jobs:
           path: bin
       - uses: docker/login-action@v3
         with:
-          username: ${{ secrets.FSI_DOCKERHUB_USERNAME }}
-          password: ${{ secrets.FSI_DOCKERHUB_TOKEN }}
+          username: ${{ secrets.dockerhub_username }}
+          password: ${{ secrets.dockerhub_token }}
       - name: Build and load x64 image for security scanning
         # We need to build a single-arch image again to be able to --load it into the host
         run: |
@@ -190,7 +207,7 @@ jobs:
       - name: Open pull request
         run: gh pr create -B main -H update-chart-version-${{ github.sha }} --title 'Bump version and update docs' --body 'Bump version and appVersion and results of running helm docs as part of release automation.'
         env:
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            GITHUB_TOKEN: ${{ secrets.github_token }}
   
   notify-failure:
     if: ${{ always() && failure() }}
@@ -200,6 +217,6 @@ jobs:
       - name: Notify failure via Slack
         uses: archive/github-actions-slack@b91c7e2ff3852411ad4fbdad441a8133221ac86e
         with:
-          slack-bot-user-oauth-access-token: ${{ secrets.K8S_AGENTS_SLACK_TOKEN }}
-          slack-channel: ${{ secrets.K8S_AGENTS_SLACK_CHANNEL }}
+          slack-bot-user-oauth-access-token: ${{ secrets.slack_token }}
+          slack-channel: ${{ secrets.slack_channel }}
           slack-text: "❌ `${{ env.ORIGINAL_REPO_NAME }}`: <${{ github.server_url }}/${{ env.ORIGINAL_REPO_NAME }}/actions/runs/${{ github.run_id }}|release pipeline failed>."
