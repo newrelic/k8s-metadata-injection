@@ -6,15 +6,35 @@ name: Reusable Trigger Prerelease Creation
 
 on:
   workflow_call:
+    inputs:
+      bot_email:
+        description: bot email
+        type: string
+        required: true
+      bot_name:
+        description: bot name
+        type: string
+        required: true
+    # secrets need to be passed in for reusable workflows
+    secrets:
+      bot_token:
+        description: bot token
+        required: true
+      slack_channel: 
+        description: slack channel for notifications
+        required: true
+      slack_token: 
+        description: slack token for slack channel
+        required: true
 
 jobs:
   prerelease:
     uses: newrelic/coreint-automation/.github/workflows/trigger_prerelease.yaml@v1
     with:
       rt-included-files: go.mod,go.sum,Dockerfile
-      bot_email: '${{ vars.K8S_AGENTS_BOT_EMAIL }}'
-      bot_name: '${{ vars.K8S_AGENTS_BOT_NAME }}'
+      bot_email: ${{ inputs.bot_email }}
+      bot_name: ${{ inputs.bot_name }}
     secrets:
-      bot_token: ${{ secrets.K8S_AGENTS_BOT_TOKEN }}
-      slack_channel:  ${{ secrets.K8S_AGENTS_SLACK_CHANNEL }}
-      slack_token: ${{ secrets.K8S_AGENTS_SLACK_TOKEN }}
+      bot_token: ${{ secrets.bot_token }}
+      slack_channel:  ${{ secrets.slack_channel }}
+      slack_token: ${{ secrets.slack_token }}
