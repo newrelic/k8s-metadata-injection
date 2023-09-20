@@ -208,7 +208,7 @@ jobs:
         run: gh pr create -B main -H update-chart-version-${{ github.sha }} --title 'Bump version and update docs' --body 'Bump version and appVersion and results of running helm docs as part of release automation.'
         env:
             GITHUB_TOKEN: ${{ secrets.gh_token }}
-  
+
   notify-failure:
     if: ${{ always() && failure() }}
     needs: [docker-integration, open-pr]
