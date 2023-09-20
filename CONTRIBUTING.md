@@ -31,6 +31,7 @@ Before submitting an Issue, please search for similar ones in the
     + `bugfix`
     + `dependency`
 
+      - Any other headers won't be accepted and the changelog check will fail.       
   - You can skip the changelog requirement by using the "Skip Changelog" label if your pull request is only updating files related to the CI/CD process or minor doc changes.
     
 4. You may merge the Pull Request in once you have the sign-off of one other developers, or if you do not have permission to do that, you may request the other reviewer to merge it for you.
