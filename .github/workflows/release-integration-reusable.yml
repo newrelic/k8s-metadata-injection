@@ -23,7 +23,7 @@ on:
       dockerhub_token:
         description: dockerhub token
         required: true
-      github_token:
+      gh_token:
         description: github token
         required: true
       slack_channel: 
@@ -207,8 +207,8 @@ jobs:
       - name: Open pull request
         run: gh pr create -B main -H update-chart-version-${{ github.sha }} --title 'Bump version and update docs' --body 'Bump version and appVersion and results of running helm docs as part of release automation.'
         env:
-            GITHUB_TOKEN: ${{ secrets.github_token }}
-  
+            GITHUB_TOKEN: ${{ secrets.gh_token }}
+
   notify-failure:
     if: ${{ always() && failure() }}
     needs: [docker-integration, open-pr]
