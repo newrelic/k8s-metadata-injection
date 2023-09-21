@@ -129,6 +129,9 @@ jobs:
     name: Update version and appVersion and open pr
     needs: [ docker-integration ]
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
     # run only for releases (not prereleases)
     if: ${{ ! github.event.release.prerelease }}
     steps:
