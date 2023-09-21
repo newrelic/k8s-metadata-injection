@@ -9,6 +9,9 @@ on:
 
 jobs:
   release-integration:
+    permissions:
+      contents: write
+      pull-requests: write
     uses: newrelic/k8s-metadata-injection/.github/workflows/release-integration-reusable.yml@main
     with:
       repo_name: k8s-metadata-injection

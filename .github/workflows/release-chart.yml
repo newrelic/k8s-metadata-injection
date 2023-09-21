@@ -6,6 +6,8 @@ on:
 
 jobs:
   release-chart:
+    permissions:
+      contents: write
     uses: newrelic/k8s-metadata-injection/.github/workflows/release-chart-reusable.yml@main
     secrets:
       gh_token: "${{ secrets.GITHUB_TOKEN }}"
