@@ -54,7 +54,7 @@ jobs:
         with:
           only-new-issues: true
           skip-cache: true
-          args: --verbose
+          args: --timeout 3m --verbose
       - name: Build integration
         env:
           GOOS: ${{ matrix.goos }}
