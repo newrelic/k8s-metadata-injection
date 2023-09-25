@@ -160,7 +160,7 @@ jobs:
           go-version: 1.19.11
 
       - name: Checkout metadata injection repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           repository: newrelic/k8s-metadata-injection
           ref: main
@@ -172,7 +172,7 @@ jobs:
           echo "NEXT_VERSION=$NEXT_VERSION" >> $GITHUB_ENV
 
       - name: Checkout input repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           repository: newrelic/${{ inputs.repo_name }}
           ref: main
