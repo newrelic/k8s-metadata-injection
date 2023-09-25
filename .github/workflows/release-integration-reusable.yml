@@ -97,8 +97,6 @@ jobs:
         with:
           username: ${{ secrets.dockerhub_username }}
           password: ${{ secrets.dockerhub_token }}
-      - name: Output Github context
-        run: echo "${{ toJSON(github) }}"
       - name: List files
         run: ls -la
       - name: Build and load x64 image for security scanning
