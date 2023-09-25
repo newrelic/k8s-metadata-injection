@@ -159,9 +159,15 @@ jobs:
         with:
           go-version: 1.19.11
 
+      - name: Checkout metadata injection repo
+        uses: actions/checkout@v3
+        with:
+          repository: newrelic/k8s-metadata-injection
+          ref: main
+
       - name: Find next helm chart version
         run: |
-          NEXT_VERSION=$(go run newrelic/k8s-metadata-injection/src/utils/version-update.go "$CURRENT_VERSION" "$ORIGINAL_APP_VERSION" "$NEW_APP_VERSION")
+          NEXT_VERSION=$(go run ./src/utils/version-update.go "$CURRENT_VERSION" "$ORIGINAL_APP_VERSION" "$NEW_APP_VERSION")
           echo "Next helm chart version: $NEXT_VERSION"
           echo "NEXT_VERSION=$NEXT_VERSION" >> $GITHUB_ENV
 
