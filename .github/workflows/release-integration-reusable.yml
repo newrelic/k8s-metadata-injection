@@ -65,7 +65,7 @@ jobs:
         with:
           retention-days: 1
           name: ${{ inputs.repo_name }}-${{ matrix.goos }}-${{ matrix.goarch }}
-          path: bin/${{ inputs.repo_name }}-${{ matrix.goos }}-${{ matrix.goarch }}
+          path: ${{ inputs.repo_name }}-${{ matrix.goos }}-${{ matrix.goarch }}
 
   docker-integration:
     name: Release docker
@@ -91,8 +91,6 @@ jobs:
         uses: docker/setup-buildx-action@v3
       - name: Download all artifacts from build job
         uses: actions/download-artifact@v3
-        with:
-          path: bin
       - uses: docker/login-action@v3
         with:
           username: ${{ secrets.dockerhub_username }}
