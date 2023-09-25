@@ -171,6 +171,12 @@ jobs:
           echo "Next helm chart version: $NEXT_VERSION"
           echo "NEXT_VERSION=$NEXT_VERSION" >> $GITHUB_ENV
 
+      - name: Checkout input repo
+        uses: actions/checkout@v3
+        with:
+          repository: newrelic/${{ inputs.repo_name }}
+          ref: main
+
       - name: Update version helm chart
         # fail the workflow if newVersion is "error", otherwise set the new versions and continue with opening pr
         run: |
