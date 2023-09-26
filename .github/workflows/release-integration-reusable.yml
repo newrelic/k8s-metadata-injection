@@ -241,4 +241,4 @@ jobs:
         with:
           slack-bot-user-oauth-access-token: ${{ secrets.slack_token }}
           slack-channel: ${{ secrets.slack_channel }}
-          slack-text: "❌ `${{ env.ORIGINAL_REPO_NAME }}`: <${{ github.server_url }}/${{ env.ORIGINAL_REPO_NAME }}/actions/runs/${{ github.run_id }}|release pipeline failed>."
+          slack-text: "❌ `${{ env.ORIGINAL_REPO_NAME }}`: <${{ github.server_url }}/${{ env.ORIGINAL_REPO_NAME }}/actions/runs/${{ github.run_id }}|'Pre-release and Release pipeline' failed>."

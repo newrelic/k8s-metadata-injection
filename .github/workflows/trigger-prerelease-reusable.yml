@@ -27,6 +27,9 @@ on:
         description: slack token for slack channel
         required: true
 
+env:
+  ORIGINAL_REPO_NAME: ${{ github.event.repository.full_name }}
+
 jobs:
   prerelease:
     uses: newrelic/coreint-automation/.github/workflows/trigger_prerelease.yaml@v1
@@ -38,3 +41,15 @@ jobs:
       bot_token: ${{ secrets.bot_token }}
       slack_channel:  ${{ secrets.slack_channel }}
       slack_token: ${{ secrets.slack_token }}
+
+  notify-failure:
+    if: ${{ always() && failure() }}
+    needs: [prerelease]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Notify failure via Slack
+        uses: archive/github-actions-slack@b91c7e2ff3852411ad4fbdad441a8133221ac86e
+        with:
+          slack-bot-user-oauth-access-token: ${{ secrets.slack_token }}
+          slack-channel: ${{ secrets.slack_channel }}
+          slack-text: "❌ `${{ env.ORIGINAL_REPO_NAME }}`: <${{ github.server_url }}/${{ env.ORIGINAL_REPO_NAME }}/actions/runs/${{ github.run_id }}|'Trigger prerelease creation' failed>."
