@@ -7,11 +7,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
-## v1.16.1 - 2023-09-26
-
-### ⛓️ Dependencies
-- Updated go.uber.org/zap to v1.26.0
-
 ## v1.16.0 - 2023-09-21
 
 ### 🚀 Enhancements
