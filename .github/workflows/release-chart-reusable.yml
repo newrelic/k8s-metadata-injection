@@ -5,6 +5,15 @@ on:
       gh_token:
         description: github token
         required: true
+      slack_channel:
+        description: slack channel for notifications
+        required: true
+      slack_token:
+        description: slack token for slack channel
+        required: true
+
+env:
+  ORIGINAL_REPO_NAME: ${{ github.event.repository.full_name }}
 
 jobs:
   #   Sometimes chart-releaser might fetch an outdated index.yaml from gh-pages, causing a WAW hazard on the repo
@@ -42,3 +51,15 @@ jobs:
         env:
           CR_SKIP_EXISTING: true
           CR_TOKEN: ${{ secrets.gh_token }}
+
+  notify-failure:
+    if: ${{ always() && failure() }}
+    needs: [validate-gh-pages-index, chart-release]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Notify failure via Slack
+        uses: archive/github-actions-slack@b91c7e2ff3852411ad4fbdad441a8133221ac86e
+        with:
+          slack-bot-user-oauth-access-token: ${{ secrets.slack_token }}
+          slack-channel: ${{ secrets.slack_channel }}
+          slack-text: "❌ `${{ env.ORIGINAL_REPO_NAME }}`: <${{ github.server_url }}/${{ env.ORIGINAL_REPO_NAME }}/actions/runs/${{ github.run_id }}|'Release chart' failed>."

@@ -11,3 +11,5 @@ jobs:
     uses: newrelic/k8s-metadata-injection/.github/workflows/release-chart-reusable.yml@main
     secrets:
       gh_token: "${{ secrets.GITHUB_TOKEN }}"
+      slack_channel: ${{ secrets.K8S_AGENTS_SLACK_CHANNEL }}
+      slack_token: ${{ secrets.K8S_AGENTS_SLACK_TOKEN }}

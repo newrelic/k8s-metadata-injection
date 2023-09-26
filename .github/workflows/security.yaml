@@ -47,3 +47,15 @@ jobs:
         if: ${{ github.event.schedule }} # Upload sarif when running periodically
         with:
           sarif_file: 'trivy-results.sarif'
+
+  notify-failure:
+    if: ${{ always() && failure() }}
+    needs: [trivy]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Notify failure via Slack
+        uses: archive/github-actions-slack@b91c7e2ff3852411ad4fbdad441a8133221ac86e
+        with:
+          slack-bot-user-oauth-access-token: ${{ secrets.K8S_AGENTS_SLACK_TOKEN }}
+          slack-channel: ${{ secrets.K8S_AGENTS_SLACK_CHANNEL }}
+          slack-text: "❌ `k8s-metadata-injection`: <${{ github.server_url }}/k8s-metadata-injection/actions/runs/${{ github.run_id }}|'Security Scan' failed>."
