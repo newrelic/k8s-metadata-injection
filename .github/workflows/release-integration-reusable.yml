@@ -10,7 +10,7 @@ on:
       artifact_path:
         description: The artifact path
         type: string
-        required: true
+        required: false
       docker_image_name:
         description: Docker image name
         type: string
