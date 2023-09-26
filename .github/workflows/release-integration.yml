@@ -15,6 +15,7 @@ jobs:
     uses: newrelic/k8s-metadata-injection/.github/workflows/release-integration-reusable.yml@main
     with:
       repo_name: k8s-metadata-injection
+      artifact_path: bin/
       docker_image_name: newrelic/k8s-metadata-injection
       chart_directory: charts/nri-metadata-injection
     secrets:
