@@ -1,6 +1,7 @@
 name: Security Scan
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - master
@@ -29,9 +30,10 @@ jobs:
         with:
           scan-type: fs
           ignore-unfixed: true
-          exit-code: 1
           severity: 'HIGH,CRITICAL'
           skip-dirs: 'build'
+          format: 'table'
+          exit-code: 1
 
       - name: Run Trivy vulnerability scanner sarif output
         uses: aquasecurity/trivy-action@0.12.0
@@ -40,19 +42,19 @@ jobs:
           scan-type: fs
           ignore-unfixed: true
           severity: 'HIGH,CRITICAL'
-          format: 'template'
-          template: '@/contrib/sarif.tpl'
-          output: 'trivy-results.sarif'
           skip-dirs: 'build'
+          format: 'sarif'
+          output: 'trivy-results.sarif'
 
       - name: Upload Trivy scan results to GitHub Security tab
         uses: github/codeql-action/upload-sarif@v2
-        if: ${{ github.event.schedule }} # Upload sarif when running periodically
+        # if: ${{ github.event.schedule }} # Upload sarif when running periodically
+        if: ${{ (github.event_name == 'schedule') || (github.event_name == 'workflow_dispatch') }} # Upload sarif when running periodically
         with:
           sarif_file: 'trivy-results.sarif'
 
   notify-failure:
-    if: ${{ always() && failure() }}
+    if: ${{ always() && failure() && (github.event_name == 'schedule') }}
     needs: [trivy]
     runs-on: ubuntu-latest
     steps:
