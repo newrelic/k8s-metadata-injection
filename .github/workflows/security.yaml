@@ -10,56 +10,12 @@ on:
   schedule:
     - cron: "0 3 * * *"
 
-env:
-  ORIGINAL_REPO_NAME: newrelic/k8s-metadata-injection
-
 jobs:
   trivy:
-    name: Trivy security scan
-    runs-on: ubuntu-latest
     permissions:
       contents: read # for actions/checkout to fetch code
       security-events: write # for github/codeql-action/upload-sarif to upload SARIF results
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Run Trivy vulnerability scanner in repo mode
-        uses: aquasecurity/trivy-action@0.12.0
-        if: ${{ ! github.event.schedule }} # Do not run inline checks when running periodically
-        with:
-          scan-type: fs
-          ignore-unfixed: true
-          severity: 'HIGH,CRITICAL'
-          skip-dirs: 'build'
-          format: 'table'
-          exit-code: 1
-
-      - name: Run Trivy vulnerability scanner sarif output
-        uses: aquasecurity/trivy-action@0.12.0
-        if: ${{ github.event.schedule }} # Generate sarif when running periodically
-        with:
-          scan-type: fs
-          ignore-unfixed: true
-          severity: 'HIGH,CRITICAL'
-          skip-dirs: 'build'
-          format: 'sarif'
-          output: 'trivy-results.sarif'
-
-      - name: Upload Trivy scan results to GitHub Security tab
-        uses: github/codeql-action/upload-sarif@v2
-        if: ${{ github.event.schedule }} # Upload sarif when running periodically
-        with:
-          sarif_file: 'trivy-results.sarif'
-
-  notify-failure:
-    if: ${{ always() && failure() && (github.event_name == 'schedule') }}
-    needs: [trivy]
-    runs-on: ubuntu-latest
-    steps:
-      - name: Notify failure via Slack
-        uses: archive/github-actions-slack@b91c7e2ff3852411ad4fbdad441a8133221ac86e
-        with:
-          slack-bot-user-oauth-access-token: ${{ secrets.K8S_AGENTS_SLACK_TOKEN }}
-          slack-channel: ${{ secrets.K8S_AGENTS_SLACK_CHANNEL }}
-          slack-text: "❌ `${{ env.ORIGINAL_REPO_NAME }}`: <${{ github.server_url }}/${{ env.ORIGINAL_REPO_NAME }}/actions/runs/${{ github.run_id }}|'Security Scan' failed>."
+    uses: newrelic/k8s-metadata-injection/.github/workflows/security-reusable.yaml@main
+    secrets:
+      slack_channel: ${{ secrets.K8S_AGENTS_SLACK_CHANNEL }}
+      slack_token: ${{ secrets.K8S_AGENTS_SLACK_TOKEN }}
