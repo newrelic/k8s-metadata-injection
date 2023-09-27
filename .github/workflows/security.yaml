@@ -10,6 +10,9 @@ on:
   schedule:
     - cron: "0 3 * * *"
 
+env:
+  ORIGINAL_REPO_NAME: newrelic/k8s-metadata-injection
+
 jobs:
   trivy:
     name: Trivy security scan
@@ -58,4 +61,4 @@ jobs:
         with:
           slack-bot-user-oauth-access-token: ${{ secrets.K8S_AGENTS_SLACK_TOKEN }}
           slack-channel: ${{ secrets.K8S_AGENTS_SLACK_CHANNEL }}
-          slack-text: "❌ `k8s-metadata-injection`: <${{ github.server_url }}/k8s-metadata-injection/actions/runs/${{ github.run_id }}|'Security Scan' failed>."
+          slack-text: "❌ `${{ env.ORIGINAL_REPO_NAME }}`: <${{ github.server_url }}/${{ env.ORIGINAL_REPO_NAME }}/actions/runs/${{ github.run_id }}|'Security Scan' failed>."
