@@ -49,6 +49,12 @@ jobs:
         goos: [ linux ]
         goarch: [ amd64, arm64, arm ]
     steps:
+      - name: Build env args
+        run: |
+          echo "${{ github.event.release.tag_name }}" | grep -E '^[v]?[0-9.]*[0-9]$'
+          DOCKER_IMAGE_TAG=$(echo "${{ github.event.release.tag_name }}" | sed 's/^v//')
+          echo "DOCKER_IMAGE_TAG=$DOCKER_IMAGE_TAG" >> $GITHUB_ENV
+          echo "DATE=`date`" >> $GITHUB_ENV
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v4
         with:
@@ -62,6 +68,9 @@ jobs:
         env:
           GOOS: ${{ matrix.goos }}
           GOARCH: ${{ matrix.goarch }}
+          COMMIT: ${{ github.sha }}
+          DATE: ${{ env.DATE }}
+          TAG: ${{ env.DOCKER_IMAGE_TAG }}
         run: |
           make compile
       - name: Upload artifact for docker build step
@@ -80,6 +89,7 @@ jobs:
     env:
       DOCKER_IMAGE_NAME: ${{ inputs.docker_image_name }}
       DOCKER_PLATFORMS: "linux/amd64,linux/arm64,linux/arm" # Must be consistent with the matrix from the job above
+      COMMIT: ${{ github.sha }}
     steps:
       - name: Generate docker image version from git tag
         id: set-new-version
@@ -87,6 +97,7 @@ jobs:
           echo "${{ github.event.release.tag_name }}" | grep -E '^[v]?[0-9.]*[0-9]$'
           DOCKER_IMAGE_TAG=$(echo "${{ github.event.release.tag_name }}" | sed 's/^v//')
           echo "DOCKER_IMAGE_TAG=$DOCKER_IMAGE_TAG" >> $GITHUB_ENV
+          echo "DATE=`date`" >> $GITHUB_ENV
           echo "new-version=$DOCKER_IMAGE_TAG" >> $GITHUB_OUTPUT
       - uses: actions/checkout@v4
       - name: Set up QEMU
@@ -126,6 +137,9 @@ jobs:
         run: |
           DOCKER_IMAGE_TAG=${DOCKER_IMAGE_TAG}-pre
           docker buildx build --push --platform=$DOCKER_PLATFORMS \
+            --build-arg COMMIT=$COMMIT \
+            --build-arg DATE=$DATE \
+            --build-arg TAG=$DOCKER_IMAGE_TAG \
             -t $DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG \
             .
       - name: Push release image
@@ -169,11 +183,14 @@ jobs:
         with:
           go-version: 1.19.11
 
-      - name: Checkout metadata injection repo
+      - name: Checkout version-update.go app
         uses: actions/checkout@v4
         with:
           repository: newrelic/k8s-metadata-injection
           ref: main
+          sparse-checkout: |
+            ./src/utils/version-update.go
+          sparse-checkout-cone-mode: false
 
       - name: Find next helm chart version
         run: |
