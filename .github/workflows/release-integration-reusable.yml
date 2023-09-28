@@ -187,17 +187,18 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: newrelic/k8s-metadata-injection
+          path: tools
           ref: main
           sparse-checkout: |
-            ./src/utils/version-update.go
+            version-update.go
           sparse-checkout-cone-mode: false
 
       - name: List files
-        run: ls -la **/*
+        run: ls -la
 
       - name: Find next helm chart version
         run: |
-          NEXT_VERSION=$(go run ./src/utils/version-update.go "$CURRENT_VERSION" "$ORIGINAL_APP_VERSION" "$NEW_APP_VERSION")
+          NEXT_VERSION=$(go run ./tools/src/utils/version-update.go "$CURRENT_VERSION" "$ORIGINAL_APP_VERSION" "$NEW_APP_VERSION")
           echo "Next helm chart version: $NEXT_VERSION"
           echo "NEXT_VERSION=$NEXT_VERSION" >> $GITHUB_ENV
 
