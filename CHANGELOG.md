@@ -7,7 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
-### bugfix
+## v1.17.1 - 2023-09-28
+
+### 🐞 Bug fixes
 - Add quotation to variables to handle spaces by @juanjjaramillo in [#417](https://github.com/newrelic/k8s-metadata-injection/pull/417)
 
 ## v1.17.0 - 2023-09-28
