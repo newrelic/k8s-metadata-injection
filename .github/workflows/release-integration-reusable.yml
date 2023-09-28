@@ -192,6 +192,9 @@ jobs:
             ./src/utils/version-update.go
           sparse-checkout-cone-mode: false
 
+      - name: List files
+        run: ls -la **/*
+
       - name: Find next helm chart version
         run: |
           NEXT_VERSION=$(go run ./src/utils/version-update.go "$CURRENT_VERSION" "$ORIGINAL_APP_VERSION" "$NEW_APP_VERSION")
