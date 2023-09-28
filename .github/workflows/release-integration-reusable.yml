@@ -137,9 +137,9 @@ jobs:
         run: |
           DOCKER_IMAGE_TAG=${DOCKER_IMAGE_TAG}-pre
           docker buildx build --push --platform=$DOCKER_PLATFORMS \
-            --build-arg COMMIT=$COMMIT \
-            --build-arg DATE=$DATE \
-            --build-arg TAG=$DOCKER_IMAGE_TAG \
+            --build-arg "COMMIT=$COMMIT" \
+            --build-arg "DATE=$DATE" \
+            --build-arg "TAG=$DOCKER_IMAGE_TAG" \
             -t $DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG \
             .
       - name: Push release image
