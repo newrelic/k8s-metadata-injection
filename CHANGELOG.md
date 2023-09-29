@@ -7,7 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
-### enhancement
+## v1.18.0 - 2023-09-29
+
+### 🚀 Enhancements
 - Improve readability of `release-integration-reusable.yml` by @juanjjaramillo in [#422](https://github.com/newrelic/k8s-metadata-injection/pull/422)
 
 ## v1.17.0 - 2023-09-29
