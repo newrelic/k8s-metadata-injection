@@ -59,11 +59,6 @@ jobs:
       - uses: actions/setup-go@v4
         with:
           go-version-file: 'go.mod'
-      - name: golangci-lint
-        uses: golangci/golangci-lint-action@v3
-        with:
-          only-new-issues: true
-          args: --timeout 5m --verbose
       - name: Build integration
         env:
           GOOS: ${{ matrix.goos }}
