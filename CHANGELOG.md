@@ -7,12 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
-### bugfix
+## v1.17.0 - 2023-09-29
+
+### 🚀 Enhancements
+- Make explicit that we are only using a single file by @juanjjaramillo in [#416](https://github.com/newrelic/k8s-metadata-injection/pull/416)
+
+### 🐞 Bug fixes
 - Fix action to fetch `version-update.go` by @juanjjaramillo in [#420](https://github.com/newrelic/k8s-metadata-injection/pull/420)
 - Add quotation to variables to handle spaces by @juanjjaramillo in [#417](https://github.com/newrelic/k8s-metadata-injection/pull/417)
 
-### enhancement
-- Make explicit that we are only using a single file by @juanjjaramillo in [#416](https://github.com/newrelic/k8s-metadata-injection/pull/416)
+### ⛓️ Dependencies
+- Updated alpine to v3.18.4
 
 ## v1.16.1 - 2023-09-26
 
