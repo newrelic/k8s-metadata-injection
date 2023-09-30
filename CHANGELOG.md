@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### bugfix
+- Fix release workflow to include build-time metadata on release image by juanjjaramillo in [#425](https://github.com/newrelic/k8s-metadata-injection/pull/425)
+
 ## v1.18.0 - 2023-09-29
 
 ### 🚀 Enhancements

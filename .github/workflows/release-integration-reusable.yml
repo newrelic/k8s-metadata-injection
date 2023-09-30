@@ -127,7 +127,7 @@ jobs:
           exit-code: '1'
           ignore-unfixed: true
           severity: 'HIGH,CRITICAL'
-      - name: Build and push docker image
+      - name: Build and push docker prerelease image
         if: ${{ github.event.release.prerelease }}
         run: |
           DOCKER_IMAGE_TAG=${DOCKER_IMAGE_TAG}-pre
@@ -137,10 +137,13 @@ jobs:
             --build-arg "TAG=$DOCKER_IMAGE_TAG" \
             -t $DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG \
             .
-      - name: Push release image
+      - name: Build and push docker release image
         if: ${{ ! github.event.release.prerelease }}
         run: |
           docker buildx build --push --platform=$DOCKER_PLATFORMS \
+            --build-arg "COMMIT=$COMMIT" \
+            --build-arg "DATE=$DATE" \
+            --build-arg "TAG=$DOCKER_IMAGE_TAG" \
             -t $DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG \
             -t $DOCKER_IMAGE_NAME:latest \
             .
