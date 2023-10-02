@@ -1,5 +1,6 @@
 {
   "extends": [
     "github>newrelic/coreint-automation:renovate-base.json5"
-  ]
+  ],
+  ignoreDeps: ["ingress-nginx/kube-webhook-certgen"],
 }
