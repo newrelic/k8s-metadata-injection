@@ -19,6 +19,12 @@ on:
         description: Location of Chart
         type: string
         required: true
+      # Usually key is .appVersion
+      image_name_key:
+        description: Image name key in chart
+        type: string
+        required: false
+        default: .appVersion
     # secrets need to be passed in for reusable workflows
     secrets:
       dockerhub_username:
@@ -169,7 +175,7 @@ jobs:
       - name: Find current appVersion
         id: original_version
         run: |
-          ORIGINAL_APP_VERSION=$(yq eval '.appVersion' ${{ inputs.chart_directory }}/Chart.yaml)
+          ORIGINAL_APP_VERSION=$(yq eval ${{ inputs.image_name_key }} ${{ inputs.chart_directory }}/Chart.yaml)
           echo "original app version: $ORIGINAL_APP_VERSION"
           echo "ORIGINAL_APP_VERSION=$ORIGINAL_APP_VERSION" >> $GITHUB_ENV
 
@@ -209,7 +215,7 @@ jobs:
           if [ "${NEXT_VERSION}" != 'error' ]; then
             echo "new appVersion to set: ${NEW_APP_VERSION}"
             echo "new version to set: ${NEXT_VERSION}"
-            yq eval --inplace ".appVersion=\"${NEW_APP_VERSION}\"" "${{ inputs.chart_directory }}/Chart.yaml"
+            yq eval --inplace "${{ inputs.image_name_key }}=\"${NEW_APP_VERSION}\"" "${{ inputs.chart_directory }}/Chart.yaml"
             yq eval --inplace ".version=\"${NEXT_VERSION}\"" "${{ inputs.chart_directory }}/Chart.yaml"
           else
             echo "Error: newVersion is 'error'."
