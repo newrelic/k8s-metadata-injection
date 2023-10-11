@@ -154,7 +154,7 @@ jobs:
     # run only for releases (not prereleases)
     if: ${{ ! github.event.release.prerelease }}
     steps:
-      - name: Checkout input repo
+      - name: Checkout original repo
         uses: actions/checkout@v4
         with:
           repository: ${{ env.ORIGINAL_REPO_NAME }}
