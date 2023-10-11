@@ -157,7 +157,7 @@ jobs:
       - name: Checkout input repo
         uses: actions/checkout@v4
         with:
-          repository: newrelic/${{ inputs.repo_name }}
+          repository: ${{ env.ORIGINAL_REPO_NAME }}
           ref: main
 
       - name: Find new appVersion
