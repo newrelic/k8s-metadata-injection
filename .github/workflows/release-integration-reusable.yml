@@ -242,7 +242,7 @@ jobs:
 
       - name: Open pull request
         run: |
-          pr_url=$(gh pr create -B main -H update-chart-version-${{ github.sha }} --title 'Bump version and update docs' --body 'Bump version and appVersion and results of running helm docs as part of release automation.')
+          pr_url=$(gh pr create -B main -H update-chart-version-${{ github.sha }} --label "Skip Changelog" --title 'Bump version and update docs' --body 'Bump version and appVersion and results of running helm docs as part of release automation.')
           pr_number=$(basename $pr_url)
           gh pr merge $pr_number --squash --admin --delete-branch --body "Merged by k8s agent bot."
         env:
