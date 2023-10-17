@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### bugfix
+- Trivy scans should only run on the 'Security' workflow by juanjjaramillo in [#436](https://github.com/newrelic/k8s-metadata-injection/pull/436)
+
 ## v1.18.3 - 2023-10-16
 
 ### 🐞 Bug fixes

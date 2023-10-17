@@ -125,14 +125,6 @@ jobs:
           docker buildx build --load --platform=linux/amd64 \
             -t $DOCKER_IMAGE_NAME:ci-scan \
             .
-      - name: Run Trivy vulnerability scanner
-        uses: aquasecurity/trivy-action@0.12.0
-        with:
-          image-ref: '${{ env.DOCKER_IMAGE_NAME }}:ci-scan'
-          format: 'table'
-          exit-code: '1'
-          ignore-unfixed: true
-          severity: 'HIGH,CRITICAL'
       - name: Build and push docker prerelease image
         if: ${{ github.event.release.prerelease }}
         run: |
