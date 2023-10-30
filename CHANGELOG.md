@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### security
+- Pin Slack notification action to a hash, not to a tag by @juanjjaramillo in [#447](https://github.com/newrelic/k8s-metadata-injection/pull/447)
+
 ## v1.19.0 - 2023-10-30
 
 ### 🚀 Enhancements
