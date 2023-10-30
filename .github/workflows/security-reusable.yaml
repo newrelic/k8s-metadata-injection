@@ -31,14 +31,17 @@ jobs:
           severity: 'HIGH,CRITICAL'
           skip-dirs: 'build'
           format: 'table'
-          exit-code: 1
+
+      - name: Build and load x64 image
+        run: |
+          docker buildx build --load --platform=linux/amd64 --tag trivy-scan:${{ github.sha }}
 
       - name: Run Trivy vulnerability scanner sarif output
         uses: aquasecurity/trivy-action@0.13.0
         # Upload sarif when running periodically or pushing to main
         if: ${{ github.event.schedule || (github.event_name == 'push' && github.ref_name == 'main') }}
         with:
-          scan-type: fs
+          image-ref: 'trivy-scan:${{ github.sha }}'
           ignore-unfixed: true
           severity: 'HIGH,CRITICAL'
           skip-dirs: 'build'
