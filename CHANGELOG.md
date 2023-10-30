@@ -10,7 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### enhancement
 - Remove 1.23 support by @svetlanabrennan in [#441](https://github.com/newrelic/k8s-metadata-injection/pull/441)
 - Add k8s 1.28.0-rc.1 support by @svetlanabrennan in [#443](https://github.com/newrelic/k8s-metadata-injection/pull/443)
-- Upload sarif when running periodically or pushing to main in [#444](https://github.com/newrelic/k8s-metadata-injection/pull/444)
+- Upload sarif when running periodically or pushing to main by @juanjaramillo in [#444](https://github.com/newrelic/k8s-metadata-injection/pull/444)
+- Improve Trivy scan by using Docker image by @juanjjaramillo in [#446](https://github.com/newrelic/k8s-metadata-injection/pull/446)
 
 ## v1.18.4 - 2023-10-23
 
