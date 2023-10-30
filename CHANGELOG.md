@@ -7,7 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
-### enhancement
+## v1.19.0 - 2023-10-30
+
+### 🚀 Enhancements
 - Remove 1.23 support by @svetlanabrennan in [#441](https://github.com/newrelic/k8s-metadata-injection/pull/441)
 - Add k8s 1.28.0-rc.1 support by @svetlanabrennan in [#443](https://github.com/newrelic/k8s-metadata-injection/pull/443)
 - Upload sarif when running periodically or pushing to main by @juanjaramillo in [#444](https://github.com/newrelic/k8s-metadata-injection/pull/444)
