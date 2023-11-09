@@ -1,0 +1,20 @@
+{
+  "extends": [
+    "github>newrelic/coreint-automation:renovate-base.json5"
+  ],
+  ignoreDeps: ["ingress-nginx/kube-webhook-certgen"],
+  "customManagers": [
+    {
+      "description": "Update minikube",
+      "customType": "regex",
+      "fileMatch": [
+        "^\.github/workflows/.+\.ya?ml$",
+      ],
+      "matchStrings": [
+        "\\s+minikube version:\\s+(?<currentValue>v.*?)\\s+",
+      ],
+      "depNameTemplate": "kubernetes/minikube",
+      "datasourceTemplate": "github-releases",
+    },
+  ],
+}
