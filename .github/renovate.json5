@@ -1,0 +1,5 @@
+{
+  "extends": [
+    "github>newrelic/k8s-metadata-injection:renovate-base.json5"
+  ]
+}
