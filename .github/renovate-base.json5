@@ -3,6 +3,12 @@
     "github>newrelic/coreint-automation:renovate-base.json5"
   ],
   ignoreDeps: ["ingress-nginx/kube-webhook-certgen"],
+  "packageRules": [
+    {
+      "groupName": "Minikube version (batch update)",
+      "matchDepNames": ["manusa/actions-setup-minikube", "kubernetes/minikube"],
+    },
+  ],
   "customManagers": [
     {
       "description": "Update minikube",
