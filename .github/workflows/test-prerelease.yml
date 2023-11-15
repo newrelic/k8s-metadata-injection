@@ -1,0 +1,51 @@
+name: Test Pre-release
+
+on: 
+  release:
+    types: [prelease]
+    tags: 
+      - 'v*'
+  workflow_dispatch: 
+
+jobs: 
+  test-prerelease:
+    name: Test Prerelease
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ../../e2e-tests 
+      steps:
+        - name: Build env args
+          run: |
+            echo "${{ github.event.release.tag_name }}" | grep -E '^[v]?[0-9.]*[0-9]$'
+            IMAGE_TAG=$(echo "${{ github.event.release.tag_name }}" | sed 's/^v//')
+            echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
+        - uses: actions/checkout@v4
+        - uses: actions/setup-go@v4
+          with:
+            go-version-file: 'go.mod'
+        - name: Make the script files executable
+          run: chmod +x tests.sh
+        - name: Run e2e testing script
+          run: |
+            export IMAGE_TAG=${IMAGE_TAG}-pre \
+            sh ./tests.sh 
+
+  notify-failure:
+    if: ${{ always() && failure() }}
+    needs: [test-prerelease]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Notify failure via Slack
+        uses: archive/github-actions-slack@cb6f1f6bc7bfe991ea956833f9515dac40da14d2 # v2.8.0
+        with:
+          slack-bot-user-oauth-access-token: ${{ secrets.slack_token }}
+          slack-channel: ${{ secrets.slack_channel }}
+          slack-text: "❌ `${{ env.ORIGINAL_REPO_NAME }}`: <${{ github.server_url }}/${{ env.ORIGINAL_REPO_NAME }}/actions/runs/${{ github.run_id }}|'Pre-release and Release pipeline' failed>."
+
+
+
+
+
+
+
