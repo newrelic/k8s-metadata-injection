@@ -16,14 +16,14 @@ jobs:
         working-directory: ./e2e-tests 
     steps:
       - name: Build env args
-        run: |
-          echo "${{ github.event.release.tag_name }}" | grep -E '^[v]?[0-9.]*[0-9]$'
-          IMAGE_TAG=$(echo "${{ github.event.release.tag_name }}" | sed 's/^v//')
-          echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v4
         with:
           go-version-file: 'go.mod'
+        run: |
+          echo "${{ github.event.release.tag_name }}" | grep -E '^[v]?[0-9.]*[0-9]$'
+          IMAGE_TAG=$(echo "${{ github.event.release.tag_name }}" | sed 's/^v//')
+          echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
       - name: Make the script files executable
         run: chmod +x tests.sh
       - name: Run e2e testing script
