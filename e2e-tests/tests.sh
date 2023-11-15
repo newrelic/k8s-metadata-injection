@@ -12,6 +12,7 @@ DUMMY_DEPLOYMENT_NAME="dummy-deployment"
 DUMMY_POD_LABEL="app=${DUMMY_DEPLOYMENT_NAME}"
 ENV_VARS_PREFIX="NEW_RELIC_METADATA_KUBERNETES"
 NAMESPACE_NAME="$(kubectl config view --minify --output 'jsonpath={..namespace}')"
+IMAGE_TAG=${IMAGE_TAG:-e2e-test}
 
 finish() {
     printf "webhook logs:\n"
@@ -38,7 +39,7 @@ if ! helm upgrade --install "$HELM_RELEASE_NAME" ../charts/nri-metadata-injectio
                 --wait \
                 --set cluster=YOUR-CLUSTER-NAME \
                 --set image.pullPolicy=Never \
-                --set image.tag=e2e-test
+                --set image.tag="$IMAGE_TAG"
 then
     printf "Helm failed to install this release\n"
     exit 1
