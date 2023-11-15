@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ../../e2e-tests 
+        working-directory: ./e2e-tests 
     steps:
       - name: Build env args
         run: |
