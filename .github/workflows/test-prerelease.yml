@@ -2,7 +2,7 @@ name: Test Pre-release
 
 on: 
   release:
-    types: [prelease]
+    types: [preleased]
     tags: 
       - 'v*'
   workflow_dispatch: 

@@ -132,6 +132,7 @@ jobs:
       max-parallel: 5
       matrix:
         k8s-version: [ "v1.24.17", "v1.25.13", "v1.26.8", "v1.27.5", "v1.28.3" ]
+      cri: [ containerd ]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v4
