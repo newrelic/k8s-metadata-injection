@@ -9,6 +9,10 @@
       "matchDepNames": ["manusa/actions-setup-minikube", "kubernetes/minikube"],
     },
   ],
+  "enabledManagers": [
+    "helm-values",
+    "helmv3"
+  ],
   "customManagers": [
     {
       "description": "Update minikube",
