@@ -30,7 +30,7 @@ finish() {
 # build webhook docker image
 
 # Set GOOS and GOARCH explicitly since Dockerfile expects them in the binary name
-GOOS="linux" GOARCH="amd64" DOCKER_IMAGE_TAG="e2e-test" make -C .. compile build-container
+GOOS="linux" GOARCH="amd64" DOCKER_IMAGE_TAG="$IMAGE_TAG" make -C .. compile build-container
 
 trap finish EXIT
 
