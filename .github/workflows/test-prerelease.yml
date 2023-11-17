@@ -1,0 +1,73 @@
+name: Test Pre-release
+
+on: 
+  push:
+    tags: 
+      - 'v*'
+  release: 
+    types: [published]
+  workflow_dispatch: 
+
+jobs: 
+  build:
+    name: Build integration for
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        goos: [ linux ]
+        goarch: [ amd64, arm64, arm ]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v4
+        with:
+          go-version-file: 'go.mod'
+      - name: Build integration
+        env:
+          GOOS: ${{ matrix.goos }}
+          GOARCH: ${{ matrix.goarch }}
+        run: |
+          make compile
+  
+  test:
+    name: Unit tests
+    needs: [ build ]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v4
+        with:
+          go-version-file: 'go.mod'
+      - name: Run unit tests
+        run: make test
+
+  test-prerelease:
+    name: Test Prerelease
+    needs: [test]
+    runs-on: ubuntu-latest
+    env:
+      E2E_KUBERNETES_VERSION: ${{ matrix.k8s-version }}
+      DOCKER_BUILDKIT: '1' # Setting DOCKER_BUILDKIT=1 ensures TARGETOS and TARGETARCH are populated
+    strategy:
+      fail-fast: false
+      max-parallel: 5
+      matrix:
+        k8s-version: [ "v1.24.17", "v1.25.13", "v1.26.8", "v1.27.5", "v1.28.3" ]
+        cri: [ containerd ]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v4
+        with:
+          go-version-file: 'go.mod'
+      - run: make e2e-release-test
+
+  notify-failure:
+    if: ${{ always() && failure() }}
+    needs: [test-prerelease]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Notify failure via Slack
+        uses: archive/github-actions-slack@cb6f1f6bc7bfe991ea956833f9515dac40da14d2 # v2.8.0
+        with:
+          slack-bot-user-oauth-access-token: ${{ secrets.slack_token }}
+          slack-channel: ${{ secrets.slack_channel }}
+          slack-text: "❌ `${{ env.ORIGINAL_REPO_NAME }}`: <${{ github.server_url }}/${{ env.ORIGINAL_REPO_NAME }}/actions/runs/${{ github.run_id }}|'Pre-release and Release pipeline' failed>."
