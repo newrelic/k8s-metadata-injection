@@ -53,6 +53,11 @@ e2e-test:
 	@echo "[test] Running e2e tests"
 	./e2e-tests/tests.sh
 
+# .PHONY: e2e-release-test
+# e2e-release-test:
+# 	@echo "[test] Running e2e tests for release" 
+# 	./e2e-tests/release-tests.sh 
+
 .PHONY: benchmark-test
 benchmark-test:
 	@echo "[test] Running benchmark tests"
