@@ -22,5 +22,18 @@
       "depNameTemplate": "kubernetes/minikube",
       "datasourceTemplate": "github-releases",
     },
+    {
+      // Cover cases not supported by `helm-values` manager:
+      // https://docs.renovatebot.com/modules/manager/helm-values/
+      "description": "NewRelic dependencies in Helm values",
+      "customType": "regex",
+      "fileMatch": [
+        "(^|/)values\.ya?ml$",
+      ],
+      "matchStrings": [
+        "\\srepository:\\s+?(?<depName>newrelic.+?)\\s+?tag:\\s+?(?<currentValue>.+?)\\s",
+      ],
+      "datasourceTemplate": "docker",
+    },
   ],
 }
