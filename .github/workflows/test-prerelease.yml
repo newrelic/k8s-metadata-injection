@@ -60,7 +60,7 @@ jobs:
           go-version-file: 'go.mod'
       - run: |
           DIR=$(pwd)
-          echo $DIR 
+          echo "$DIR"
           make e2e-release-test
 
   notify-failure:
