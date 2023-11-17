@@ -42,6 +42,7 @@ jobs:
 
   test-prerelease:
     name: Test Prerelease
+    needs: [test]
     runs-on: ubuntu-latest
     env:
       E2E_KUBERNETES_VERSION: ${{ matrix.k8s-version }}
