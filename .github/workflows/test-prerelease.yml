@@ -59,9 +59,9 @@ jobs:
         with:
           go-version-file: 'go.mod'
       - run: |
-        DIR=$(pwd)
-        echo $DIR 
-        make e2e-release-test
+          DIR=$(pwd)
+          echo $DIR 
+          make e2e-release-test
 
   notify-failure:
     if: ${{ always() && failure() }}
