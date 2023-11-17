@@ -63,6 +63,7 @@ jobs:
           IMAGE_TAG="$(curl --silent "https://api.github.com/repos/newrelic/k8s-metadata-injection/releases" | jq -r 'map(select(.prerelease)) | first | .tag_name')"
           IMAGE_TAG="${IMAGE_TAG:1}-pre"
           echo "$IMAGE_TAG"
+          echo "$(pwd)"
           make e2e-release-test
 
   notify-failure:
