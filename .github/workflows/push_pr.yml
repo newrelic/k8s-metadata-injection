@@ -6,8 +6,6 @@ on:
       - main
       - master
       - renovate/**
-  release: 
-    types: [published]
   pull_request:
 
 jobs:
