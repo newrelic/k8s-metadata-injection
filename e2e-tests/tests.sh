@@ -38,7 +38,7 @@ if ! helm upgrade --install "$HELM_RELEASE_NAME" ../charts/nri-metadata-injectio
                 --wait \
                 --set cluster=YOUR-CLUSTER-NAME \
                 --set image.pullPolicy=Never \
-                --set image.tag="-e2e-test"
+                --set image.tag="e2e-test"
 then
     printf "Helm failed to install this release\n"
     exit 1
