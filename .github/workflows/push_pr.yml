@@ -162,4 +162,4 @@ jobs:
       - uses: actions/setup-go@v4
         with:
           go-version-file: 'go.mod'
-      - run: export PRERELEASE=true make e2e-test
+      - run: PRERELEASE=true make e2e-test

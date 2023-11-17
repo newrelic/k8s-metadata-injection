@@ -14,13 +14,15 @@ ENV_VARS_PREFIX="NEW_RELIC_METADATA_KUBERNETES"
 NAMESPACE_NAME="$(kubectl config view --minify --output 'jsonpath={..namespace}')"
 IMAGE_TAG="e2e-test"
 
-echo $IMAGE_TAG
+
 
 if [ -z "$(PRERELEASE)" ]; then \
-    echo "testing prerelease"
-    IMAGE_TAG="$(curl --silent "https://api.github.com/repos/newrelic/k8s-metadata-injection/releases" | jq -r 'map(select(.prerelease)) | first | .tag_name')"
-    IMAGE_TAG="${IMAGE_TAG:1}-pre"
-    echo "testing prerelease image ${IMAGE_TAG}"
+        echo $IMAGE_TAG \ 
+    else \ 
+        echo "testing prerelease"
+        IMAGE_TAG="$(curl --silent "https://api.github.com/repos/newrelic/k8s-metadata-injection/releases" | jq -r 'map(select(.prerelease)) | first | .tag_name')"
+        IMAGE_TAG="${IMAGE_TAG:1}-pre"
+        echo "testing prerelease image ${IMAGE_TAG}"
 fi 
 
 
