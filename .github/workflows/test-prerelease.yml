@@ -16,7 +16,7 @@ jobs:
         goarch: [ amd64, arm64, arm ]
     defaults:
       run:
-        working-directory: ./e2e-tests
+        working-directory: ../../e2e-tests
     steps:
       - name: Build env args
         run: |
