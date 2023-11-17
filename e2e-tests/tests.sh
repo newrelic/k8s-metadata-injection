@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
 set -e
 
 printf 'bootstrapping starts:\n'
@@ -12,6 +12,17 @@ DUMMY_DEPLOYMENT_NAME="dummy-deployment"
 DUMMY_POD_LABEL="app=${DUMMY_DEPLOYMENT_NAME}"
 ENV_VARS_PREFIX="NEW_RELIC_METADATA_KUBERNETES"
 NAMESPACE_NAME="$(kubectl config view --minify --output 'jsonpath={..namespace}')"
+IMAGE_TAG="e2e-test"
+
+echo $IMAGE_TAG
+
+if [ -z "$(PRERELEASE)" ]; then \
+    echo "testing prerelease"
+    IMAGE_TAG="$(curl --silent "https://api.github.com/repos/newrelic/k8s-metadata-injection/releases" | jq -r 'map(select(.prerelease)) | first | .tag_name')"
+    IMAGE_TAG="${IMAGE_TAG:1}-pre"
+    echo "testing prerelease image ${IMAGE_TAG}"
+fi 
+
 
 finish() {
     printf "webhook logs:\n"
@@ -27,7 +38,7 @@ finish() {
 # build webhook docker image
 
 # Set GOOS and GOARCH explicitly since Dockerfile expects them in the binary name
-GOOS="linux" GOARCH="amd64" DOCKER_IMAGE_TAG="e2e-test" make -C .. compile build-container
+GOOS="linux" GOARCH="amd64" DOCKER_IMAGE_TAG="$IMAGE_TAG" make -C .. compile build-container
 
 trap finish EXIT
 
@@ -38,7 +49,7 @@ if ! helm upgrade --install "$HELM_RELEASE_NAME" ../charts/nri-metadata-injectio
                 --wait \
                 --set cluster=YOUR-CLUSTER-NAME \
                 --set image.pullPolicy=Never \
-                --set image.tag="e2e-test"
+                --set image.tag="$IMAGE_TAG"
 then
     printf "Helm failed to install this release\n"
     exit 1
