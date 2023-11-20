@@ -12,6 +12,7 @@ DUMMY_DEPLOYMENT_NAME="dummy-deployment"
 DUMMY_POD_LABEL="app=${DUMMY_DEPLOYMENT_NAME}"
 ENV_VARS_PREFIX="NEW_RELIC_METADATA_KUBERNETES"
 NAMESPACE_NAME="$(kubectl config view --minify --output 'jsonpath={..namespace}')"
+IMAGE_TAG="e2e-test"
 
 while getopts i: flag 
 do 
@@ -19,6 +20,10 @@ do
         i) IMAGE_TAG=${OPTARG};; 
     esac
 done 
+echo "heyy"
+echo "$IMAGE_TAG"
+echo "byee"
+
 
 finish() {
     printf "webhook logs:\n"
