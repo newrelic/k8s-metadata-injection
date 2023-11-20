@@ -16,8 +16,8 @@ IMAGE_TAG="e2e-test"
 
 while getopts i: flag 
 do 
-    case "${flag}" in 
-        i) IMAGE_TAG=${OPTARG};; 
+    case "$flag" in 
+        i) IMAGE_TAG=$OPTARG;; 
     esac
 done 
 echo "heyy"
