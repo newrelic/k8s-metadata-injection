@@ -67,7 +67,7 @@ jobs:
           echo "$IMAGE_TAG"
           echo "$(pwd)"
           echo "hey whats up"
-          bash ./tests.sh -f $IMAGE_TAG 
+          bash ./tests.sh -i $IMAGE_TAG 
 
   notify-failure:
     if: ${{ always() && failure() }}
