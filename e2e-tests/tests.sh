@@ -20,10 +20,8 @@ do
         i) IMAGE_TAG=$OPTARG;; 
     esac
 done 
-echo "heyy"
-echo "$IMAGE_TAG"
-echo "byee"
 
+printf 'image tag: "$IMAGE_TAG"' 
 
 finish() {
     printf "webhook logs:\n"
