@@ -66,7 +66,8 @@ jobs:
           IMAGE_TAG="${IMAGE_TAG:1}-pre"
           echo "$IMAGE_TAG"
           echo "$(pwd)"
-          bash ./release-tests.sh -f $IMAGE_TAG 
+          echo "hey whats up"
+          bash ./tests.sh -f $IMAGE_TAG 
 
   notify-failure:
     if: ${{ always() && failure() }}
