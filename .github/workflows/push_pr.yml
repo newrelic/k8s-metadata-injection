@@ -124,7 +124,6 @@ jobs:
 
   e2e-kubernetes:
     name: Kubernetes E2E tests
-    if: github.event_name != 'release'
     needs: [ test ]
     runs-on: ubuntu-22.04
     env:
@@ -145,7 +144,6 @@ jobs:
   
   test-prerelease:
     name: Test Prerelease
-    if: github.event_name == 'release'
     needs: [ test ]
     runs-on: ubuntu-latest
     env:
@@ -180,4 +178,4 @@ jobs:
         with:
           slack-bot-user-oauth-access-token: ${{ secrets.slack_token }}
           slack-channel: ${{ secrets.slack_channel }}
-          slack-text: "❌ `${{ env.ORIGINAL_REPO_NAME }}`: <${{ github.server_url }}/${{ env.ORIGINAL_REPO_NAME }}/actions/runs/${{ github.run_id }}|'Pre-release and Release pipeline' failed>."
+          slack-text: "❌ `${{ env.ORIGINAL_REPO_NAME }}`: <${{ github.server_url }}/${{ env.ORIGINAL_REPO_NAME }}/actions/runs/${{ github.run_id }}|'Lint, Build, E2E Test' failed>."
