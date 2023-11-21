@@ -124,7 +124,7 @@ jobs:
 
   e2e-kubernetes:
     name: Kubernetes E2E tests
-    if: ${{ ! github.event_name == 'release' }} 
+    if: github.event_name != 'release'
     needs: [ test ]
     runs-on: ubuntu-22.04
     env:
@@ -162,7 +162,7 @@ jobs:
       - uses: actions/setup-go@v4
         with:
           go-version-file: 'go.mod'
-      - name: run script 
+      - name: Run e2e testing script with latest image for release testing
         working-directory: ./e2e-tests
         run: |
           IMAGE_TAG="$(curl --silent "https://api.github.com/repos/newrelic/k8s-metadata-injection/releases" | jq -r 'map(select(.prerelease)) | first | .tag_name')"
