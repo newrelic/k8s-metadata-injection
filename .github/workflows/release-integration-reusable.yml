@@ -11,6 +11,11 @@ on:
         description: The artifact path
         type: string
         required: false
+      enable_helm_chart_release:
+        description: Whether the release workflow should trigger a helm chart release or not
+        type: boolean
+        required: false
+        default: true
       docker_image_name:
         description: Docker image name
         type: string
@@ -150,7 +155,7 @@ jobs:
     needs: [ docker-integration ]
     runs-on: ubuntu-latest
     # run only for releases (not prereleases)
-    if: ${{ ! github.event.release.prerelease }}
+    if: ${{ ! github.event.release.prerelease && inputs.enable_helm_chart_release }}
     steps:
       - name: Checkout original repo
         uses: actions/checkout@v4
