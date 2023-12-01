@@ -129,6 +129,7 @@ jobs:
     env:
       E2E_KUBERNETES_VERSION: ${{ matrix.k8s-version }}
       DOCKER_BUILDKIT: '1' # Setting DOCKER_BUILDKIT=1 ensures TARGETOS and TARGETARCH are populated
+      E2E_CONTAINER_RUNTIME: ${{ matrix.cri }}
     strategy:
       fail-fast: false
       max-parallel: 5
