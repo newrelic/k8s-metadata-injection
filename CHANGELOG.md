@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### enhancement
+- Update reusable workflow dependency by @juanjjaramillo [#490](https://github.com/newrelic/k8s-metadata-injection/pull/490)
+- Reusable release workflow now provides a mechanism for opting out of helm chart updates [#488](https://github.com/newrelic/k8s-metadata-injection/pull/488)
+
 ## v1.22.1 - 2023-11-16
 
 ### ⛓️ Dependencies
