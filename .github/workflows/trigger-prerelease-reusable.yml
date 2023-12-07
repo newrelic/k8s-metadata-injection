@@ -32,7 +32,7 @@ env:
 
 jobs:
   prerelease:
-    uses: newrelic/coreint-automation/.github/workflows/trigger_prerelease.yaml@v1
+    uses: newrelic/coreint-automation/.github/workflows/trigger_prerelease.yaml@v2
     with:
       rt-included-files: go.mod,go.sum,Dockerfile
       bot_email: ${{ inputs.bot_email }}
