@@ -1,6 +1,6 @@
 BIN_DIR = ./bin
 BINARY_NAME ?= $(BIN_DIR)/k8s-metadata-injection
-DOCKER_IMAGE_NAME ?= newrelic/k8s-metadata-injection
+DOCKER_IMAGE_NAME ?= e2e/k8s-metadata-injection
 # This default tag is used during e2e test execution in the ci
 DOCKER_IMAGE_TAG ?= local-dev
 
