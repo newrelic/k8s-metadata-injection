@@ -29,7 +29,7 @@ finish() {
 # GOOS="linux" GOARCH="amd64" make compile 
 # DOCKER_BUILDKIT=1 docker buildx build --load . --tag e2e/k8s-metadata-injection:e2e -f ../Dockerfile 
 GOOS="linux" GOARCH="amd64" make -C .. compile docker-build
-eval $(minikube docker-env)
+eval "$(minikube docker-env --shell bash)"
 minikube image load e2e/k8s-metadata-injection:e2e 
 
 # ensure that we build docker image in minikube
