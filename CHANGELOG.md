@@ -25,7 +25,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## v1.22.0 - 2023-11-13
 
 ### 🚀 Enhancements
-- Add automated release testing workflow in [#485](https://github.com/newrelic/k8s-metadata-injection/pull/485)
+- Update e2e testing workflow to also run on release in [#485](https://github.com/newrelic/k8s-metadata-injection/pull/485)
 
 - Update k8s version in e2e tests by @svetlanabrennan in [#459](https://github.com/newrelic/k8s-metadata-injection/pull/459)
 
