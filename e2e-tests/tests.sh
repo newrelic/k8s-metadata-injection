@@ -23,13 +23,14 @@ finish() {
     kubectl delete deployment ${DUMMY_DEPLOYMENT_NAME} || true
 }
 
+minikube image load . 
 # ensure that we build docker image in minikube
-[ "$E2E_MINIKUBE_DRIVER" = "none" ] || eval "$(minikube docker-env --shell bash)"
+# [ "$E2E_MINIKUBE_DRIVER" = "none" ] || eval "$(minikube docker-env --shell bash)"
 
 # build webhook docker image
 
 # Set GOOS and GOARCH explicitly since Dockerfile expects them in the binary name
-GOOS="linux" GOARCH="amd64" IMAGE_NAME="$IMAGE_NAME" DOCKER_IMAGE_TAG="$IMAGE_TAG" make -C .. compile build-container
+# GOOS="linux" GOARCH="amd64" IMAGE_NAME="$IMAGE_NAME" DOCKER_IMAGE_TAG="$IMAGE_TAG" make -C .. compile build-container
 
 trap finish EXIT
 
