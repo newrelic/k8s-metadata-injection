@@ -23,7 +23,8 @@ finish() {
     kubectl delete deployment ${DUMMY_DEPLOYMENT_NAME} || true
 }
 
-minikube image load . 
+docker buildx build --load . --tag e2e/k8s-metadata-injection:e2e
+minikube image load e2e/k8s-metadata-injection:e2e
 # ensure that we build docker image in minikube
 # [ "$E2E_MINIKUBE_DRIVER" = "none" ] || eval "$(minikube docker-env --shell bash)"
 
