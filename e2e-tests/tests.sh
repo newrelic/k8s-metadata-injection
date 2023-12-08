@@ -12,6 +12,7 @@ DUMMY_DEPLOYMENT_NAME="dummy-deployment"
 DUMMY_POD_LABEL="app=${DUMMY_DEPLOYMENT_NAME}"
 ENV_VARS_PREFIX="NEW_RELIC_METADATA_KUBERNETES"
 NAMESPACE_NAME="$(kubectl config view --minify --output 'jsonpath={..namespace}')"
+IMAGE_NAME="e2e/k8s-metadata-injection"
 IMAGE_TAG="e2e"
 
 finish() {
@@ -28,7 +29,7 @@ finish() {
 # build webhook docker image
 
 # Set GOOS and GOARCH explicitly since Dockerfile expects them in the binary name
-GOOS="linux" GOARCH="amd64" DOCKER_IMAGE_TAG="$IMAGE_TAG" make -C .. compile build-container
+GOOS="linux" GOARCH="amd64" IMAGE_NAME="$IMAGE_NAME" DOCKER_IMAGE_TAG="$IMAGE_TAG" make -C .. compile build-container
 
 trap finish EXIT
 
@@ -39,7 +40,7 @@ if ! helm upgrade --install "$HELM_RELEASE_NAME" ../charts/nri-metadata-injectio
                 --wait \
                 --set cluster=YOUR-CLUSTER-NAME \
                 --set image.pullPolicy=Never \
-                --set image.tag="e2e/k8s-metadata-injection:e2e"
+                --set image.tag="$IMAGE_NAME:$IMAGE_TAG"
 then
     printf "Helm failed to install this release\n"
     exit 1
