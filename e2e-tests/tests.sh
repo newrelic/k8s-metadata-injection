@@ -40,7 +40,7 @@ minikube image load e2e/k8s-metadata-injection:e2e
 # GOOS="linux" GOARCH="amd64" IMAGE_NAME="$IMAGE_NAME" DOCKER_IMAGE_TAG="$IMAGE_TAG" make -C .. compile build-container
 
 trap finish EXIT
-
+chmod go-r /home/runner/.kube/config
 # install the metadata-injection webhook
 helm repo add newrelic https://helm-charts.newrelic.com
 helm dependency build ../charts/nri-metadata-injection
