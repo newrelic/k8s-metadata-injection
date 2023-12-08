@@ -12,7 +12,7 @@ DUMMY_DEPLOYMENT_NAME="dummy-deployment"
 DUMMY_POD_LABEL="app=${DUMMY_DEPLOYMENT_NAME}"
 ENV_VARS_PREFIX="NEW_RELIC_METADATA_KUBERNETES"
 NAMESPACE_NAME="$(kubectl config view --minify --output 'jsonpath={..namespace}')"
-IMAGE_TAG="e2e-test"
+IMAGE_TAG="e2e/k8s-metadata-injection:e2e"
 
 finish() {
     printf "webhook logs:\n"
