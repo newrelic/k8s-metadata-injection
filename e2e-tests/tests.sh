@@ -29,7 +29,10 @@ finish() {
 # build webhook docker image
 
 # Set GOOS and GOARCH explicitly since Dockerfile expects them in the binary name
-GOOS="linux" GOARCH="amd64" IMAGE_NAME="$IMAGE_NAME" DOCKER_IMAGE_TAG="$IMAGE_TAG" make -C .. compile build-container
+# GOOS="linux" GOARCH="amd64" IMAGE_NAME="$IMAGE_NAME" DOCKER_IMAGE_TAG="$IMAGE_TAG" make -C .. compile build-container
+
+docker buildx build --load . --tag e2e/k8s-metadata-injection:e2e
+minikube image load e2e/k8s-metadata-injection:e2e
 
 trap finish EXIT
 
