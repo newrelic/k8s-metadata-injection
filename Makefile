@@ -45,7 +45,7 @@ build-container:
 
 .PHONY: docker-build 
 docker-build: 
-	docker buildx build --load . -t e2e/k8s-metadata-injection:e2e $$DOCKERARGS .
+	docker buildx build --load . -t e2e/k8s-metadata-injection:e2e
 
 .PHONY: test
 test:
