@@ -13,7 +13,8 @@ start_minikube() {
     export KUBECONFIG=$HOME/.kube/config
 
     printf "Starting Minikube with Kubernetes version %s...\n" "${E2E_KUBERNETES_VERSION}"
-    $E2E_SUDO minikube start --driver="$E2E_MINIKUBE_DRIVER" --kubernetes-version="$E2E_KUBERNETES_VERSION" 
+    $E2E_SUDO minikube start --driver="$E2E_MINIKUBE_DRIVER" --kubernetes-version="$E2E_KUBERNETES_VERSION" --container-runtime=containerd
+    
 }
 
 get_pod_name_by_label() {
