@@ -43,6 +43,10 @@ compile-multiarch:
 build-container:
 	docker build -t $(DOCKER_IMAGE_NAME):$(DOCKER_IMAGE_TAG) $$DOCKERARGS .
 
+.PHONY: docker-build 
+docker-build: 
+	docker buildx build --load . -t e2e/k8s-metadata-injection:e2e $$DOCKERARGS .
+
 .PHONY: test
 test:
 	@echo "[test] Running unit tests"

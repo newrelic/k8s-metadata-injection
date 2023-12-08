@@ -23,8 +23,9 @@ finish() {
     kubectl delete deployment ${DUMMY_DEPLOYMENT_NAME} || true
 }
 
-GOOS="linux" GOARCH="amd64" docker buildx build --load . --tag e2e/k8s-metadata-injection:e2e -f ../Dockerfile GOOS="linux" GOARCH="amd64"  
-minikube image load e2e/k8s-metadata-injection:e2e
+# docker buildx build --load . --tag e2e/k8s-metadata-injection:e2e -f ../Dockerfile GOOS="linux" GOARCH="amd64"  
+# minikube image load e2e/k8s-metadata-injection:e2e
+GOOS="linux" GOARCH="amd64" make -C .. compile docker-build
 # ensure that we build docker image in minikube
 # [ "$E2E_MINIKUBE_DRIVER" = "none" ] || eval "$(minikube docker-env --shell bash)"
 
