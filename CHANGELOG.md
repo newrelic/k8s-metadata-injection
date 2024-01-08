@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased - 2023-12-18
 
+## v1.23.2 - 2024-01-08
+
+### ⛓️ Dependencies
+- Updated kubernetes packages to v0.29.0
+- Updated golang.org/x/crypto to v0.18.0
+
 ## v1.23.1 - 2023-12-25
 
 ### Added
