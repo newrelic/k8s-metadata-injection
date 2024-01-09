@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### enhancement
+- Trigger release creation by @juanjjaramillo [#506](https://github.com/newrelic/k8s-metadata-injection/pull/506)
 - Remove reusable workflows by @juanjjaramillo [#491](https://github.com/newrelic/k8s-metadata-injection/pull/491)
 
 ## v1.23.2 - 2024-01-08
