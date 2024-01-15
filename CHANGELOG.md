@@ -6,7 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
-### enhancement
+
+## v1.24.0 - 2024-01-15
+
+### 🚀 Enhancements
 - Trigger release creation by @juanjjaramillo [#506](https://github.com/newrelic/k8s-metadata-injection/pull/506)
 - Remove reusable workflows by @juanjjaramillo [#491](https://github.com/newrelic/k8s-metadata-injection/pull/491)
 
