@@ -1,4 +1,5 @@
 BIN_DIR = ./bin
+TEST_COVERAGE_DIR := $(BIN_DIR)/test-coverage
 BINARY_NAME ?= $(BIN_DIR)/k8s-metadata-injection
 DOCKER_IMAGE_NAME ?= newrelic/k8s-metadata-injection
 # This default tag is used during e2e test execution in the ci
@@ -46,7 +47,8 @@ build-container:
 .PHONY: test
 test:
 	@echo "[test] Running unit tests"
-	@go test ./...
+	@mkdir -p $(TEST_COVERAGE_DIR)
+	@go test ./... -count=1 -coverprofile=$(TEST_COVERAGE_DIR)/coverage.out -covermode=count
 
 .PHONY: e2e-test
 e2e-test:
