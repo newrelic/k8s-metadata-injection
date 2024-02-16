@@ -23,8 +23,9 @@ tests:
       cluster: my-cluster
     asserts:
       - equal:
-          path: spec.template.spec.nodeSelector["kubernetes.io/os"]
-          value: linux
+          path: spec.template.spec.nodeSelector
+          value:
+            kubernetes.io/os: linux
   - it: has a linux node selector and additional selectors
     set:
       cluster: my-cluster
@@ -32,8 +33,7 @@ tests:
         aCoolTestLabel: aCoolTestValue
     asserts:
       - equal:
-          path: spec.template.spec.nodeSelector["kubernetes.io/os"]
-          value: linux
-      - equal:
-          path: spec.template.spec.nodeSelector["aCoolTestLabel"]
-          value: aCoolTestValue
+          path: spec.template.spec.nodeSelector
+          value:
+            kubernetes.io/os: linux
+            aCoolTestLabel: aCoolTestValue
