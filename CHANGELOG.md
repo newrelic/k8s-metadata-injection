@@ -6,8 +6,29 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
-### enhancement
+
+## v1.26.3 - 2024-03-25
+
+### ⛓️ Dependencies
+- Updated kubernetes packages to v0.29.3
+
+## v1.26.2 - 2024-03-11
+
+### ⛓️ Dependencies
+- Updated golang.org/x/crypto to v0.21.0
+
+## v1.26.1 - 2024-03-04
+
+### ⛓️ Dependencies
+- Updated kubernetes packages to v0.29.2
+
+## v1.26.0 - 2024-02-26
+
+### 🚀 Enhancements
 - Add linux node selector @dbudziwojskiNR [#523](https://github.com/newrelic/k8s-metadata-injection/pull/523)
+
+### ⛓️ Dependencies
+- Updated go.uber.org/zap to v1.27.0
 
 ## v1.25.1 - 2024-02-19
 
