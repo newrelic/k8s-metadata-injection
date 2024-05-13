@@ -2,6 +2,35 @@ apiVersion: v1
 entries:
   nri-metadata-injection:
   - apiVersion: v2
+    appVersion: 1.27.1
+    created: "2024-05-13T12:07:21.701502332Z"
+    dependencies:
+    - name: common-library
+      repository: https://helm-charts.newrelic.com
+      version: 1.1.1
+    description: A Helm chart to deploy the New Relic metadata injection webhook.
+    digest: a72ec8fd113b72a14c01dbfb6ac3a3e1fb8250575e9d0f92f46fac71dc677b0d
+    home: https://hub.docker.com/r/newrelic/k8s-metadata-injection
+    icon: https://newrelic.com/assets/newrelic/source/NewRelic-logo-square.svg
+    keywords:
+    - infrastructure
+    - newrelic
+    - monitoring
+    maintainers:
+    - name: juanjjaramillo
+      url: https://github.com/juanjjaramillo
+    - name: csongnr
+      url: https://github.com/csongnr
+    - name: dbudziwojskiNR
+      url: https://github.com/dbudziwojskiNR
+    name: nri-metadata-injection
+    sources:
+    - https://github.com/newrelic/k8s-metadata-injection
+    - https://github.com/newrelic/k8s-metadata-injection/tree/master/charts/nri-metadata-injection
+    urls:
+    - https://github.com/newrelic/k8s-metadata-injection/releases/download/nri-metadata-injection-4.19.1/nri-metadata-injection-4.19.1.tgz
+    version: 4.19.1
+  - apiVersion: v2
     appVersion: 1.27.0
     created: "2024-04-29T12:07:36.214242977Z"
     dependencies:
@@ -1753,4 +1782,4 @@ entries:
     urls:
     - https://github.com/newrelic/k8s-metadata-injection/releases/download/nri-metadata-injection-2.2.0/nri-metadata-injection-2.2.0.tgz
     version: 2.2.0
-generated: "2024-04-29T12:07:36.214787339Z"
+generated: "2024-05-13T12:07:21.701663609Z"
