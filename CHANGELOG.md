@@ -10,6 +10,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### enhancement
 - Add 1.29 and 1.30 support and drop 1.25 and 1.24 @dbudziwojskiNR [#551](https://github.com/newrelic/k8s-metadata-injection/pull/551)
 
+## v1.27.4 - 2024-06-17
+
+### ⛓️ Dependencies
+- Updated go to v1.22.4
+- Updated golang.org/x/crypto to v0.24.0
+
 ## v1.27.3 - 2024-06-10
 
 ### ⛓️ Dependencies
