@@ -7,8 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
-### enhancement
+## v1.28.0 - 2024-06-24
+
+### 🚀 Enhancements
 - Add 1.29 and 1.30 support and drop 1.25 and 1.24 @dbudziwojskiNR [#551](https://github.com/newrelic/k8s-metadata-injection/pull/551)
+
+### ⛓️ Dependencies
+- Updated alpine to v3.20.1
 
 ## v1.27.4 - 2024-06-17
 
