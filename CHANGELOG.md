@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## v1.28.4 - 2024-08-12
+
+### ⛓️ Dependencies
+- Updated golang.org/x/crypto to v0.26.0
+
 ## v1.28.3 - 2024-07-29
 
 ### ⛓️ Dependencies
