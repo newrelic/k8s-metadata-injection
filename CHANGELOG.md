@@ -7,6 +7,71 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## v1.28.4 - 2024-08-12
+
+### ⛓️ Dependencies
+- Updated golang.org/x/crypto to v0.26.0
+
+## v1.28.3 - 2024-07-29
+
+### ⛓️ Dependencies
+- Updated alpine to v3.20.2
+- Updated kubernetes packages to v0.30.3
+
+## v1.28.2 - 2024-07-22
+
+### ⛓️ Dependencies
+- Updated golang.org/x/crypto to v0.25.0
+
+## v1.28.1 - 2024-07-08
+
+### ⛓️ Dependencies
+- Updated kubernetes packages to v0.30.2
+
+## v1.28.0 - 2024-06-24
+
+### 🚀 Enhancements
+- Add 1.29 and 1.30 support and drop 1.25 and 1.24 @dbudziwojskiNR [#551](https://github.com/newrelic/k8s-metadata-injection/pull/551)
+
+### ⛓️ Dependencies
+- Updated alpine to v3.20.1
+
+## v1.27.4 - 2024-06-17
+
+### ⛓️ Dependencies
+- Updated go to v1.22.4
+- Updated golang.org/x/crypto to v0.24.0
+
+## v1.27.3 - 2024-06-10
+
+### ⛓️ Dependencies
+- Updated go to v1.22.3
+
+## v1.27.2 - 2024-05-27
+
+### ⛓️ Dependencies
+- Updated alpine to v3.20.0
+
+## v1.27.1 - 2024-05-13
+
+### ⛓️ Dependencies
+- Updated golang.org/x/crypto to v0.23.0
+
+## v1.27.0 - 2024-04-29
+
+### ⛓️ Dependencies
+- Upgraded golang.org/x/net from 0.21.0 to 0.23.0
+
+## v1.26.4 - 2024-04-15
+
+### ⛓️ Dependencies
+- Updated golang.org/x/crypto to v0.22.0
+
+## v1.26.3 - 2024-03-25
+
+### ⛓️ Dependencies
+- Updated kubernetes packages to v0.29.3
+
 ## v1.26.2 - 2024-03-11
 
 ### ⛓️ Dependencies
