@@ -22,7 +22,7 @@ image:
 jobImage:
   registry:  # Defaults to registry.k8s.io
   repository: ingress-nginx/kube-webhook-certgen
-  tag: v1.3.0
+  tag: v1.4.3
   pullPolicy: IfNotPresent
   # -- The secrets that are needed to pull images from a custom registry.
   pullSecrets: []

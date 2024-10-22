@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### security
+- Update kube-webhook-certgen to 1.4.3 to patch cve 
+
 ## v1.29.2 - 2024-10-07
 
 ### ⛓️ Dependencies
