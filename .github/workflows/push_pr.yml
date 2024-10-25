@@ -38,7 +38,7 @@ jobs:
     strategy:
       max-parallel: 5
       matrix:
-        kubernetes-version: ["v1.30.0", "v1.29.5", "v1.28.3", "v1.27.5", "v1.26.8"]
+        kubernetes-version: ["v1.31.0", "v1.30.0", "v1.29.5", "v1.28.3", "v1.27.5"]
     steps:
       - uses: actions/checkout@v4
         with:
@@ -139,7 +139,7 @@ jobs:
       fail-fast: false
       max-parallel: 5
       matrix:
-        k8s-version: ["v1.30.0", "v1.29.5", "v1.28.3", "v1.27.5", "v1.26.8"]
+        k8s-version: ["v1.31.0", "v1.30.0", "v1.29.5", "v1.28.3", "v1.27.5"]
         cri: [ containerd ]
     steps:
       - uses: actions/checkout@v4

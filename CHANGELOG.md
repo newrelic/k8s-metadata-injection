@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### enhancement
+- Add 1.31 support and drop 1.26 @zeitlerc [#574](https://github.com/newrelic/k8s-metadata-injection/pull/574)
+
 ### security
 - Update kube-webhook-certgen to 1.4.3 to patch cve 
 
