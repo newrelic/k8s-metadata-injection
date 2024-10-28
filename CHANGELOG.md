@@ -7,11 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
-### enhancement
+## v1.30.0 - 2024-10-28
+
+### 🛡️ Security notices
+- Update kube-webhook-certgen to 1.4.3 to patch cve
+
+### 🚀 Enhancements
 - Add 1.31 support and drop 1.26 @zeitlerc [#574](https://github.com/newrelic/k8s-metadata-injection/pull/574)
 
-### security
-- Update kube-webhook-certgen to 1.4.3 to patch cve 
+### ⛓️ Dependencies
+- Updated golang.org/x/crypto to v0.28.0
 
 ## v1.29.2 - 2024-10-07
 
