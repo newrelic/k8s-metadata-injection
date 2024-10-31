@@ -3,7 +3,7 @@ module github.com/newrelic/k8s-metadata-injection
 go 1.23.2
 
 require (
-	github.com/fsnotify/fsnotify v1.7.0
+	github.com/fsnotify/fsnotify v1.8.0
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/stretchr/testify v1.9.0
 	go.uber.org/zap v1.27.0
