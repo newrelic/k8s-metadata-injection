@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## v1.30.1 - 2024-11-04
+
+### ⛓️ Dependencies
+- Updated kubernetes packages to v0.31.2
+- Updated github.com/fsnotify/fsnotify to v1.8.0 - [Changelog 🔗](https://github.com/fsnotify/fsnotify/releases/tag/v1.8.0)
+
 ## v1.30.0 - 2024-10-28
 
 ### 🛡️ Security notices
