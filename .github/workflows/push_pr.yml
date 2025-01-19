@@ -154,7 +154,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Notify failure via Slack
-        uses: archive/github-actions-slack@df8416e7f4856b362a349c63b48165b42fc2f3b4 # v2.9.0
+        uses: archive/github-actions-slack@c643e5093620d65506466f2c9b317d5d29a5e517 # v2.10.1
         with:
           slack-bot-user-oauth-access-token: ${{ secrets.slack_token }}
           slack-channel: ${{ secrets.slack_channel }}
