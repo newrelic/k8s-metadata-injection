@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## v1.31.2 - 2025-02-17
+
+### ⛓️ Dependencies
+- Updated kubernetes packages to v0.32.1
+- Updated alpine to v3.21.3
+
 ## v1.31.1 - 2025-01-27
 
 ### ⛓️ Dependencies
