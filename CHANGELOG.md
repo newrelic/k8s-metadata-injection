@@ -7,6 +7,267 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## v1.31.2 - 2025-02-17
+
+### ⛓️ Dependencies
+- Updated kubernetes packages to v0.32.1
+- Updated alpine to v3.21.3
+
+## v1.31.1 - 2025-01-27
+
+### ⛓️ Dependencies
+- Updated go to v1.23.5
+
+## v1.31.0 - 2025-01-20
+
+### ⛓️ Dependencies
+- Updated golang.org/x/crypto to v0.32.0
+- Upgraded golang.org/x/net from 0.30.0 to 0.33.0
+
+## v1.30.5 - 2025-01-13
+
+### ⛓️ Dependencies
+- Updated alpine to v3.21.2
+
+## v1.30.4 - 2024-12-23
+
+### ⛓️ Dependencies
+- Updated kubernetes packages to v0.32.0
+- Updated go to v1.23.4
+- Updated golang.org/x/crypto to v0.31.0
+
+## v1.30.3 - 2024-12-09
+
+### ⛓️ Dependencies
+- Updated alpine to v3.21.0
+
+## v1.30.2 - 2024-11-18
+
+### ⛓️ Dependencies
+- Updated go to v1.23.3
+- Updated golang.org/x/crypto to v0.29.0
+
+## v1.30.1 - 2024-11-04
+
+### ⛓️ Dependencies
+- Updated kubernetes packages to v0.31.2
+- Updated github.com/fsnotify/fsnotify to v1.8.0 - [Changelog 🔗](https://github.com/fsnotify/fsnotify/releases/tag/v1.8.0)
+
+## v1.30.0 - 2024-10-28
+
+### 🛡️ Security notices
+- Update kube-webhook-certgen to 1.4.3 to patch cve
+
+### 🚀 Enhancements
+- Add 1.31 support and drop 1.26 @zeitlerc [#574](https://github.com/newrelic/k8s-metadata-injection/pull/574)
+
+### ⛓️ Dependencies
+- Updated golang.org/x/crypto to v0.28.0
+
+## v1.29.2 - 2024-10-07
+
+### ⛓️ Dependencies
+- Updated go to v1.23.2
+- Updated kubernetes packages to v0.31.1
+
+## v1.29.1 - 2024-09-09
+
+### ⛓️ Dependencies
+- Updated golang.org/x/crypto to v0.27.0
+- Updated alpine to v3.20.3
+
+## v1.29.0 - 2024-09-02
+
+### 🚀 Enhancements
+- Avoid Using PSP in k8s >= 1.25 @xqi-nr [#529](https://github.com/newrelic/k8s-metadata-injection/pull/529)
+
+### ⛓️ Dependencies
+- Updated go to v1.23.0
+- Updated kubernetes packages to v0.31.0
+
+## v1.28.4 - 2024-08-12
+
+### ⛓️ Dependencies
+- Updated golang.org/x/crypto to v0.26.0
+
+## v1.28.3 - 2024-07-29
+
+### ⛓️ Dependencies
+- Updated alpine to v3.20.2
+- Updated kubernetes packages to v0.30.3
+
+## v1.28.2 - 2024-07-22
+
+### ⛓️ Dependencies
+- Updated golang.org/x/crypto to v0.25.0
+
+## v1.28.1 - 2024-07-08
+
+### ⛓️ Dependencies
+- Updated kubernetes packages to v0.30.2
+
+## v1.28.0 - 2024-06-24
+
+### 🚀 Enhancements
+- Add 1.29 and 1.30 support and drop 1.25 and 1.24 @dbudziwojskiNR [#551](https://github.com/newrelic/k8s-metadata-injection/pull/551)
+
+### ⛓️ Dependencies
+- Updated alpine to v3.20.1
+
+## v1.27.4 - 2024-06-17
+
+### ⛓️ Dependencies
+- Updated go to v1.22.4
+- Updated golang.org/x/crypto to v0.24.0
+
+## v1.27.3 - 2024-06-10
+
+### ⛓️ Dependencies
+- Updated go to v1.22.3
+
+## v1.27.2 - 2024-05-27
+
+### ⛓️ Dependencies
+- Updated alpine to v3.20.0
+
+## v1.27.1 - 2024-05-13
+
+### ⛓️ Dependencies
+- Updated golang.org/x/crypto to v0.23.0
+
+## v1.27.0 - 2024-04-29
+
+### ⛓️ Dependencies
+- Upgraded golang.org/x/net from 0.21.0 to 0.23.0
+
+## v1.26.4 - 2024-04-15
+
+### ⛓️ Dependencies
+- Updated golang.org/x/crypto to v0.22.0
+
+## v1.26.3 - 2024-03-25
+
+### ⛓️ Dependencies
+- Updated kubernetes packages to v0.29.3
+
+## v1.26.2 - 2024-03-11
+
+### ⛓️ Dependencies
+- Updated golang.org/x/crypto to v0.21.0
+
+## v1.26.1 - 2024-03-04
+
+### ⛓️ Dependencies
+- Updated kubernetes packages to v0.29.2
+
+## v1.26.0 - 2024-02-26
+
+### 🚀 Enhancements
+- Add linux node selector @dbudziwojskiNR [#523](https://github.com/newrelic/k8s-metadata-injection/pull/523)
+
+### ⛓️ Dependencies
+- Updated go.uber.org/zap to v1.27.0
+
+## v1.25.1 - 2024-02-19
+
+### ⛓️ Dependencies
+- Updated golang.org/x/crypto to v0.19.0
+
+## v1.25.0 - 2024-02-05
+
+### 🚀 Enhancements
+- Add Codecov @dbudziwojskiNR [#513](https://github.com/newrelic/k8s-metadata-injection/pull/513)
+
+## v1.24.2 - 2024-01-29
+
+### ⛓️ Dependencies
+- Updated kubernetes packages to v0.29.1
+- Updated alpine to v3.19.1
+
+## v1.24.1 - 2024-01-22
+
+### ⛓️ Dependencies
+- Updated go to v1.21.6
+
+## v1.24.0 - 2024-01-15
+
+### 🚀 Enhancements
+- Trigger release creation by @juanjjaramillo [#506](https://github.com/newrelic/k8s-metadata-injection/pull/506)
+- Remove reusable workflows by @juanjjaramillo [#491](https://github.com/newrelic/k8s-metadata-injection/pull/491)
+
+## v1.23.2 - 2024-01-08
+
+### ⛓️ Dependencies
+- Updated kubernetes packages to v0.29.0
+- Updated golang.org/x/crypto to v0.18.0
+
+## v1.23.1 - 2023-12-25
+
+### 🚀 Enhancements
+- Update e2e testing workflow to also run on release in [#485](https://github.com/newrelic/k8s-metadata-injection/pull/485)
+
+### ⛓️ Dependencies
+- Updated kubernetes packages to v0.28.4
+- Updated go to v1.21.5
+- Updated alpine to v3.19.0
+
+## v1.23.0 - 2023-12-06
+
+### 🚀 Enhancements
+- Update reusable workflow dependency by @juanjjaramillo [#490](https://github.com/newrelic/k8s-metadata-injection/pull/490)
+- Reusable release workflow now provides a mechanism for opting out of helm chart updates [#488](https://github.com/newrelic/k8s-metadata-injection/pull/488)
+
+### ⛓️ Dependencies
+- Updated golang.org/x/crypto to v0.16.0
+- Updated alpine to v3.18.5
+
+## v1.22.1 - 2023-11-16
+
+### ⛓️ Dependencies
+- Updated golang.org/x/crypto to v0.15.0
+
+## v1.22.0 - 2023-11-13
+
+### 🚀 Enhancements
+- Update k8s version in e2e tests by @svetlanabrennan in [#459](https://github.com/newrelic/k8s-metadata-injection/pull/459)
+
+## v1.21.0 - 2023-11-13
+
+### 🚀 Enhancements
+- Replace k8s v1.28.0-rc.1 with k8s 1.28.3 support by @svetlanabrennan in [#458](https://github.com/newrelic/k8s-metadata-injection/pull/458)
+
+## v1.20.0 - 2023-11-06
+
+### 🛡️ Security notices
+- Pin Slack notification action to a hash, not to a tag by @juanjjaramillo in [#447](https://github.com/newrelic/k8s-metadata-injection/pull/447)
+
+## v1.19.0 - 2023-10-30
+
+### 🚀 Enhancements
+- Remove 1.23 support by @svetlanabrennan in [#441](https://github.com/newrelic/k8s-metadata-injection/pull/441)
+- Add k8s 1.28.0-rc.1 support by @svetlanabrennan in [#443](https://github.com/newrelic/k8s-metadata-injection/pull/443)
+- Upload sarif when running periodically or pushing to main by @juanjaramillo in [#444](https://github.com/newrelic/k8s-metadata-injection/pull/444)
+- Improve Trivy scan by using Docker image by @juanjjaramillo in [#446](https://github.com/newrelic/k8s-metadata-injection/pull/446)
+
+## v1.18.4 - 2023-10-23
+
+### 🐞 Bug fixes
+- Trivy scans should only run on the 'Security' workflow by juanjjaramillo in [#436](https://github.com/newrelic/k8s-metadata-injection/pull/436)
+
+### ⛓️ Dependencies
+- Updated kubernetes packages to v0.28.3
+- Updated github.com/fsnotify/fsnotify to v1.7.0 - [Changelog 🔗](https://github.com/fsnotify/fsnotify/releases/tag/v1.7.0)
+
+## v1.18.3 - 2023-10-16
+
+### 🐞 Bug fixes
+- Address CVE-2023-44487 and CVE-2023-39325 by juanjjaramillo in [#434](https://github.com/newrelic/k8s-metadata-injection/pull/434)
+
+## v1.18.2 - 2023-10-09
+
+### ⛓️ Dependencies
+- Updated golang.org/x/crypto to v0.14.0
+
 ## v1.18.1 - 2023-10-02
 
 ### 🐞 Bug fixes

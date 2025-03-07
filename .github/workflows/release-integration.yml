@@ -12,15 +12,15 @@ jobs:
     permissions:
       contents: write
       pull-requests: write
-    uses: newrelic/k8s-metadata-injection/.github/workflows/release-integration-reusable.yml@main
+    uses: newrelic/k8s-agents-automation/.github/workflows/reusable-release-integration.yml@main
     with:
       repo_name: k8s-metadata-injection
       artifact_path: bin/
       docker_image_name: newrelic/k8s-metadata-injection
       chart_directory: charts/nri-metadata-injection
     secrets:
-      dockerhub_username: ${{ secrets.FSI_DOCKERHUB_USERNAME }}
-      dockerhub_token: ${{ secrets.FSI_DOCKERHUB_TOKEN }}
-      gh_token: ${{ secrets.GITHUB_TOKEN }}
+      dockerhub_username: ${{ secrets.K8S_AGENTS_DOCKERHUB_USERNAME }}
+      dockerhub_token: ${{ secrets.K8S_AGENTS_DOCKERHUB_TOKEN }}
+      bot_token: ${{ secrets.K8S_AGENTS_BOT_TOKEN }}
       slack_channel: ${{ secrets.K8S_AGENTS_SLACK_CHANNEL }}
       slack_token: ${{ secrets.K8S_AGENTS_SLACK_TOKEN }}

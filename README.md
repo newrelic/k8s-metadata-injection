@@ -1,8 +1,6 @@
 <a href="https://opensource.newrelic.com/oss-category/#community-plus"><picture><source media="(prefers-color-scheme: dark)" srcset="https://github.com/newrelic/opensource-website/raw/main/src/images/categories/dark/Community_Plus.png"><source media="(prefers-color-scheme: light)" srcset="https://github.com/newrelic/opensource-website/raw/main/src/images/categories/Community_Plus.png"><img alt="New Relic Open Source community plus project banner." src="https://github.com/newrelic/opensource-website/raw/main/src/images/categories/Community_Plus.png"></picture></a>
 
-# Kubernetes Metadata injection for New Relic APM agents
-
-[![Build Status](https://travis-ci.com/newrelic/k8s-metadata-injection.svg?branch=main)](https://travis-ci.com/newrelic/k8s-metadata-injection) [![Go Report Card](https://goreportcard.com/badge/github.com/newrelic/k8s-metadata-injection)](https://goreportcard.com/report/github.com/newrelic/k8s-metadata-injection)
+# Kubernetes Metadata injection for New Relic APM agents [![codecov](https://codecov.io/gh/newrelic/k8s-metadata-injection/graph/badge.svg?token=vuX7pJaRnS)](https://codecov.io/gh/newrelic/k8s-metadata-injection) [![Build Status](https://travis-ci.com/newrelic/k8s-metadata-injection.svg?branch=main)](https://travis-ci.com/newrelic/k8s-metadata-injection) [![Go Report Card](https://goreportcard.com/badge/github.com/newrelic/k8s-metadata-injection)](https://goreportcard.com/report/github.com/newrelic/k8s-metadata-injection)
 
 # Table of contents
 
@@ -207,7 +205,7 @@ If you have any questions, or to execute our corporate CLA (which is required if
 
 As noted in our [security policy](../../security/policy), New Relic is committed to the privacy and security of our customers and their data. We believe that providing coordinated disclosure by security researchers and engaging with the security community are important means to achieve our security goals.
 
-If you believe you have found a security vulnerability in this project or any of New Relic's products or websites, we welcome and greatly appreciate you reporting it to New Relic through [HackerOne](https://hackerone.com/newrelic).
+If you believe you have found a security vulnerability in this project or any of New Relic's products or websites, we welcome and greatly appreciate you reporting it to New Relic through [Hackerour bug bounty program](https://docs.newrelic.com/docs/security/security-privacy/information-security/report-security-vulnerabilities/).
 
 If you would like to contribute to this project, review [these guidelines](./CONTRIBUTING.md).
 
