@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## v1.32.1 - 2025-04-07
+
+### ⛓️ Dependencies
+- Updated github.com/fsnotify/fsnotify to v1.9.0 - [Changelog 🔗](https://github.com/fsnotify/fsnotify/releases/tag/v1.9.0)
+
 ## v1.32.0 - 2025-03-24
 
 ### 🚀 Enhancements
