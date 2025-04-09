@@ -7,6 +7,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## v1.32.1 - 2025-04-07
+
+### ⛓️ Dependencies
+- Updated github.com/fsnotify/fsnotify to v1.9.0 - [Changelog 🔗](https://github.com/fsnotify/fsnotify/releases/tag/v1.9.0)
+
+## v1.32.0 - 2025-03-24
+
+### 🚀 Enhancements
+- Add v1.32 support and drop support for v1.27 @kpattaswamy [#602](https://github.com/newrelic/k8s-metadata-injection/pull/602)
+
+### ⛓️ Dependencies
+- Updated kubernetes packages to v0.32.3
+- Upgraded golang.org/x/net from 0.33.0 to 0.36.0
+
+## v1.31.3 - 2025-03-10
+
+### ⛓️ Dependencies
+- Updated golang.org/x/crypto to v0.36.0
+
 ## v1.31.2 - 2025-02-17
 
 ### ⛓️ Dependencies

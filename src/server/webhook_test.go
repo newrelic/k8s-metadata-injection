@@ -27,7 +27,7 @@ func TestServeHTTP(t *testing.T) {
 	var expectedPatchForValidBody bytes.Buffer
 	if len(patchForValidBody) > 0 {
 		if err := json.Compact(&expectedPatchForValidBody, patchForValidBody); err != nil {
-			t.Fatalf(err.Error())
+			t.Fatal(err.Error())
 		}
 	}
 
