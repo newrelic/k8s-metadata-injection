@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### enhancements
+- Pass container security context into admission webhooks @kondracek-nr [#619](https://github.com/newrelic/k8s-metadata-injection/pull/619)
+
 ## v1.33.1 - 2025-05-05
 
 ### ⛓️ Dependencies
