@@ -7,8 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
-### enhancements
+## v1.34.0 - 2025-05-19
+
+### 🚀 Enhancements
 - Pass container security context into admission webhooks @kondracek-nr [#619](https://github.com/newrelic/k8s-metadata-injection/pull/619)
+
+### ⛓️ Dependencies
+- Updated golang.org/x/crypto to v0.38.0
+- Updated go to v1.24.3
 
 ## v1.33.1 - 2025-05-05
 
