@@ -6,8 +6,8 @@ icon: https://newrelic.com/assets/newrelic/source/NewRelic-logo-square.svg
 sources:
   - https://github.com/newrelic/k8s-metadata-injection
   - https://github.com/newrelic/k8s-metadata-injection/tree/master/charts/nri-metadata-injection
-version: 4.26.5
-appVersion: 1.34.5
+version: 4.26.7
+appVersion: 1.34.7
 keywords:
   - infrastructure
   - newrelic
