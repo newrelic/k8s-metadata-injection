@@ -11,6 +11,10 @@ on:
   pull_request:
   workflow_dispatch: 
 
+permissions:
+  contents: read
+  pull-requests: read
+
 jobs:
   build:
     name: Build integration for
@@ -20,7 +24,7 @@ jobs:
         goos: [ linux ]
         goarch: [ amd64, arm64, arm ]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: actions/setup-go@v5
         with:
           go-version-file: 'go.mod'
@@ -38,9 +42,9 @@ jobs:
     strategy:
       max-parallel: 5
       matrix:
-        kubernetes-version: ["v1.31.0", "v1.30.0", "v1.29.5", "v1.28.3", "v1.27.5"]
+        kubernetes-version: ["v1.33.0", "v1.32.0", "v1.31.0", "v1.30.0", "v1.29.5"]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           fetch-depth: 0
       - uses: helm/chart-testing-action@v2.7.0
@@ -67,10 +71,10 @@ jobs:
             fi
           done
       - name: Setup Minikube
-        uses: manusa/actions-setup-minikube@v2.13.1
+        uses: manusa/actions-setup-minikube@v2.14.0
         if: steps.list-changed.outputs.changed == 'true'
         with:
-          minikube version: v1.35.0
+          minikube version: v1.36.0
           kubernetes version: ${{ matrix.kubernetes-version }}
           github token: ${{ secrets.GITHUB_TOKEN }}
       - uses: actions/setup-go@v5
@@ -96,14 +100,14 @@ jobs:
     needs: [ build ]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: actions/setup-go@v5
         with:
           go-version-file: 'go.mod'
       - name: Run unit tests
         run: make test
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@0565863a31f2c772f9f0395002a31e3f06189574 # v5.4.0
+        uses: codecov/codecov-action@18283e04ce6e62d37312384ff67231eb8fd56d24 # v5.4.3
         with:
           fail_ci_if_error: false
         env:
@@ -113,7 +117,7 @@ jobs:
     name: Static analysis and linting
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: actions/setup-go@v5
         with:
           go-version-file: 'go.mod'
@@ -123,7 +127,7 @@ jobs:
       #   with:
       #     auditOn: push
       - name: golangci-lint
-        uses: golangci/golangci-lint-action@v6
+        uses: golangci/golangci-lint-action@v8
         continue-on-error: ${{ github.event_name != 'pull_request' }}
         with:
           only-new-issues: true
@@ -139,10 +143,10 @@ jobs:
       fail-fast: false
       max-parallel: 5
       matrix:
-        k8s-version: ["v1.31.0", "v1.30.0", "v1.29.5", "v1.28.3", "v1.27.5"]
+        k8s-version: ["v1.33.0", "v1.32.0", "v1.31.0", "v1.30.0", "v1.29.5"]
         cri: [ containerd ]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: actions/setup-go@v5
         with:
           go-version-file: 'go.mod'
