@@ -100,3 +100,18 @@ customTLSCertificate: false
 # -- Webhook timeout
 # Ref: https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#timeouts
 timeoutSeconds: 28
+
+# -- Port configuration for the webhook server
+ports:
+  # -- Port on which the webhook server listens (TLS/HTTPS)
+  webhook: 8443
+  # -- Port for health check endpoint (HTTP)
+  health: 8080
+
+# -- Service configuration
+service:
+  # -- External port exposed by the Kubernetes service
+  port: 443
+  # -- Target port that the service forwards traffic to (should match webhook port)
+  # If not specified, defaults to the webhook port value
+  targetPort: ""
