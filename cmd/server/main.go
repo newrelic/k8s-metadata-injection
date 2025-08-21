@@ -66,7 +66,10 @@ func main() {
 		ClusterName: s.ClusterName,
 		CertWatcher: watcher,
 		Server: &http.Server{
-			Addr: fmt.Sprintf(":%d", s.Port),
+			Addr:         fmt.Sprintf(":%d", s.Port),
+			ReadTimeout:  10 * time.Second,
+			WriteTimeout: 10 * time.Second,
+			IdleTimeout:  60 * time.Second,
 		},
 		Logger: logger,
 	}
@@ -80,7 +83,15 @@ func main() {
 	readinessProbe := server.TLSReadyReadinessProbe(whsvr)
 	go func() {
 		logger.Info("starting the TLS readiness server")
-		if err := http.ListenAndServe(fmt.Sprintf(":%d", s.HealthPort), readinessProbe); err != nil {
+		healthServer := &http.Server{
+			Addr:         fmt.Sprintf(":%d", s.HealthPort),
+			Handler:      readinessProbe,
+			ReadTimeout:  5 * time.Second,
+			WriteTimeout: 5 * time.Second,
+			IdleTimeout:  60 * time.Second,
+		}
+
+		if err := healthServer.ListenAndServe(); err != nil {
 			logger.Errorw("failed to start TLS readiness server", "err", err)
 		}
 	}()
