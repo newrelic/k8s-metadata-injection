@@ -66,10 +66,7 @@ func main() {
 		ClusterName: s.ClusterName,
 		CertWatcher: watcher,
 		Server: &http.Server{
-			Addr:         fmt.Sprintf(":%d", s.Port),
-			ReadTimeout:  10 * time.Second,
-			WriteTimeout: 10 * time.Second,
-			IdleTimeout:  60 * time.Second,
+			Addr: fmt.Sprintf(":%d", s.Port),
 		},
 		Logger: logger,
 	}
