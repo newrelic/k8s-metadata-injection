@@ -28,6 +28,7 @@ const (
 // specification contains the specs for this app.
 type specification struct {
 	Port        int           `default:"8443"`                                                     // Webhook server port.
+	HealthPort  int           `default:"8080" split_words:"true"`                                  // Health check server port.
 	TLSCertFile string        `default:"/etc/tls-key-cert-pair/tls.crt" envconfig:"tls_cert_file"` // File containing the x509 Certificate for HTTPS.
 	TLSKeyFile  string        `default:"/etc/tls-key-cert-pair/tls.key" envconfig:"tls_key_file"`  // File containing the x509 private key for TLSCERTFILE.
 	ClusterName string        `default:"cluster" split_words:"true"`                               // The name of the Kubernetes cluster.
@@ -79,7 +80,15 @@ func main() {
 	readinessProbe := server.TLSReadyReadinessProbe(whsvr)
 	go func() {
 		logger.Info("starting the TLS readiness server")
-		if err := http.ListenAndServe(":8080", readinessProbe); err != nil {
+		healthServer := &http.Server{
+			Addr:         fmt.Sprintf(":%d", s.HealthPort),
+			Handler:      readinessProbe,
+			ReadTimeout:  5 * time.Second,
+			WriteTimeout: 5 * time.Second,
+			IdleTimeout:  60 * time.Second,
+		}
+
+		if err := healthServer.ListenAndServe(); err != nil {
 			logger.Errorw("failed to start TLS readiness server", "err", err)
 		}
 	}()

@@ -7,7 +7,7 @@ metadata:
     {{- include "newrelic.common.labels" . | nindent 4 }}
 spec:
   ports:
-  - port: 443
-    targetPort: 8443
+  - port: {{ .Values.service.port }}
+    targetPort: {{ .Values.service.targetPort | default .Values.ports.webhook }}
   selector:
     {{- include "newrelic.common.labels.selectorLabels" . | nindent 4 }}

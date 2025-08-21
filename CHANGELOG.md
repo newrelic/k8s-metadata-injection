@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### enhancement
+- Make webhook ports configurable via Helm values @dpacheconr [#639](https://github.com/newrelic/k8s-metadata-injection/pull/639/)
+
 ## v1.35.1 - 2025-08-18
 
 ### ⛓️ Dependencies

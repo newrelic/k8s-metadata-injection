@@ -52,8 +52,12 @@ spec:
         env:
         - name: clusterName
           value: {{ include "newrelic.common.cluster" . }}
+        - name: NEW_RELIC_K8S_METADATA_INJECTION_PORT
+          value: {{ .Values.ports.webhook | quote }}
+        - name: NEW_RELIC_K8S_METADATA_INJECTION_HEALTH_PORT
+          value: {{ .Values.ports.health | quote }}
         ports:
-          - containerPort: 8443
+          - containerPort: {{ .Values.ports.webhook }}
             protocol: TCP
         volumeMounts:
         - name: tls-key-cert-pair
@@ -61,7 +65,7 @@ spec:
         readinessProbe:
           httpGet:
             path: /health
-            port: 8080
+            port: {{ .Values.ports.health }}
           initialDelaySeconds: 1
           periodSeconds: 1
         {{- if .Values.resources }}
