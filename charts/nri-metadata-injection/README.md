@@ -54,10 +54,16 @@ Options that can be defined globally include `affinity`, `nodeSelector`, `tolera
 | podAnnotations | object | `{}` | Annotations to be added to all pods created by the integration. |
 | podLabels | object | `{}` | Additional labels for chart pods. Can be configured also with `global.podLabels` |
 | podSecurityContext | object | `{}` | Sets security context (at pod level). Can be configured also with `global.podSecurityContext` |
+| ports | object | `{"health":8080,"webhook":8443}` | Port configuration for the webhook server |
+| ports.health | int | `8080` | Port for health check endpoint (HTTP) |
+| ports.webhook | int | `8443` | Port on which the webhook server listens (TLS/HTTPS) |
 | priorityClassName | string | `""` | Sets pod's priorityClassName. Can be configured also with `global.priorityClassName` |
 | rbac.pspEnabled | bool | `false` | Whether the chart should create Pod Security Policy objects. |
 | replicas | int | `1` |  |
 | resources | object | 100m/30M -/80M | Image for creating the needed certificates of this webhook to work |
+| service | object | `{"port":443,"targetPort":""}` | Service configuration |
+| service.port | int | `443` | External port exposed by the Kubernetes service |
+| service.targetPort | string | `""` | Target port that the service forwards traffic to (should match webhook port) If not specified, defaults to the webhook port value |
 | timeoutSeconds | int | `28` | Webhook timeout Ref: https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#timeouts |
 | tolerations | list | `[]` | Sets pod's tolerations to node taints. Can be configured also with `global.tolerations` |
 
