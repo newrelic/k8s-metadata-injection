@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### enhancement
+- Add default ignoredNamespace and make configurable @dpacheconr [#600](https://github.com/newrelic/k8s-metadata-injection/pull/600/)
+
 ## v1.36.0 - 2025-08-25
 
 ### 🚀 Enhancements

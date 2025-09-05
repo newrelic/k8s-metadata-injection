@@ -10,3 +10,5 @@ ports:
 service:
   port: 443
   targetPort: ""
+
+ignoreNamespaces: ['kube-public', 'kube-node-lease', 'kube-system']

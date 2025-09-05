@@ -93,7 +93,6 @@ tolerations: []
 injectOnlyLabeledNamespaces: false
 
 # -- This is a list of namespaces that will be ignored by the webhook.
-# if injectOnlyLabeledNamespaces is set to true, pods in labeled namespaces will be injected even if included in ignoreNamespaces list.
 ignoreNamespaces: ['kube-public', 'kube-node-lease', 'kube-system']
 
 # -- Use custom tls certificates for the webhook, or let the chart handle it
