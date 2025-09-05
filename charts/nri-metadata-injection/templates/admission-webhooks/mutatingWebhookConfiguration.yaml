@@ -24,11 +24,19 @@ webhooks:
     apiGroups: [""]
     apiVersions: ["v1"]
     resources: ["pods"]
-{{- if .Values.injectOnlyLabeledNamespaces }}
+{{- if or .Values.ignoreNamespaces .Values.injectOnlyLabeledNamespaces }}
     scope: Namespaced
   namespaceSelector:
+{{- if .Values.ignoreNamespaces }}
+    matchExpressions:
+      - key: kubernetes.io/metadata.name
+        operator: NotIn
+        values: {{ .Values.ignoreNamespaces | toJson }}
+{{- end }}
+{{- if .Values.injectOnlyLabeledNamespaces }}
     matchLabels:
       newrelic-metadata-injection: enabled
+{{- end }}
 {{- end }}
   failurePolicy: Ignore
   timeoutSeconds: {{ .Values.timeoutSeconds }}

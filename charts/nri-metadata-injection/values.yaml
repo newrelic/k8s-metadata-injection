@@ -92,6 +92,9 @@ tolerations: []
 # with 'newrelic-metadata-injection=enabled'.
 injectOnlyLabeledNamespaces: false
 
+# -- This is a list of namespaces that will be ignored by the webhook.
+ignoreNamespaces: ['kube-public', 'kube-node-lease', 'kube-system']
+
 # -- Use custom tls certificates for the webhook, or let the chart handle it
 # automatically.
 # Ref: https://docs.newrelic.com/docs/integrations/kubernetes-integration/link-your-applications/link-your-applications-kubernetes#configure-injection
