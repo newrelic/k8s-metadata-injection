@@ -10,7 +10,7 @@ metadata:
   labels:
     {{- include "newrelic.common.labels" . | nindent 4 }}
 webhooks:
-- name: metadata-injection.newrelic.com
+- name: metadata-injection2.newrelic.com
   clientConfig:
     service:
       name: {{ include "newrelic.common.naming.fullname" . }}
