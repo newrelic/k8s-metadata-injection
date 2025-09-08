@@ -41,6 +41,7 @@ Options that can be defined globally include `affinity`, `nodeSelector`, `tolera
 | dnsConfig | object | `{}` | Sets pod's dnsConfig. Can be configured also with `global.dnsConfig` |
 | fullnameOverride | string | `""` | Override the full name of the release |
 | hostNetwork | bool | false | Sets pod's hostNetwork. Can be configured also with `global.hostNetwork` |
+| ignoreNamespaces | list | `["kube-public","kube-node-lease","kube-system"]` | This is a list of namespaces that will be ignored by the webhook. |
 | image | object | See `values.yaml` | Image for the New Relic Metadata Injector |
 | image.pullSecrets | list | `[]` | The secrets that are needed to pull images from a custom registry. |
 | injectOnlyLabeledNamespaces | bool | `false` | Enable the metadata decoration only for pods living in namespaces labeled with 'newrelic-metadata-injection=enabled'. |
