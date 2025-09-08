@@ -7,8 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
-### enhancement
+## v1.37.0 - 2025-09-08
+
+### 🚀 Enhancements
 - Add default ignoredNamespace and make configurable @dpacheconr [#600](https://github.com/newrelic/k8s-metadata-injection/pull/600/)
+
+### ⛓️ Dependencies
+- Updated golang.org/x/crypto to v0.41.0
+- Updated go to v1.25.0
 
 ## v1.36.0 - 2025-08-25
 
