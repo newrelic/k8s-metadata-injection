@@ -46,6 +46,8 @@ Options that can be defined globally include `affinity`, `nodeSelector`, `tolera
 | image.pullSecrets | list | `[]` | The secrets that are needed to pull images from a custom registry. |
 | injectOnlyLabeledNamespaces | bool | `false` | Enable the metadata decoration only for pods living in namespaces labeled with 'newrelic-metadata-injection=enabled'. |
 | jobImage | object | See `values.yaml` | Image for creating the needed certificates of this webhook to work |
+| jobImage.admissionCreate.resources | object | `[]` | Resources to set for `admission-create` job  |
+| jobImage.admissionPatch.resources | object | `[]` | Resources to set for `admission-patch` job  |
 | jobImage.pullSecrets | list | `[]` | The secrets that are needed to pull images from a custom registry. |
 | jobImage.volumeMounts | list | `[]` | Volume mounts to add to the job, you might want to mount tmp if Pod Security Policies Enforce a read-only root. |
 | jobImage.volumes | list | `[]` | Volumes to add to the job container |
