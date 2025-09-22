@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### 🚀 Enhancements
+
+- Added `jobImage.admissionCreate.resources` and `jobImage.admissionPatch.resources` configuration block.
+
 ## v1.37.1 - 2025-09-15
 
 ### ⛓️ Dependencies
