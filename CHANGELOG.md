@@ -7,9 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
-### 🚀 Enhancements
+### enhancement
 
-- Added `jobImage.admissionCreate.resources` and `jobImage.admissionPatch.resources` configuration block.
+- Added `jobImage.admissionCreate.resources` and `jobImage.admissionPatch.resources` configuration block @tviaud [#657](https://github.com/newrelic/k8s-metadata-injection/pull/657).
 
 ## v1.37.1 - 2025-09-15
 
