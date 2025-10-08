@@ -7,8 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
-### Enhancement
-- Add support for k8s v1.34.0, remove support for v1.29.5 @TmNguyen12 []()
+### enhancement
+- Add support for k8s v1.34.0, remove support for v1.29.5 @TmNguyen12 [#659](https://github.com/newrelic/k8s-metadata-injection/pull/659)
 
 ## v1.37.1 - 2025-09-15
 
