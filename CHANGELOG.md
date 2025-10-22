@@ -10,6 +10,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### enhancement
 
 - Added `jobImage.admissionCreate.resources` and `jobImage.admissionPatch.resources` configuration block @tviaud [#657](https://github.com/newrelic/k8s-metadata-injection/pull/657).
+## v1.38.1 - 2025-10-20
+
+### ⛓️ Dependencies
+- Updated golang.org/x/crypto to v0.42.0
+- Updated go to v1.25.3
+
 ## v1.38.0 - 2025-10-13
 
 ### dependency
