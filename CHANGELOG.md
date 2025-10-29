@@ -8,8 +8,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 
 ### enhancement
-
 - Added `jobImage.admissionCreate.resources` and `jobImage.admissionPatch.resources` configuration block @tviaud [#657](https://github.com/newrelic/k8s-metadata-injection/pull/657).
+
+## v1.38.1 - 2025-10-20
+
+### ⛓️ Dependencies
+- Updated golang.org/x/crypto to v0.42.0
+- Updated go to v1.25.3
+
+## v1.38.0 - 2025-10-13
+
+### dependency
+- Upgradek8s.io/api, k8s.io/apimachinery to v0.34.1 @TmNguyen12 [#659](https://github.com/newrelic/k8s-metadata-injection/pull/659)
+
+### 🚀 Enhancements
+- Add support for k8s v1.34.0, remove support for v1.29.5 @TmNguyen12 [#659](https://github.com/newrelic/k8s-metadata-injection/pull/659)
+
+### ⛓️ Dependencies
+- Updated alpine to v3.22.2
 
 ## v1.37.1 - 2025-09-15
 
