@@ -46,7 +46,7 @@ func TestTLSReadyReadinessProbe(t *testing.T) {
 	}
 }
 
-// failingResponseWriter is a mock ResponseWriter that fails on Write()
+// failingResponseWriter is a mock ResponseWriter that fails on Write().
 type failingResponseWriter struct {
 	statusCode int
 	header     http.Header
@@ -60,7 +60,7 @@ func (f *failingResponseWriter) Header() http.Header {
 }
 
 func (f *failingResponseWriter) Write([]byte) (int, error) {
-	return 0, errors.New("mock write error")
+	return 0, errors.New("mock write error") //nolint:err113
 }
 
 func (f *failingResponseWriter) WriteHeader(statusCode int) {
@@ -68,6 +68,7 @@ func (f *failingResponseWriter) WriteHeader(statusCode int) {
 }
 
 func TestTLSReadyReadinessProbe_WriteErrorWithoutCert(t *testing.T) {
+	t.Parallel()
 	// Create an observer to capture log entries
 	observedZapCore, observedLogs := observer.New(zap.ErrorLevel)
 	observedLogger := zap.New(observedZapCore).Sugar()
@@ -95,6 +96,7 @@ func TestTLSReadyReadinessProbe_WriteErrorWithoutCert(t *testing.T) {
 }
 
 func TestTLSReadyReadinessProbe_WriteErrorWithCert(t *testing.T) {
+	t.Parallel()
 	// Create an observer to capture log entries
 	observedZapCore, observedLogs := observer.New(zap.ErrorLevel)
 	observedLogger := zap.New(observedZapCore).Sugar()

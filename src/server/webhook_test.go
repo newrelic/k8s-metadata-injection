@@ -204,7 +204,9 @@ func makeTestData(t testing.TB, namespace string) []byte {
 }
 
 func TestUpdateContainer_WithExistingEnvVars(t *testing.T) {
-	// This test ensures line 107 is covered by testing a container that already has env vars
+	// This test covers the case where a container already has env vars
+	t.Parallel()
+
 	whsvr := &Webhook{
 		ClusterName: "test-cluster",
 		Logger:      zap.NewNop().Sugar(),
@@ -249,6 +251,8 @@ func TestUpdateContainer_WithExistingEnvVars(t *testing.T) {
 
 func TestUpdateContainer_EmptyContainer(t *testing.T) {
 	// This test covers the case where a container has no existing env vars
+	t.Parallel()
+
 	whsvr := &Webhook{
 		ClusterName: "test-cluster",
 		Logger:      zap.NewNop().Sugar(),
