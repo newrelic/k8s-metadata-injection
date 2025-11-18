@@ -6,8 +6,9 @@
 {{- include "newrelic.common.securityContext.pod" . -}}
 {{- else -}}
 fsGroup: 1001
-runAsUser: 1001
-runAsGroup: 1001
+runAsUser: 2000
+runAsGroup: 2000
+runAsNonRoot: true
 {{- end -}}
 {{- end -}}
 
