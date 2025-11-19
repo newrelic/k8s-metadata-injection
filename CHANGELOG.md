@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### enhancement 
+- Add support for GKE Autopilot && allows users to set resource requets/limits on jobs. @Philip-R-Beckwith [#600](https://github.com/newrelic/k8s-metadata-injection/pull/671/)
+
+
 ### 🔒 Security
 - Allow pre-upgrade job pods to honor global security context settings @dpacheconr [#670](https://github.com/newrelic/k8s-metadata-injection/pull/670)
 
