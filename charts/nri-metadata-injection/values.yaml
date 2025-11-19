@@ -6,8 +6,8 @@ fullnameOverride: ""
 # -- Name of the Kubernetes cluster monitored. Can be configured also with `global.cluster`
 cluster: ""
 
-# -- The provider that you are deploying your cluster on. Sets config options providers that are known to have constraints. 
-provider: 
+# -- The provider that you are deploying your cluster on. Sets config options providers that are known to have constraints.
+provider:
 
 # -- Image for the New Relic Metadata Injector
 # @default -- See `values.yaml`
@@ -66,8 +66,6 @@ resources:
   requests:
     cpu: 100m
     memory: 30M
-
-
 
 # -- Sets pod's priorityClassName. Can be configured also with `global.priorityClassName`
 priorityClassName: ""
