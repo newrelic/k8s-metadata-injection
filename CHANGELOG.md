@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### security
+- Allow pre-upgrade job pods to honor global security context settings @dpacheconr [#670](https://github.com/newrelic/k8s-metadata-injection/pull/670)
+
 ### enhancement
 - Propagate global tolerations to webhook jobs @chernetskyi [#668](https://github.com/newrelic/k8s-metadata-injection/pull/668)
 

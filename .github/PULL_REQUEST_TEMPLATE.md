@@ -12,7 +12,7 @@
 ## Checklist:
 <!-- Please check applicable options. -->
 
-- [ ] Add changelog entry following the [contributing guide](../CONTRIBUTING.md#pull-requests)
+- [ ] Add changelog entry following the [contributing guide](https://github.com/newrelic/k8s-metadata-injection/blob/main/CONTRIBUTING.md)
 - [ ] Documentation has been updated
 - [ ] This change requires changes in testing:
   - [ ] unit tests
