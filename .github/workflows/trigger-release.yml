@@ -11,6 +11,8 @@ on:
 
 jobs:
   trigger-release:
+    permissions:
+      contents: read
     uses: newrelic/k8s-agents-automation/.github/workflows/reusable-trigger-release.yml@main
     with:
       bot_email: '${{ vars.K8S_AGENTS_BOT_EMAIL }}'

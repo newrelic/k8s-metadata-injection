@@ -7,6 +7,151 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## v1.39.0 - 2025-11-24
+
+### 🛡️ Security notices
+- Allow pre-upgrade job pods to honor global security context settings @dpacheconr [#670](https://github.com/newrelic/k8s-metadata-injection/pull/670)
+
+### 🚀 Enhancements
+- Propagate global tolerations to webhook jobs @chernetskyi [#668](https://github.com/newrelic/k8s-metadata-injection/pull/668)
+- Added `jobImage.admissionCreate.resources` and `jobImage.admissionPatch.resources` configuration block @tviaud [#657](https://github.com/newrelic/k8s-metadata-injection/pull/657).
+
+### ⛓️ Dependencies
+- Updated golang.org/x/crypto to v0.44.0
+- Updated go to v1.25.4
+- Updated kubernetes packages to v0.34.2
+- Updated go.uber.org/zap to v1.27.1
+
+## v1.38.1 - 2025-10-20
+
+### ⛓️ Dependencies
+- Updated golang.org/x/crypto to v0.42.0
+- Updated go to v1.25.3
+
+## v1.38.0 - 2025-10-13
+
+### dependency
+- Upgradek8s.io/api, k8s.io/apimachinery to v0.34.1 @TmNguyen12 [#659](https://github.com/newrelic/k8s-metadata-injection/pull/659)
+
+### 🚀 Enhancements
+- Add support for k8s v1.34.0, remove support for v1.29.5 @TmNguyen12 [#659](https://github.com/newrelic/k8s-metadata-injection/pull/659)
+
+### ⛓️ Dependencies
+- Updated alpine to v3.22.2
+
+## v1.37.1 - 2025-09-15
+
+### ⛓️ Dependencies
+- Updated go to v1.25.1
+- Updated actions/setup-go to v6
+
+## v1.37.0 - 2025-09-08
+
+### 🚀 Enhancements
+- Add default ignoredNamespace and make configurable @dpacheconr [#600](https://github.com/newrelic/k8s-metadata-injection/pull/600/)
+
+### ⛓️ Dependencies
+- Updated golang.org/x/crypto to v0.41.0
+- Updated go to v1.25.0
+
+## v1.36.0 - 2025-08-25
+
+### 🚀 Enhancements
+- Make webhook ports configurable via Helm values @dpacheconr [#639](https://github.com/newrelic/k8s-metadata-injection/pull/639/)
+
+### ⛓️ Dependencies
+- Updated kubernetes packages to v0.33.4
+
+## v1.35.1 - 2025-08-18
+
+### ⛓️ Dependencies
+- Updated go to v1.24.6
+
+## v1.35.0 - 2025-08-11
+
+### 🚀 Enhancements
+- Add v1.33 support and drop support for v1.28 @TmNguyen12 [#637](https://github.com/newrelic/k8s-metadata-injection/pull/637)
+
+## v1.34.7 - 2025-07-28
+
+### ⛓️ Dependencies
+- Updated kubernetes packages to v0.33.3
+
+## v1.34.6 - 2025-07-21
+
+### ⛓️ Dependencies
+- Updated golang.org/x/crypto to v0.40.0
+- Updated alpine to v3.22.1
+
+## v1.34.5 - 2025-07-14
+
+### ⛓️ Dependencies
+- Updated go to v1.24.5
+
+## v1.34.4 - 2025-06-30
+
+### ⛓️ Dependencies
+- Updated kubernetes packages to v0.33.2
+
+## v1.34.3 - 2025-06-23
+
+### ⛓️ Dependencies
+- Updated go to v1.24.4
+
+## v1.34.2 - 2025-06-16
+
+### ⛓️ Dependencies
+- Updated golang.org/x/crypto to v0.39.0
+
+## v1.34.1 - 2025-06-02
+
+### ⛓️ Dependencies
+- Updated alpine to v3.22.0
+
+## v1.34.0 - 2025-05-19
+
+### 🚀 Enhancements
+- Pass container security context into admission webhooks @kondracek-nr [#619](https://github.com/newrelic/k8s-metadata-injection/pull/619)
+
+### ⛓️ Dependencies
+- Updated golang.org/x/crypto to v0.38.0
+- Updated go to v1.24.3
+
+## v1.33.1 - 2025-05-05
+
+### ⛓️ Dependencies
+- Updated kubernetes packages to v0.33.0
+
+## v1.33.0 - 2025-04-28
+
+### ⛓️ Dependencies
+- Upgraded golang.org/x/net from 0.36.0 to 0.38.0
+
+## v1.32.2 - 2025-04-14
+
+### ⛓️ Dependencies
+- Updated go to v1.24.2
+- Updated golang.org/x/crypto to v0.37.0
+
+## v1.32.1 - 2025-04-07
+
+### ⛓️ Dependencies
+- Updated github.com/fsnotify/fsnotify to v1.9.0 - [Changelog 🔗](https://github.com/fsnotify/fsnotify/releases/tag/v1.9.0)
+
+## v1.32.0 - 2025-03-24
+
+### 🚀 Enhancements
+- Add v1.32 support and drop support for v1.27 @kpattaswamy [#602](https://github.com/newrelic/k8s-metadata-injection/pull/602)
+
+### ⛓️ Dependencies
+- Updated kubernetes packages to v0.32.3
+- Upgraded golang.org/x/net from 0.33.0 to 0.36.0
+
+## v1.31.3 - 2025-03-10
+
+### ⛓️ Dependencies
+- Updated golang.org/x/crypto to v0.36.0
+
 ## v1.31.2 - 2025-02-17
 
 ### ⛓️ Dependencies

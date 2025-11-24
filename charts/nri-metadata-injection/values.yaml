@@ -38,6 +38,13 @@ jobImage:
   volumes: []
   #  - name: tmp
   #    emptyDir: {}
+  # -- Resources for the job container admission-create
+  admissionCreate:
+    resources: {}
+  # -- Resources for the job container admission-patch
+  admissionPatch:
+    resources: {}
+
 
 rbac:
   # rbac.pspEnabled -- Whether the chart should create Pod Security Policy objects.
@@ -91,6 +98,9 @@ tolerations: []
 # -- Enable the metadata decoration only for pods living in namespaces labeled
 # with 'newrelic-metadata-injection=enabled'.
 injectOnlyLabeledNamespaces: false
+
+# -- This is a list of namespaces that will be ignored by the webhook.
+ignoreNamespaces: ['kube-public', 'kube-node-lease', 'kube-system']
 
 # -- Use custom tls certificates for the webhook, or let the chart handle it
 # automatically.

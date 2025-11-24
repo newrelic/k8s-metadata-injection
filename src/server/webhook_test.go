@@ -12,6 +12,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"go.uber.org/zap"
 	admissionv1 "k8s.io/api/admission/v1"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -27,7 +28,7 @@ func TestServeHTTP(t *testing.T) {
 	var expectedPatchForValidBody bytes.Buffer
 	if len(patchForValidBody) > 0 {
 		if err := json.Compact(&expectedPatchForValidBody, patchForValidBody); err != nil {
-			t.Fatalf(err.Error())
+			t.Fatal(err.Error())
 		}
 	}
 
@@ -200,4 +201,82 @@ func makeTestData(t testing.TB, namespace string) []byte {
 		t.Fatalf("Failed to create AdmissionReview: %v", err)
 	}
 	return reviewJSON
+}
+
+func TestUpdateContainer_WithExistingEnvVars(t *testing.T) {
+	// This test covers the case where a container already has env vars
+	t.Parallel()
+
+	whsvr := &Webhook{
+		ClusterName: "test-cluster",
+		Logger:      zap.NewNop().Sugar(),
+	}
+
+	pod := &corev1.Pod{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:            "test-pod",
+			GenerateName:    "test-deployment-abc-",
+			Namespace:       "default",
+			OwnerReferences: []metav1.OwnerReference{{Kind: "ReplicaSet"}},
+		},
+	}
+
+	// Container with existing environment variables
+	container := &corev1.Container{
+		Name:  "test-container",
+		Image: "test-image:latest",
+		Env: []corev1.EnvVar{
+			{Name: "EXISTING_VAR_1", Value: "value1"},
+			{Name: "EXISTING_VAR_2", Value: "value2"},
+			{Name: "NEW_RELIC_METADATA_KUBERNETES_CLUSTER_NAME", Value: "existing-cluster"}, // Already exists
+		},
+	}
+
+	patches := whsvr.updateContainer(pod, 0, container)
+
+	// Should only add env vars that don't already exist
+	// NEW_RELIC_METADATA_KUBERNETES_CLUSTER_NAME should not be added since it already exists
+	assert.NotNil(t, patches)
+
+	// Verify that the existing cluster name env var is not in the patches
+	for _, patch := range patches {
+		if patch.Op == "add" {
+			if envVar, ok := patch.Value.(corev1.EnvVar); ok {
+				assert.NotEqual(t, "NEW_RELIC_METADATA_KUBERNETES_CLUSTER_NAME", envVar.Name,
+					"Should not add env var that already exists")
+			}
+		}
+	}
+}
+
+func TestUpdateContainer_EmptyContainer(t *testing.T) {
+	// This test covers the case where a container has no existing env vars
+	t.Parallel()
+
+	whsvr := &Webhook{
+		ClusterName: "test-cluster",
+		Logger:      zap.NewNop().Sugar(),
+	}
+
+	pod := &corev1.Pod{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:            "test-pod",
+			GenerateName:    "test-deployment-abc-",
+			Namespace:       "default",
+			OwnerReferences: []metav1.OwnerReference{{Kind: "ReplicaSet"}},
+		},
+	}
+
+	// Container with no existing environment variables
+	container := &corev1.Container{
+		Name:  "test-container",
+		Image: "test-image:latest",
+		Env:   []corev1.EnvVar{}, // Empty env vars
+	}
+
+	patches := whsvr.updateContainer(pod, 0, container)
+
+	// Should add all New Relic env vars
+	assert.NotEmpty(t, patches)
+	assert.True(t, len(patches) > 0, "Should generate patches for empty container")
 }
