@@ -1,0 +1,317 @@
+suite: test global value inheritance
+templates:
+  - templates/deployment.yaml
+release:
+  name: my-release
+  namespace: my-namespace
+tests:
+  # ============================================================================
+  # global.cluster
+  # ============================================================================
+  - it: should inherit global.cluster when local cluster not set
+    set:
+      global.cluster: global-test-cluster
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].env[?(@.name=="clusterName")].value
+          value: global-test-cluster
+
+  - it: should use local cluster over global.cluster
+    set:
+      cluster: local-cluster
+      global.cluster: global-cluster
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].env[?(@.name=="clusterName")].value
+          value: local-cluster
+
+  # ============================================================================
+  # global.labels
+  # ============================================================================
+  - it: should inherit global.labels when local labels not set
+    set:
+      cluster: test-cluster
+      global.labels:
+        globalLabel1: globalValue1
+        globalLabel2: globalValue2
+    asserts:
+      - equal:
+          path: metadata.labels.globalLabel1
+          value: globalValue1
+      - equal:
+          path: metadata.labels.globalLabel2
+          value: globalValue2
+
+  - it: should merge local labels with global.labels (local takes precedence)
+    set:
+      cluster: test-cluster
+      labels:
+        localLabel: localValue
+        sharedLabel: localValue
+      global.labels:
+        globalLabel: globalValue
+        sharedLabel: globalValue
+    asserts:
+      - equal:
+          path: metadata.labels.localLabel
+          value: localValue
+      - equal:
+          path: metadata.labels.globalLabel
+          value: globalValue
+      - equal:
+          path: metadata.labels.sharedLabel
+          value: localValue
+
+  # ============================================================================
+  # global.podLabels
+  # ============================================================================
+  - it: should inherit global.podLabels when local podLabels not set
+    set:
+      cluster: test-cluster
+      global.podLabels:
+        globalPodLabel1: globalPodValue1
+        globalPodLabel2: globalPodValue2
+    asserts:
+      - equal:
+          path: spec.template.metadata.labels.globalPodLabel1
+          value: globalPodValue1
+      - equal:
+          path: spec.template.metadata.labels.globalPodLabel2
+          value: globalPodValue2
+
+  - it: should merge local podLabels with global.podLabels (local takes precedence)
+    set:
+      cluster: test-cluster
+      podLabels:
+        localPodLabel: localPodValue
+        sharedPodLabel: localPodValue
+      global.podLabels:
+        globalPodLabel: globalPodValue
+        sharedPodLabel: globalPodValue
+    asserts:
+      - equal:
+          path: spec.template.metadata.labels.localPodLabel
+          value: localPodValue
+      - equal:
+          path: spec.template.metadata.labels.globalPodLabel
+          value: globalPodValue
+      - equal:
+          path: spec.template.metadata.labels.sharedPodLabel
+          value: localPodValue
+
+  # ============================================================================
+  # global.images.registry
+  # ============================================================================
+  - it: should inherit global.images.registry when local image.registry not set
+    set:
+      cluster: test-cluster
+      global.images.registry: global-registry.io
+    asserts:
+      - matchRegex:
+          path: spec.template.spec.containers[0].image
+          pattern: ^global-registry\.io/
+
+  - it: should use local image.registry over global.images.registry
+    set:
+      cluster: test-cluster
+      image.registry: local-registry.io
+      global.images.registry: global-registry.io
+    asserts:
+      - matchRegex:
+          path: spec.template.spec.containers[0].image
+          pattern: ^local-registry\.io/
+
+  # ============================================================================
+  # global.images.pullSecrets
+  # ============================================================================
+  - it: should inherit global.images.pullSecrets when local image.pullSecrets not set
+    set:
+      cluster: test-cluster
+      global.images.pullSecrets:
+        - name: global-pull-secret
+    asserts:
+      - contains:
+          path: spec.template.spec.imagePullSecrets
+          content:
+            name: global-pull-secret
+
+  - it: should merge local image.pullSecrets with global.images.pullSecrets
+    set:
+      cluster: test-cluster
+      image.pullSecrets:
+        - name: local-pull-secret
+      global.images.pullSecrets:
+        - name: global-pull-secret
+    asserts:
+      - contains:
+          path: spec.template.spec.imagePullSecrets
+          content:
+            name: local-pull-secret
+      - contains:
+          path: spec.template.spec.imagePullSecrets
+          content:
+            name: global-pull-secret
+
+  # ============================================================================
+  # global.priorityClassName
+  # ============================================================================
+  - it: should inherit global.priorityClassName when local priorityClassName not set
+    set:
+      cluster: test-cluster
+      global.priorityClassName: global-priority-class
+    asserts:
+      - equal:
+          path: spec.template.spec.priorityClassName
+          value: global-priority-class
+
+  - it: should use local priorityClassName over global.priorityClassName
+    set:
+      cluster: test-cluster
+      priorityClassName: local-priority-class
+      global.priorityClassName: global-priority-class
+    asserts:
+      - equal:
+          path: spec.template.spec.priorityClassName
+          value: local-priority-class
+
+  # ============================================================================
+  # global.hostNetwork
+  # ============================================================================
+  - it: should inherit global.hostNetwork when local hostNetwork not set
+    set:
+      cluster: test-cluster
+      global.hostNetwork: true
+    asserts:
+      - equal:
+          path: spec.template.spec.hostNetwork
+          value: true
+      - equal:
+          path: spec.template.spec.dnsPolicy
+          value: ClusterFirstWithHostNet
+
+  - it: should use local hostNetwork over global.hostNetwork
+    set:
+      cluster: test-cluster
+      hostNetwork: false
+      global.hostNetwork: true
+    asserts:
+      - equal:
+          path: spec.template.spec.hostNetwork
+          value: false
+      - notExists:
+          path: spec.template.spec.dnsPolicy
+
+  # ============================================================================
+  # global.dnsConfig
+  # ============================================================================
+  - it: should inherit global.dnsConfig when local dnsConfig not set
+    set:
+      cluster: test-cluster
+      global.dnsConfig:
+        nameservers:
+          - 1.2.3.4
+        searches:
+          - ns1.svc.cluster-domain.example
+    asserts:
+      - equal:
+          path: spec.template.spec.dnsConfig.nameservers[0]
+          value: 1.2.3.4
+      - equal:
+          path: spec.template.spec.dnsConfig.searches[0]
+          value: ns1.svc.cluster-domain.example
+
+  - it: should use local dnsConfig over global.dnsConfig
+    set:
+      cluster: test-cluster
+      dnsConfig:
+        nameservers:
+          - 5.6.7.8
+      global.dnsConfig:
+        nameservers:
+          - 1.2.3.4
+    asserts:
+      - equal:
+          path: spec.template.spec.dnsConfig.nameservers[0]
+          value: 5.6.7.8
+      - notContains:
+          path: spec.template.spec.dnsConfig.nameservers
+          content: 1.2.3.4
+
+  # ============================================================================
+  # global.nodeSelector
+  # ============================================================================
+  - it: should inherit global.nodeSelector when local nodeSelector not set
+    set:
+      cluster: test-cluster
+      global.nodeSelector:
+        globalNodeKey: globalNodeValue
+    asserts:
+      - equal:
+          path: spec.template.spec.nodeSelector["globalNodeKey"]
+          value: globalNodeValue
+      - equal:
+          path: spec.template.spec.nodeSelector["kubernetes.io/os"]
+          value: linux
+
+  - it: should use local nodeSelector over global.nodeSelector
+    set:
+      cluster: test-cluster
+      nodeSelector:
+        localNodeKey: localNodeValue
+      global.nodeSelector:
+        globalNodeKey: globalNodeValue
+    asserts:
+      - equal:
+          path: spec.template.spec.nodeSelector.localNodeKey
+          value: localNodeValue
+      - equal:
+          path: spec.template.spec.nodeSelector["kubernetes.io/os"]
+          value: linux
+      - notExists:
+          path: spec.template.spec.nodeSelector.globalNodeKey
+
+  # ============================================================================
+  # global.affinity
+  # ============================================================================
+  - it: should inherit global.affinity when local affinity not set
+    set:
+      cluster: test-cluster
+      global.affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: global-key
+                    operator: In
+                    values:
+                      - global-value
+    asserts:
+      - equal:
+          path: spec.template.spec.affinity.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution.nodeSelectorTerms[0].matchExpressions[0].key
+          value: global-key
+
+  - it: should use local affinity over global.affinity
+    set:
+      cluster: test-cluster
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: local-key
+                    operator: In
+                    values:
+                      - local-value
+      global.affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: global-key
+                    operator: In
+                    values:
+                      - global-value
+    asserts:
+      - equal:
+          path: spec.template.spec.affinity.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution.nodeSelectorTerms[0].matchExpressions[0].key
+          value: local-key
