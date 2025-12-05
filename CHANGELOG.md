@@ -7,12 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
-### security
+## v1.39.0 - 2025-11-24
+
+### 🛡️ Security notices
 - Allow pre-upgrade job pods to honor global security context settings @dpacheconr [#670](https://github.com/newrelic/k8s-metadata-injection/pull/670)
 
-### enhancement
+### 🚀 Enhancements
 - Propagate global tolerations to webhook jobs @chernetskyi [#668](https://github.com/newrelic/k8s-metadata-injection/pull/668)
 - Added `jobImage.admissionCreate.resources` and `jobImage.admissionPatch.resources` configuration block @tviaud [#657](https://github.com/newrelic/k8s-metadata-injection/pull/657).
+
+### ⛓️ Dependencies
+- Updated golang.org/x/crypto to v0.44.0
+- Updated go to v1.25.4
+- Updated kubernetes packages to v0.34.2
+- Updated go.uber.org/zap to v1.27.1
 
 ## v1.38.1 - 2025-10-20
 
