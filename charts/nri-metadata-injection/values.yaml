@@ -41,6 +41,13 @@ jobImage:
   volumes: []
   #  - name: tmp
   #    emptyDir: {}
+  # -- Resources for the job container admission-create
+  admissionCreate:
+    resources: {}
+  # -- Resources for the job container admission-patch
+  admissionPatch:
+    resources: {}
+
 
 jobs:
   resources: {}

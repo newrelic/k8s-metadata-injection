@@ -36,6 +36,10 @@ spec:
           securityContext:
             {{- . | nindent 12 }}
           {{- end }}
+          {{- if .Values.jobImage.admissionPatch.resources }}
+          resources:
+            {{ toYaml .Values.jobImage.admissionPatch.resources | nindent 12 }}
+          {{- end }}
           args:
             - patch
             - --webhook-name={{ include "newrelic.common.naming.fullname" . }}
@@ -60,8 +64,8 @@ spec:
       nodeSelector:
         kubernetes.io/os: linux
         {{ include "newrelic.common.nodeSelector" . | nindent 8 }}
-      {{- if .Values.tolerations }}
+      {{- with include "newrelic.common.tolerations" . }}
       tolerations:
-        {{- toYaml .Values.tolerations | nindent 8 }}
+        {{- . | nindent 8 -}}
       {{- end }}
 {{- end }}
