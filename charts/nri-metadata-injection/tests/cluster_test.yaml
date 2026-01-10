@@ -18,22 +18,19 @@ tests:
     asserts:
       - failedTemplate:
           errorMessage: There is not cluster name definition set neither in `.global.cluster' nor `.cluster' in your values.yaml. Cluster name is required.
-  - it: has a linux node selector by default
+  - it: should inherit global.cluster when local cluster not set
     set:
-      cluster: my-cluster
+      global.cluster: global-test-cluster
     asserts:
       - equal:
-          path: spec.template.spec.nodeSelector
-          value:
-            kubernetes.io/os: linux
-  - it: has a linux node selector and additional selectors
+          path: spec.template.spec.containers[0].env[?(@.name=="clusterName")].value
+          value: global-test-cluster
+
+  - it: should use local cluster over global.cluster
     set:
-      cluster: my-cluster
-      nodeSelector:
-        aCoolTestLabel: aCoolTestValue
+      cluster: local-cluster
+      global.cluster: global-cluster
     asserts:
       - equal:
-          path: spec.template.spec.nodeSelector
-          value:
-            kubernetes.io/os: linux
-            aCoolTestLabel: aCoolTestValue
+          path: spec.template.spec.containers[0].env[?(@.name=="clusterName")].value
+          value: local-cluster
