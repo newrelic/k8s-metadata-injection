@@ -14,6 +14,27 @@ helm repo add nri-metadata-injection https://newrelic.github.io/k8s-metadata-inj
 helm upgrade --install nri-metadata-injection/nri-metadata-injection -f your-custom-values.yaml
 ```
 
+## GKE Autopilot
+When installing this chart in a GKE Autopilot cluster, it's recommended to set resource defaults for the prometheus, and configurator containers.
+If resources are not set, GKE Autopilot will assign default resource values, and you will see the following warning in the in your console:
+
+`defaulted unspecified 'cpu' resource for containers [configurator, prometheus]`
+
+To avoid this warning, and having GKE Autopilot set resource values for you, you can set the following values in your `values.yaml` file.
+``` yaml
+jobImage:
+  admissionCreate
+    resources:
+      requests:
+        cpu: 50m
+        memory: 100Mi
+  admissionPatch:
+    resources:
+      requests:
+        cpu: 50m
+        memory: 100Mi
+```
+
 ## Source Code
 
 * <https://github.com/newrelic/k8s-metadata-injection>
