@@ -48,10 +48,6 @@ jobImage:
   admissionPatch:
     resources: {}
 
-
-jobs:
-  resources: {}
-
 rbac:
   # rbac.pspEnabled -- Whether the chart should create Pod Security Policy objects.
   pspEnabled: false
