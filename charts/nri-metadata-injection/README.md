@@ -15,7 +15,14 @@ helm upgrade --install nri-metadata-injection/nri-metadata-injection -f your-cus
 ```
 
 ## GKE Autopilot
-When installing this chart in a GKE Autopilot cluster, it's recommended to set resource defaults for the prometheus, and configurator containers.
+When installing this chart in a GKE Autopilot cluster, provider should be set to `GKE_AUTOPILOT`.
+This will apply some required configurations so that Autopilot Does not reject the deployment.
+
+``` yaml
+provider: GKE_AUTOPILOT
+```
+
+It's also recommended to set resource defaults for the prometheus, and configurator containers.
 If resources are not set, GKE Autopilot will assign default resource values, and you will see the following warning in the in your console:
 
 `defaulted unspecified 'cpu' resource for containers [configurator, prometheus]`
