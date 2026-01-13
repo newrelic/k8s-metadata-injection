@@ -14,6 +14,34 @@ helm repo add nri-metadata-injection https://newrelic.github.io/k8s-metadata-inj
 helm upgrade --install nri-metadata-injection/nri-metadata-injection -f your-custom-values.yaml
 ```
 
+## GKE Autopilot
+When installing this chart in a GKE Autopilot cluster, provider should be set to `GKE_AUTOPILOT`.
+This will apply some required configurations so that Autopilot Does not reject the deployment.
+
+``` yaml
+provider: GKE_AUTOPILOT
+```
+
+It's also recommended to set resource defaults for the prometheus, and configurator containers.
+If resources are not set, GKE Autopilot will assign default resource values, and you will see the following warning in the in your console:
+
+`defaulted unspecified 'cpu' resource for containers [configurator, prometheus]`
+
+To avoid this warning, and having GKE Autopilot set resource values for you, you can set the following values in your `values.yaml` file.
+``` yaml
+jobImage:
+  admissionCreate
+    resources:
+      requests:
+        cpu: 50m
+        memory: 100Mi
+  admissionPatch:
+    resources:
+      requests:
+        cpu: 50m
+        memory: 100Mi
+```
+
 ## Source Code
 
 * <https://github.com/newrelic/k8s-metadata-injection>
@@ -61,6 +89,7 @@ Options that can be defined globally include `affinity`, `nodeSelector`, `tolera
 | ports.health | int | `8080` | Port for health check endpoint (HTTP) |
 | ports.webhook | int | `8443` | Port on which the webhook server listens (TLS/HTTPS) |
 | priorityClassName | string | `""` | Sets pod's priorityClassName. Can be configured also with `global.priorityClassName` |
+| provider | string | `""` | Sets configs for providers with known constraints, currently has support for `GKE_AUTOPILOT` | 
 | rbac.pspEnabled | bool | `false` | Whether the chart should create Pod Security Policy objects. |
 | replicas | int | `1` |  |
 | resources | object | 100m/30M -/80M | Image for creating the needed certificates of this webhook to work |

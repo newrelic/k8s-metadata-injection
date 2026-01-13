@@ -6,6 +6,9 @@ fullnameOverride: ""
 # -- Name of the Kubernetes cluster monitored. Can be configured also with `global.cluster`
 cluster: ""
 
+# -- The provider that you are deploying your cluster on. Sets config options providers that are known to have constraints.
+provider:
+
 # -- Image for the New Relic Metadata Injector
 # @default -- See `values.yaml`
 image:
@@ -44,7 +47,6 @@ jobImage:
   # -- Resources for the job container admission-patch
   admissionPatch:
     resources: {}
-
 
 rbac:
   # rbac.pspEnabled -- Whether the chart should create Pod Security Policy objects.

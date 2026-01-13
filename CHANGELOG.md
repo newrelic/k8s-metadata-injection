@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### enhancement 
+- Add support for GKE Autopilot. @Philip-R-Beckwith [#600](https://github.com/newrelic/k8s-metadata-injection/pull/671/)
+- Adds callout for GKE Autopilot about setting resources to avoid warnings. @Philip-R-Beckwith [#600](https://github.com/newrelic/k8s-metadata-injection/pull/671/)
+
+
 ## v1.39.2 - 2025-12-22
 
 ### ⛓️ Dependencies
