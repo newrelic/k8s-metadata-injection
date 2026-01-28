@@ -6,8 +6,8 @@ icon: https://newrelic.com/assets/newrelic/source/NewRelic-logo-square.svg
 sources:
   - https://github.com/newrelic/k8s-metadata-injection
   - https://github.com/newrelic/k8s-metadata-injection/tree/master/charts/nri-metadata-injection
-version: 4.31.2
-appVersion: 1.39.2
+version: 4.32.0
+appVersion: 1.40.0
 keywords:
   - infrastructure
   - newrelic
@@ -23,3 +23,5 @@ maintainers:
     url: https://github.com/csongnr
   - name: dbudziwojskiNR
     url: https://github.com/dbudziwojskiNR
+  - name: Philip-R-Beckwith
+    url: https://github.com/Philip-R-Beckwith
