@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### enhancement
+- Global serviceAccount.annotations inheritance for IAM role integration (IRSA, Workload Identity, Pod Identity) @dpacheconr [#678](https://github.com/newrelic/k8s-metadata-injection/pull/678)
+- Test coverage for serviceAccount.annotations propagation and annotation merge behavior with Helm hooks @dpacheconr [#678](https://github.com/newrelic/k8s-metadata-injection/pull/678)
+
+### bugfix
+- Pre-existing test assertion error in webhook_test.yaml (notExists → isNull) @dpacheconr [#678](https://github.com/newrelic/k8s-metadata-injection/pull/678)
+
 ## v1.40.0 - 2026-01-19
 
 ### 🚀 Enhancements
