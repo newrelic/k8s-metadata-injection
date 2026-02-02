@@ -7,12 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
-### enhancement
+## v1.41.0 - 2026-02-02
+
+### 🚀 Enhancements
 - Global serviceAccount.annotations inheritance for IAM role integration (IRSA, Workload Identity, Pod Identity) @dpacheconr [#678](https://github.com/newrelic/k8s-metadata-injection/pull/678)
 - Test coverage for serviceAccount.annotations propagation and annotation merge behavior with Helm hooks @dpacheconr [#678](https://github.com/newrelic/k8s-metadata-injection/pull/678)
 
-### bugfix
+### 🐞 Bug fixes
 - Pre-existing test assertion error in webhook_test.yaml (notExists → isNull) @dpacheconr [#678](https://github.com/newrelic/k8s-metadata-injection/pull/678)
+
+### ⛓️ Dependencies
+- Updated golang.org/x/crypto to v0.47.0
+- Updated go to v1.25.6
+- Updated kubernetes packages to v0.35.0
+- Updated alpine to v3.23.3
 
 ## v1.40.0 - 2026-01-19
 
