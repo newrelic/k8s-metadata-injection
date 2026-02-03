@@ -1,6 +1,6 @@
 <a href="https://opensource.newrelic.com/oss-category/#community-plus"><picture><source media="(prefers-color-scheme: dark)" srcset="https://github.com/newrelic/opensource-website/raw/main/src/images/categories/dark/Community_Plus.png"><source media="(prefers-color-scheme: light)" srcset="https://github.com/newrelic/opensource-website/raw/main/src/images/categories/Community_Plus.png"><img alt="New Relic Open Source community plus project banner." src="https://github.com/newrelic/opensource-website/raw/main/src/images/categories/Community_Plus.png"></picture></a>
 
-# Kubernetes Metadata injection for New Relic APM agents [![codecov](https://codecov.io/gh/newrelic/k8s-metadata-injection/graph/badge.svg?token=vuX7pJaRnS)](https://codecov.io/gh/newrelic/k8s-metadata-injection) [![Build Status](https://travis-ci.com/newrelic/k8s-metadata-injection.svg?branch=main)](https://travis-ci.com/newrelic/k8s-metadata-injection) [![Go Report Card](https://goreportcard.com/badge/github.com/newrelic/k8s-metadata-injection)](https://goreportcard.com/report/github.com/newrelic/k8s-metadata-injection)
+# Kubernetes Metadata injection for New Relic APM agents [![codecov](https://codecov.io/gh/newrelic/k8s-metadata-injection/graph/badge.svg?token=vuX7pJaRnS)](https://codecov.io/gh/newrelic/k8s-metadata-injection) [![Go Report Card](https://goreportcard.com/badge/github.com/newrelic/k8s-metadata-injection)](https://goreportcard.com/report/github.com/newrelic/k8s-metadata-injection)
 
 # Table of contents
 
@@ -56,32 +56,76 @@ For further information of the configuration needed for the chart just read the 
 
 ### Prerequisites
 
-For the development process [Minikube](https://kubernetes.io/docs/getting-started-guides/minikube) and [Skaffold](https://github.com/GoogleCloudPlatform/skaffold) tools are used.
+For the development process [Minikube](https://kubernetes.io/docs/getting-started-guides/minikube) and [Helm](https://helm.sh/) tools are used.
 
-- [Install Minikube](https://kubernetes.io/docs/tasks/tools/install-minikube/).
-- [Install Skaffold](https://github.com/GoogleCloudPlatform/skaffold#installation).
+- [Install Minikube](https://kubernetes.io/docs/tasks/tools/install-minikube/)
+- [Install Helm](https://helm.sh/docs/intro/install/)
+- [Install kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/)
 
-Currently the project compiles with **Go 1.11.4**.
+Currently the project compiles with **Go 1.25.6**.
 
 ### Dependency management
 
 [Go modules](https://github.com/golang/go/wiki/Modules) are used for managing dependencies. This project does not need to be in your GOROOT, if you wish so.
 
-Currently for K8s libraries it uses version 1.13.1. Only couple of libraries are direct dependencies, the rest are indirect. You need to point all of them to the same K8s version to make sure that everything works as expected. For the moment this process is manual.
+Currently for K8s libraries it uses version 0.35.0. Only couple of libraries are direct dependencies, the rest are indirect. You need to point all of them to the same K8s version to make sure that everything works as expected. For the moment this process is manual.
 
-### Configuration
+### Local Development Setup
 
-- Copy the deployment file `deploy/newrelic-metadata-injection.yaml` to `deploy/local.yaml`.
-- Edit the file and set the following value as container image: `internal/k8s-metadata-injector`.
-- Make sure that `imagePullPolicy: Always` is not present in the file (otherwise, the image won't be pulled).
+To run the webhook locally with Minikube:
 
-### Run
+1. **Start Minikube**:
+   ```bash
+   minikube start
+   ```
 
-Run `skaffold run`. This will build a docker image, build the webhook server inside it, and finally deploy the webhook server to your Minikube and use the Kubernetes API server to sign its TLS certificate ([see section about certificates](#3-install-the-certificates)).
+2. **Build the Docker image in Minikube's Docker environment**:
+   ```bash
+   # Configure shell to use Minikube's Docker daemon
+   eval $(minikube docker-env)
 
-To follow the logs, you can run `skaffold run --tail`. To delete the resources created by Skaffold you can run `skaffold delete`.
+   # Build the image
+   make compile build-container DOCKER_IMAGE_TAG=local-dev
+   ```
 
-If you would like to enable automatic redeploy on changes to the repository, you can run `skaffold dev`. It automatically tails the logs and delete the resources when interrupted (i.e. with a `Ctrl + C`).
+3. **Install the webhook using Helm**:
+   ```bash
+   # Add New Relic Helm repository
+   helm repo add newrelic https://helm-charts.newrelic.com
+
+   # Build chart dependencies
+   helm dependency build ./charts/nri-metadata-injection
+
+   # Install the chart with local image
+   helm upgrade --install nri-metadata-injection ./charts/nri-metadata-injection \
+       --set cluster=local-cluster \
+       --set image.tag=local-dev \
+       --set image.pullPolicy=Never
+   ```
+
+4. **View logs**:
+   ```bash
+   kubectl logs -l app.kubernetes.io/name=nri-metadata-injection -f
+   ```
+
+5. **Test the webhook** by deploying a sample pod:
+   ```bash
+   kubectl create deployment test-deployment --image=nginx:latest
+   kubectl get pods
+   kubectl exec <pod-name> -- env | grep NEW_RELIC_METADATA_KUBERNETES
+   ```
+
+6. **Cleanup**:
+   ```bash
+   helm uninstall nri-metadata-injection
+   kubectl delete deployment test-deployment
+   ```
+
+After making code changes, rebuild the Docker image (step 2) and upgrade the Helm release:
+```bash
+helm upgrade nri-metadata-injection ./charts/nri-metadata-injection \
+    --reuse-values
+```
 
 ### Tests
 
@@ -129,47 +173,57 @@ Please refer to [docs/performance.md](docs/performance.md).
 
 ## Certificates management
 
-Admission webhooks are called by the Kubernetes API server and it needs to authenticate the webhooks using TLS. In this project we offer 2 different options of certificate management.
+Admission webhooks are called by the Kubernetes API server and it needs to authenticate the webhooks using TLS. The Helm chart offers 3 different options for certificate management:
 
-Either certificate management choice made, the important thing is to have the secret created with the correct name and namespace, and also to have the correct CA bundle in the MutatingWebhookConfiguration resource. As long as this is done the webhook server will be able to pick it up.
+1. **Automatic (Default)**: Helm pre-install/pre-upgrade jobs automatically create and manage certificates
+2. **cert-manager**: Use cert-manager for automated certificate lifecycle management
+3. **Custom**: Provide your own TLS certificates
 
-### Automatic
+Regardless of which option you choose, the important thing is to have the secret created with the correct name and namespace, and also to have the correct CA bundle in the MutatingWebhookConfiguration resource. As long as this is done the webhook server will be able to pick it up.
+
+### Automatic (Default)
 
 Please refer to the [setup instructions in the official documentation](https://docs.newrelic.com/docs/integrations/kubernetes-integration/metadata-injection/kubernetes-apm-metadata-injection#install).
 
-For the automatic certificate management, the [k8s-webhook-cert-manager](https://github.com/newrelic/k8s-webhook-cert-manager) is used. Feel free to check the repository to know more about it.
+The Helm chart uses Kubernetes jobs (see [charts/nri-metadata-injection/templates/admission-webhooks/job-patch/](./charts/nri-metadata-injection/templates/admission-webhooks/job-patch/)) that run during Helm hooks to automatically create self-signed certificates and patch the MutatingWebhookConfiguration.
 
-The manifest file at [deploy/job.yaml](./deploy/job.yaml) contains a service account that has the following **cluster** permissions (**RBAC based**) to be capable of automatically manage the certificates:
+The jobs run with a service account that has the following **cluster** permissions (**RBAC based**):
 
 - `MutatingWebhookConfiguration` - **get**, **create** and **patch**: to be able to create the webhook and patch its CA bundle.
 - `CertificateSigningRequests` - **create**, **get** and **delete**: to be able to sign the certificate required for the webhook server without leaving duplicates.
 - `CertificateSigningRequests/Approval` - **update**: to be able to approve CertificateSigningRequests.
 - `Secrets` - **create**, **get** and **patch**: to be able to manage the TLS secret used to store the key/cert pair used in the webhook server.
-- `ConfigMaps` - **get**: to be able go get the k8s api server's CA bundle, used in the MutatingWebhookConfiguration.
+- `ConfigMaps` - **get**: to be able to get the k8s api server's CA bundle, used in the MutatingWebhookConfiguration.
+
+### cert-manager
+
+To use cert-manager for certificate management, set `certManager.enabled=true` in your Helm values. This delegates certificate lifecycle management to cert-manager.
 
 If you wish to learn more about TLS certificates management inside Kubernetes, check out [the official documentation for Managing TLS Certificates in a Cluster](https://kubernetes.io/docs/tasks/tls/managing-tls-in-a-cluster/#create-a-certificate-signing-request-object-to-send-to-the-kubernetes-api).
 
 ### Custom
 
-Otherwise, if you want to use the custom certificate management option you have to create the TLS secret with the signed certificate/key pair and patch the webhook's CA bundle:
+If you want to use the custom certificate management option, set `customTLSCertificate=true` in your Helm values, then create the TLS secret with the signed certificate/key pair and patch the webhook's CA bundle:
 
 ```bash
 $ kubectl create secret tls newrelic-metadata-injection-secret \
       --key=server-key.pem \
       --cert=signed-server-cert.pem \
       --dry-run -o yaml |
-  kubectl -n default apply -f -
+  kubectl -n <namespace> apply -f -
 
-$ caBundle=$(cat caBundle.pem | base64 | td -d '\n')
-$ kubectl patch mutatingwebhookconfiguration newrelic-metadata-injection-cfg --type='json' -p "[{'op': 'replace', 'path': '/webhooks/0/clientConfig/caBundle', 'value':'${caBundle}'}]"
+$ caBundle=$(cat caBundle.pem | base64 | tr -d '\n')
+$ kubectl patch mutatingwebhookconfiguration <webhook-name> --type='json' -p "[{'op': 'replace', 'path': '/webhooks/0/clientConfig/caBundle', 'value':'${caBundle}'}]"
 ```
+
+Replace `<namespace>` with your installation namespace and `<webhook-name>` with the name of your webhook configuration.
 
 ## Release a new version
 
-- Update the version in `deploy/newrelic-metadata-injection.yaml`.
-- Update the version in `WEBHOOK_DOCKER_IMAGE_TAG` in the `Makefile`.
-- Create a Github release.
-- Launch the `k8s-metadata-injection-release` job in Jenkins.
+- Update the version in `charts/nri-metadata-injection/Chart.yaml`.
+- Update the version in `DOCKER_IMAGE_TAG` in the `Makefile` if needed.
+- Update the CHANGELOG.md using `make rt-update-changelog`.
+- Create a GitHub release using the workflow in `.github/workflows/`.
 
 ## Support
 
