@@ -6,6 +6,10 @@ DOCKER_IMAGE_NAME ?= newrelic/k8s-metadata-injection
 DOCKER_IMAGE_TAG ?= local-dev
 
 GOLANGCILINT_VERSION = 1.43.0
+GO_BIN_DIR = ~/go/bin
+
+GOTOOLS ?=
+GOTOOLS += " go.elastic.co/go-licence-detector@v0.7.0"
 
 # required for enabling Go modules inside $GOPATH
 export GO111MODULE=on
@@ -60,12 +64,26 @@ benchmark-test:
 	@echo "[test] Running benchmark tests"
 	@go test -run=^Benchmark* -bench .
 
+.PHONY: install-tools
+install-tools:
+	@for tool in $(GOTOOLS); do \
+		go install $$tool; \
+	done
+	@echo '[go-install] Done.'
+
+.PHONY: buildLicenseNotice
+buildLicenseNotice:
+	@$(MAKE) install-tools
+	@go list -mod=readonly -m -json all | $(GO_BIN_DIR)/go-licence-detector -noticeOut=NOTICE.txt -rules ./assets/licence/rules.json -noticeTemplate ./assets/licence/THIRD_PARTY_NOTICES.md.tmpl -noticeOut THIRD_PARTY_NOTICES.md -overrides ./assets/licence/overrides -includeIndirect
+	@echo '[buildLicenseNotice] Complete. Please check THIRD_PARTY_NOTICES.md'
+
 # rt-update-changelog runs the release-toolkit run.sh script by piping it into bash to update the CHANGELOG.md.
 # It also passes down to the script all the flags added to the make target. To check all the accepted flags,
 # see: https://github.com/newrelic/release-toolkit/blob/main/contrib/ohi-release-notes/run.sh
 #  e.g. `make rt-update-changelog -- -v`
+.PHONY: rt-update-changelog
 rt-update-changelog:
 	curl "https://raw.githubusercontent.com/newrelic/release-toolkit/v1/contrib/ohi-release-notes/run.sh" | bash -s -- $(filter-out $@,$(MAKECMDGOALS))
 
 
-.PHONY: compile rt-update-changelog
+.PHONY: compile rt-update-changelog install-tools buildLicenseNotice

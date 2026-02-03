@@ -18,7 +18,6 @@
   - [Custom](#custom)
 - [Contributing](#contributing)
 - [License](#license)
-- [Release a new version](#release-a-new-version)
 
 ## Documentation
 
@@ -217,13 +216,6 @@ $ kubectl patch mutatingwebhookconfiguration <webhook-name> --type='json' -p "[{
 ```
 
 Replace `<namespace>` with your installation namespace and `<webhook-name>` with the name of your webhook configuration.
-
-## Release a new version
-
-- Update the version in `charts/nri-metadata-injection/Chart.yaml`.
-- Update the version in `DOCKER_IMAGE_TAG` in the `Makefile` if needed.
-- Update the CHANGELOG.md using `make rt-update-changelog`.
-- Create a GitHub release using the workflow in `.github/workflows/`.
 
 ## Support
 
