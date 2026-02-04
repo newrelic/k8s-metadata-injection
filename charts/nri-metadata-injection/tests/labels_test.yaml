@@ -1,4 +1,4 @@
-suite: test global labels inheritance
+suite: labels
 templates:
   - templates/deployment.yaml
 release:

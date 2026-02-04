@@ -1,10 +1,18 @@
-suite: test global images configuration
+suite: images
 templates:
   - templates/deployment.yaml
 release:
   name: my-release
   namespace: my-namespace
 tests:
+  - it: should use default image registry when nothing is set
+    set:
+      cluster: test-cluster
+    asserts:
+      - matchRegex:
+          path: spec.template.spec.containers[0].image
+          pattern: ^docker.io/newrelic/k8s-metadata-injection
+
   - it: should inherit global.images.registry when local image.registry not set
     set:
       cluster: test-cluster
@@ -23,6 +31,13 @@ tests:
       - matchRegex:
           path: spec.template.spec.containers[0].image
           pattern: ^local-registry\.io/
+
+  - it: should have no pullSecrets by default
+    set:
+      cluster: test-cluster
+    asserts:
+      - notExists:
+          path: spec.template.spec.imagePullSecrets
 
   - it: should inherit global.images.pullSecrets when local image.pullSecrets not set
     set:

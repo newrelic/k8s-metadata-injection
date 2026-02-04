@@ -1,18 +1,19 @@
-suite: test mutatingwebhookconfiguraton values
+suite: webhook
 templates:
   - templates/admission-webhooks/mutatingWebhookConfiguration.yaml
 release:
   name: release
   namespace: ns
 tests:
-  - it: default ignored namespaces are set
+  - it: sets default ignored namespaces
     set:
       cluster: my-cluster
     asserts:
       - equal:
           path: webhooks[0].namespaceSelector.matchExpressions[0].values
           value: ['kube-public', 'kube-node-lease', 'kube-system']
-  - it: custom ignored namespaces are set
+
+  - it: sets custom ignored namespaces
     set:
       cluster: my-cluster
       ignoreNamespaces: ['custom-namespace1', 'custom-namespace2']
@@ -20,13 +21,15 @@ tests:
       - equal:
           path: webhooks[0].namespaceSelector.matchExpressions[0].values
           value: [ 'custom-namespace1', 'custom-namespace2' ]
-  - it: empty ignoreNamespaces results in no namespaceSelector
+
+  - it: sets empty ignoreNamespaces results if no namespaceSelectors provided
     set:
       cluster: my-cluster
       ignoreNamespaces: []
     asserts:
       - isNull:
           path: webhooks[0].namespaceSelector
+
   - it: injectOnlyLabeledNamespaces=true results in namespaceSelector with matchLabels
     set:
       cluster: my-cluster

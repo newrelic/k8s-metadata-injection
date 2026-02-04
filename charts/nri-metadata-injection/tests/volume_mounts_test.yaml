@@ -1,4 +1,4 @@
-suite: check volume mounts is properly set
+suite: volumeMount
 templates:
   - templates/admission-webhooks/job-patch/job-createSecret.yaml
   - templates/admission-webhooks/job-patch/job-patchWebhook.yaml
@@ -6,7 +6,7 @@ release:
   name: release
   namespace: ns
 tests:
-  - it: clusterName env is properly set
+  - it: sets volumeMounts and volumes from jobImage
     set:
       cluster: my-cluster
       jobImage:
@@ -16,7 +16,6 @@ tests:
         volumes:
           - name: test-volume-container
             emptyDir: {}
-
     asserts:
       - contains:
           path: spec.template.spec.containers[0].volumeMounts

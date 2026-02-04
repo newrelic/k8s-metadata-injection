@@ -1,4 +1,4 @@
-suite: test security context configuration
+suite: security context
 templates:
   - templates/deployment.yaml
 release:

@@ -1,4 +1,4 @@
-suite: test job resources configuration
+suite: job resources configuration
 templates:
   - templates/admission-webhooks/job-patch/job-createSecret.yaml
   - templates/admission-webhooks/job-patch/job-patchWebhook.yaml
@@ -93,20 +93,24 @@ tests:
     asserts:
       - template: templates/admission-webhooks/job-patch/job-createSecret.yaml
         equal:
-          path: spec.template.spec.containers[0].resources.requests.cpu
-          value: 100m
-      - template: templates/admission-webhooks/job-patch/job-createSecret.yaml
-        equal:
-          path: spec.template.spec.containers[0].resources.requests.memory
-          value: 64Mi
+          path: spec.template.spec.containers[0].resources
+          value:
+            limits:
+              cpu: 200m
+              memory: 128Mi
+            requests:
+              cpu: 100m
+              memory: 64Mi
       - template: templates/admission-webhooks/job-patch/job-patchWebhook.yaml
         equal:
-          path: spec.template.spec.containers[0].resources.requests.cpu
-          value: 50m
-      - template: templates/admission-webhooks/job-patch/job-patchWebhook.yaml
-        equal:
-          path: spec.template.spec.containers[0].resources.requests.memory
-          value: 32Mi
+          path: spec.template.spec.containers[0].resources
+          value:
+            limits:
+              cpu: 100m
+              memory: 64Mi
+            requests:
+              cpu: 50m
+              memory: 32Mi
 
   - it: should set only requests when limits are not specified for admission-create
     template: templates/admission-webhooks/job-patch/job-createSecret.yaml

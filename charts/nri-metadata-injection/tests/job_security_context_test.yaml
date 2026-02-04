@@ -1,4 +1,4 @@
-suite: test job security context configuration
+suite: job security context
 templates:
   - templates/admission-webhooks/job-patch/job-createSecret.yaml
   - templates/admission-webhooks/job-patch/job-patchWebhook.yaml

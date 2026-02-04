@@ -1,10 +1,17 @@
-suite: test global priorityClassName configuration
+suite: priorityClassName
 templates:
   - templates/deployment.yaml
 release:
   name: my-release
   namespace: my-namespace
 tests:
+  - it: should not set a priorityClassName when none is provided
+    set:
+      cluster: test-cluster
+      licenseKey: us-whatever
+    asserts:
+      - notExists:
+          path: spec.template.spec.priorityClassName
   - it: should inherit global.priorityClassName when local priorityClassName not set
     set:
       cluster: test-cluster

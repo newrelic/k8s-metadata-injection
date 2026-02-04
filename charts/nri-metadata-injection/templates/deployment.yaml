@@ -32,7 +32,9 @@ spec:
       dnsConfig:
         {{- . | nindent 8 }}
       {{- end }}
-      hostNetwork: {{ include "newrelic.common.hostNetwork.value" . }}
+      {{- with include "newrelic.common.hostNetwork.value" . }}
+      hostNetwork: {{ . }}
+      {{- end }}
       {{- if include "newrelic.common.hostNetwork" . }}
       dnsPolicy: ClusterFirstWithHostNet
       {{- end }}

@@ -5,7 +5,7 @@ release:
   name: release
   namespace: ns
 tests:
-  - it: clusterName env is properly set
+  - it: sets clusterName env
     set:
       cluster: my-cluster
     asserts:
@@ -14,7 +14,7 @@ tests:
           content:
             name: clusterName
             value: my-cluster
-  - it: fail when cluster is not defined
+  - it: fails when cluster is not defined
     asserts:
       - failedTemplate:
           errorMessage: There is not cluster name definition set neither in `.global.cluster' nor `.cluster' in your values.yaml. Cluster name is required.
