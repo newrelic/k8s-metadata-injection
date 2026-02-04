@@ -1,4 +1,4 @@
-suite: test node selector configuration
+suite: node selector
 templates:
   - templates/deployment.yaml
 release:
@@ -33,11 +33,10 @@ tests:
         globalNodeKey: globalNodeValue
     asserts:
       - equal:
-          path: spec.template.spec.nodeSelector["globalNodeKey"]
-          value: globalNodeValue
-      - equal:
-          path: spec.template.spec.nodeSelector["kubernetes.io/os"]
-          value: linux
+          path: spec.template.spec.nodeSelector
+          value:
+            kubernetes.io/os: linux
+            globalNodeKey: globalNodeValue
 
   - it: should use local nodeSelector over global.nodeSelector
     set:
@@ -48,10 +47,9 @@ tests:
         globalNodeKey: globalNodeValue
     asserts:
       - equal:
-          path: spec.template.spec.nodeSelector.localNodeKey
-          value: localNodeValue
-      - equal:
-          path: spec.template.spec.nodeSelector["kubernetes.io/os"]
-          value: linux
+          path: spec.template.spec.nodeSelector
+          value:
+            kubernetes.io/os: linux
+            localNodeKey: localNodeValue
       - notExists:
           path: spec.template.spec.nodeSelector.globalNodeKey

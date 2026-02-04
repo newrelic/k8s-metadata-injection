@@ -1,10 +1,17 @@
-suite: test global affinity configuration
+suite: affinity
 templates:
   - templates/deployment.yaml
 release:
   name: my-release
   namespace: my-namespace
 tests:
+  - it: sets affinity to default when no values provided
+    set:
+      cluster: my-cluster
+      licenseKey: us-whatever
+    asserts:
+      - notExists:
+          path: spec.template.spec.affinity
   - it: should inherit global.affinity when local affinity not set
     set:
       cluster: test-cluster
@@ -19,8 +26,16 @@ tests:
                       - global-value
     asserts:
       - equal:
-          path: spec.template.spec.affinity.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution.nodeSelectorTerms[0].matchExpressions[0].key
-          value: global-key
+          path: spec.template.spec.affinity
+          value:
+            nodeAffinity:
+              requiredDuringSchedulingIgnoredDuringExecution:
+                nodeSelectorTerms:
+                  - matchExpressions:
+                      - key: global-key
+                        operator: In
+                        values:
+                          - global-value
 
   - it: should use local affinity over global.affinity
     set:
@@ -45,5 +60,13 @@ tests:
                       - global-value
     asserts:
       - equal:
-          path: spec.template.spec.affinity.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution.nodeSelectorTerms[0].matchExpressions[0].key
-          value: local-key
+          path: spec.template.spec.affinity
+          value:
+            nodeAffinity:
+              requiredDuringSchedulingIgnoredDuringExecution:
+                nodeSelectorTerms:
+                  - matchExpressions:
+                      - key: local-key
+                        operator: In
+                        values:
+                          - local-value

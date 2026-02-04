@@ -1,14 +1,14 @@
-suite: test pod annotations configuration
+suite: annotations
 templates:
   - templates/deployment.yaml
 release:
   name: my-release
   namespace: my-namespace
 tests:
-  - it: should not have annotations when podAnnotations is empty
+  - it: sets pod annotations to default when no values provided
     set:
       cluster: test-cluster
-      podAnnotations: {}
+      licenseKey: us-whatever
     asserts:
       - notExists:
           path: spec.template.metadata.annotations
