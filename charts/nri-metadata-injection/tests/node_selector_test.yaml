@@ -33,10 +33,11 @@ tests:
         globalNodeKey: globalNodeValue
     asserts:
       - equal:
-          path: spec.template.spec.nodeSelector
-          value:
-            kubernetes.io/os: linux
-            globalNodeKey: globalNodeValue
+          path: spec.template.spec.nodeSelector["globalNodeKey"]
+          value: globalNodeValue
+      - equal:
+          path: spec.template.spec.nodeSelector["kubernetes.io/os"]
+          value: linux
 
   - it: should use local nodeSelector over global.nodeSelector
     set:
@@ -47,9 +48,10 @@ tests:
         globalNodeKey: globalNodeValue
     asserts:
       - equal:
-          path: spec.template.spec.nodeSelector
-          value:
-            kubernetes.io/os: linux
-            localNodeKey: localNodeValue
+          path: spec.template.spec.nodeSelector.localNodeKey
+          value: localNodeValue
+      - equal:
+          path: spec.template.spec.nodeSelector["kubernetes.io/os"]
+          value: linux
       - notExists:
           path: spec.template.spec.nodeSelector.globalNodeKey

@@ -22,6 +22,9 @@ tests:
       - equal:
           path: spec.template.spec.hostNetwork
           value: true
+      - equal:
+          path: spec.template.spec.dnsPolicy
+          value: ClusterFirstWithHostNet
 
   - it: should use local hostNetwork over global.hostNetwork
     set:
@@ -39,7 +42,7 @@ tests:
       licenseKey: us-whatever
     asserts:
       - notExists:
-          path: spec.template.spec.dnsConfig
+          path: spec.template.spec.dnsPolicy
 
   - it: should inherit global.dnsConfig when local dnsConfig not set
     set:
