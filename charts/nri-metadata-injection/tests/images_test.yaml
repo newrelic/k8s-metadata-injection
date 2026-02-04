@@ -11,7 +11,7 @@ tests:
     asserts:
       - matchRegex:
           path: spec.template.spec.containers[0].image
-          pattern: ^newrelic/k8s-metadata-injection
+          pattern: ^docker.io/newrelic/k8s-metadata-injection
 
   - it: should inherit global.images.registry when local image.registry not set
     set:
