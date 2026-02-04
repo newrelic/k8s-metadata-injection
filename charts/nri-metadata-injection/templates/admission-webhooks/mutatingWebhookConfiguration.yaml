@@ -32,6 +32,18 @@ webhooks:
       - key: kubernetes.io/metadata.name
         operator: NotIn
         values: {{ .Values.ignoreNamespaces | toJson }}
+    {{ if include "newrelic.common.gkeAutopilot" . }}
+      - key: kubernetes.io/metadata.name
+        operator: NotIn
+        values:
+          - kube-system
+          - gke-gmp-system
+          - gke-managed-cim
+          - gke-managed-volumepopulator
+          - gke-managed-checkpointing
+          - gke-managed-parallelstorecsi
+          - gke-managed-lustrecsi
+    {{ end }}
 {{- end }}
 {{- if .Values.injectOnlyLabeledNamespaces }}
     matchLabels:

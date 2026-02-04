@@ -61,6 +61,7 @@ Options that can be defined globally include `affinity`, `nodeSelector`, `tolera
 | ports.health | int | `8080` | Port for health check endpoint (HTTP) |
 | ports.webhook | int | `8443` | Port on which the webhook server listens (TLS/HTTPS) |
 | priorityClassName | string | `""` | Sets pod's priorityClassName. Can be configured also with `global.priorityClassName` |
+| provider | string | `nil` | The provider that you are deploying your cluster on. Sets config options providers that are known to have constraints. |
 | rbac.pspEnabled | bool | `false` | Whether the chart should create Pod Security Policy objects. |
 | replicas | int | `1` |  |
 | resources | object | 100m/30M -/80M | Image for creating the needed certificates of this webhook to work |
@@ -75,3 +76,4 @@ Options that can be defined globally include `affinity`, `nodeSelector`, `tolera
 * [juanjjaramillo](https://github.com/juanjjaramillo)
 * [csongnr](https://github.com/csongnr)
 * [dbudziwojskiNR](https://github.com/dbudziwojskiNR)
+* [Philip-R-Beckwith](https://github.com/Philip-R-Beckwith)
