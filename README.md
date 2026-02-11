@@ -83,8 +83,9 @@ To run the webhook locally with Minikube:
    # Configure shell to use Minikube's Docker daemon
    eval $(minikube docker-env)
 
-   # Build the image
-   make compile build-container DOCKER_IMAGE_TAG=local-dev
+   # Build the image 
+   # Update the GOOS and GOARCH envars based on your system (https://docs.docker.com/build/building/multi-platform/)
+   make compile build-container DOCKER_IMAGE_TAG=local-dev GOOS=linux GOARCH=arm64
    ```
 
 3. **Install the webhook using Helm**:

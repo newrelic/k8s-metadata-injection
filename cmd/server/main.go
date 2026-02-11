@@ -33,6 +33,7 @@ type specification struct {
 	TLSKeyFile  string        `default:"/etc/tls-key-cert-pair/tls.key" envconfig:"tls_key_file"`  // File containing the x509 private key for TLSCERTFILE.
 	ClusterName string        `default:"cluster" split_words:"true"`                               // The name of the Kubernetes cluster.
 	Timeout     time.Duration `default:"1s"`                                                       // Server timeout for the pod mutation.
+	LogLevel    string        `default:"info" split_words:"true"`                                  // Logger log level.
 }
 
 func main() {
@@ -42,7 +43,7 @@ func main() {
 		log.Fatal(err.Error())
 	}
 
-	logger := setupLogger()
+	logger := setupLogger(s.LogLevel)
 	defer func() { _ = logger.Sync() }()
 
 	pair, err := tls.LoadX509KeyPair(s.TLSCertFile, s.TLSKeyFile)
@@ -144,7 +145,7 @@ func withLoggingMiddleware(logger *zap.SugaredLogger) func(next http.Handler) ht
 			if r.TLS != nil {
 				scheme = "https"
 			}
-			logger.Infof("%s %s://%s%s %s\" from %s", r.Method, scheme, r.Host, r.RequestURI, r.Proto, r.RemoteAddr)
+			logger.Debugf("%s %s://%s%s %s\" from %s", r.Method, scheme, r.Host, r.RequestURI, r.Proto, r.RemoteAddr)
 
 			next.ServeHTTP(w, r)
 		}
@@ -153,13 +154,33 @@ func withLoggingMiddleware(logger *zap.SugaredLogger) func(next http.Handler) ht
 	}
 }
 
-func setupLogger() *zap.SugaredLogger {
+func setupLogger(lvl string) *zap.SugaredLogger {
+	level := strings.ToLower(strings.TrimSpace(lvl))
+	atom := zap.NewAtomicLevel()
+	invalidLevel := false
+	if err := atom.UnmarshalText([]byte(level)); err != nil {
+		atom.SetLevel(zap.InfoLevel)
+		invalidLevel = true
+	}
+
 	config := zap.NewProductionConfig()
-	config.EncoderConfig.EncodeTime = zapcore.ISO8601TimeEncoder // We want human readable timestamps.
+	config.EncoderConfig.EncodeTime = zapcore.ISO8601TimeEncoder // We want human-readable timestamps.
+	config.Level = atom
 
 	zapLogger, err := config.Build()
 	if err != nil {
 		log.Fatalf("can't initialize zap logger: %v", err)
 	}
-	return zapLogger.Sugar()
+
+	logger := zapLogger.Sugar()
+
+	if invalidLevel {
+		logger.Warnw(
+			"invalid log level, defaulting to info",
+			"provided", level,
+			"default", "info",
+		)
+	}
+
+	return logger
 }

@@ -50,7 +50,7 @@ func (whsvr *Webhook) getEnvVarsToInject(pod *corev1.Pod, container *corev1.Cont
 		createEnvVarFromString("NEW_RELIC_METADATA_KUBERNETES_CONTAINER_IMAGE_NAME", container.Image),
 	}
 
-	whsvr.Logger.Infow("creating env variables", "cluster_name", whsvr.ClusterName, "container_name", container.Name, "container_image", container.Image)
+	whsvr.Logger.Debugw("creating env variables", "cluster_name", whsvr.ClusterName, "container_name", container.Name, "container_image", container.Image)
 	// Guess the name of the deployment. We check whether the Pod is Owned by a ReplicaSet and confirms with the
 	// naming convention for a Deployment. This can give a false positive if the user uses ReplicaSets directly.
 	if len(pod.OwnerReferences) == 1 && pod.OwnerReferences[0].Kind == "ReplicaSet" {
@@ -156,12 +156,22 @@ func (whsvr *Webhook) mutate(ar *admissionv1.AdmissionReview) ([]byte, error) {
 		return nil, err
 	}
 
-	whsvr.Logger.Infow("received admission review", "kind", req.Kind, "namespace", req.Namespace, "name",
+	willMutate := mutationRequired(ignoredNamespaces, &pod.ObjectMeta)
+	whsvr.Logger.Infow(
+		"admission review received",
+		"operation", req.Operation,
+		"kind", req.Kind.Kind,
+		"namespace", pod.Namespace,
+		"podGenerateName", pod.GenerateName, // final pod name not set until after the admission webhooks have run
+		"uid", req.UID,
+		"mutate", willMutate,
+	)
+
+	whsvr.Logger.Debugw("received admission review", "kind", req.Kind, "namespace", req.Namespace, "name",
 		req.Name, "pod", pod.Name, "UID", req.UID, "operation", req.Operation, "userinfo", req.UserInfo)
 
 	// determine whether to perform mutation
-	if !mutationRequired(ignoredNamespaces, &pod.ObjectMeta) {
-		whsvr.Logger.Infow("skipped mutation", "namespace", pod.Namespace, "pod", pod.Name, "reason", "policy check (special namespaces)")
+	if !willMutate {
 		return nil, nil
 	}
 
@@ -170,7 +180,7 @@ func (whsvr *Webhook) mutate(ar *admissionv1.AdmissionReview) ([]byte, error) {
 		return nil, err
 	}
 
-	whsvr.Logger.Infow("admission response created", "response", string(patchBytes))
+	whsvr.Logger.Debugw("admission response created", "response", string(patchBytes))
 	return patchBytes, nil
 }
 
@@ -259,7 +269,7 @@ func (whsvr *Webhook) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, fmt.Sprintf("could not encode response: %v", err), http.StatusInternalServerError)
 		return
 	}
-	whsvr.Logger.Info("writing response")
+	whsvr.Logger.Debug("writing response")
 	if _, err := w.Write(resp); err != nil {
 		whsvr.Logger.Errorw("can't write response", "err", err)
 		http.Error(w, fmt.Sprintf("could not write response: %v", err), http.StatusInternalServerError)

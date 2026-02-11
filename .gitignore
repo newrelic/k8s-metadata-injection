@@ -6,3 +6,5 @@ bin
 
 # Release toolkit
 CHANGELOG.partial.md
+
+.idea
