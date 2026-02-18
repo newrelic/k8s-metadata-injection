@@ -1,4 +1,4 @@
-suite: test tolerations configuration
+suite: tolerations
 templates:
   - templates/deployment.yaml
   - templates/admission-webhooks/job-patch/job-createSecret.yaml
