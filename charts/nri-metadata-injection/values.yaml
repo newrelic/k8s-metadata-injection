@@ -9,6 +9,9 @@ cluster: ""
 # -- The provider that you are deploying your cluster on. Sets config options providers that are known to have constraints.
 provider:
 
+# -- Log level for the app (e.g., debug, info, warn, error)
+logLevel: info
+
 # -- Image for the New Relic Metadata Injector
 # @default -- See `values.yaml`
 image:
