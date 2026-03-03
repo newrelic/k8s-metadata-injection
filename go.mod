@@ -1,14 +1,14 @@
 module github.com/newrelic/k8s-metadata-injection
 
-go 1.25.6
+go 1.26.0
 
 require (
 	github.com/fsnotify/fsnotify v1.9.0
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/stretchr/testify v1.11.1
 	go.uber.org/zap v1.27.1
-	k8s.io/api v0.35.0
-	k8s.io/apimachinery v0.35.0
+	k8s.io/api v0.35.2
+	k8s.io/apimachinery v0.35.2
 )
 
 require (
@@ -37,4 +37,4 @@ require (
 )
 
 // To avoid CVE-2022-27191 triggering a security scan
-replace golang.org/x/crypto => golang.org/x/crypto v0.47.0
+replace golang.org/x/crypto => golang.org/x/crypto v0.48.0
