@@ -1,0 +1,29 @@
+suite: test log level configuration
+templates:
+  - templates/deployment.yaml
+release:
+  name: release
+  namespace: ns
+tests:
+  - it: should use default log level when not specified
+    set:
+      cluster: test-cluster
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: NEW_RELIC_K8S_METADATA_INJECTION_LOG_LEVEL
+            value: "info"
+    template: templates/deployment.yaml
+
+  - it: should use correct log level when specified
+    set:
+      cluster: test-cluster
+      logLevel: debug
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: NEW_RELIC_K8S_METADATA_INJECTION_LOG_LEVEL
+            value: "debug"
+    template: templates/deployment.yaml

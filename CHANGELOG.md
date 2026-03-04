@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### 🐞 Bug fixes
+- Add log level support & decrease info level verbosity @michaelprice232 [#701](https://github.com/newrelic/k8s-metadata-injection/pull/701)
+
 ## v1.41.0 - 2026-02-02
 
 ### 🚀 Enhancements
