@@ -6,7 +6,8 @@ import (
 	"go.uber.org/zap/zapcore"
 )
 
-func TestSetupLogger_ValidLogLevels(t *testing.T) {
+func TestSetupLogger_ValidLogLevels(test *testing.T) {
+	test.Parallel()
 	tests := []struct {
 		name          string
 		logLevel      string
@@ -65,7 +66,7 @@ func TestSetupLogger_ValidLogLevels(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+		test.Run(tt.name, func(t *testing.T) {
 			logger := setupLogger(tt.logLevel)
 
 			if logger == nil {
@@ -87,7 +88,8 @@ func TestSetupLogger_ValidLogLevels(t *testing.T) {
 	}
 }
 
-func TestSetupLogger_InvalidLogLevels(t *testing.T) {
+func TestSetupLogger_InvalidLogLevels(test *testing.T) {
+	test.Parallel()
 	tests := []struct {
 		name     string
 		logLevel string
@@ -111,17 +113,17 @@ func TestSetupLogger_InvalidLogLevels(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+		test.Run(tt.name, func(test *testing.T) {
 			logger := setupLogger(tt.logLevel)
 
 			if logger == nil {
-				t.Fatal("setupLogger returned nil even for invalid level")
+				test.Fatal("setupLogger returned nil even for invalid level")
 			}
 
 			// Invalid levels should default to info
 			zapLogger := logger.Desugar()
 			if !zapLogger.Core().Enabled(zapcore.InfoLevel) {
-				t.Error("logger with invalid level should default to info level")
+				test.Error("logger with invalid level should default to info level")
 			}
 		})
 	}
