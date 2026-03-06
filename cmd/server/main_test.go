@@ -85,7 +85,6 @@ func TestSetupLogger_ValidLogLevels(test *testing.T) {
 			if !zapLogger.Core().Enabled(tt.expectedLevel) {
 				t.Errorf("logger is not enabled at level %v", tt.expectedLevel)
 			}
-
 		})
 	}
 }
