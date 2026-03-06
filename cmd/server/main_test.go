@@ -67,6 +67,8 @@ func TestSetupLogger_ValidLogLevels(test *testing.T) {
 
 	for _, tt := range tests {
 		test.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			logger := setupLogger(tt.logLevel)
 
 			if logger == nil {
@@ -114,6 +116,8 @@ func TestSetupLogger_InvalidLogLevels(test *testing.T) {
 
 	for _, tt := range tests {
 		test.Run(tt.name, func(test *testing.T) {
+			test.Parallel()
+
 			logger := setupLogger(tt.logLevel)
 
 			if logger == nil {
