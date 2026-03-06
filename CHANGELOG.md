@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### 🚀 Enhancements
+- Adding configuration for log level @pbeckwith [#704](https://github.com/newrelic/k8s-metadata-injection/pull/704)
+
 ## v1.41.0 - 2026-02-02
 
 ### 🚀 Enhancements
