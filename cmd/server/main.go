@@ -33,6 +33,7 @@ type specification struct {
 	TLSKeyFile  string        `default:"/etc/tls-key-cert-pair/tls.key" envconfig:"tls_key_file"`  // File containing the x509 private key for TLSCERTFILE.
 	ClusterName string        `default:"cluster" split_words:"true"`                               // The name of the Kubernetes cluster.
 	Timeout     time.Duration `default:"1s"`                                                       // Server timeout for the pod mutation.
+	LogLevel    string        `default:"info" split_words:"true"`                                  // Log level (debug, info, warn, error, dpanic, panic, fatal).
 }
 
 func main() {
@@ -42,7 +43,7 @@ func main() {
 		log.Fatal(err.Error())
 	}
 
-	logger := setupLogger()
+	logger := setupLogger(s.LogLevel)
 	defer func() { _ = logger.Sync() }()
 
 	pair, err := tls.LoadX509KeyPair(s.TLSCertFile, s.TLSKeyFile)
@@ -153,9 +154,17 @@ func withLoggingMiddleware(logger *zap.SugaredLogger) func(next http.Handler) ht
 	}
 }
 
-func setupLogger() *zap.SugaredLogger {
+func setupLogger(logLevel string) *zap.SugaredLogger {
 	config := zap.NewProductionConfig()
 	config.EncoderConfig.EncodeTime = zapcore.ISO8601TimeEncoder // We want human readable timestamps.
+
+	// Parse the log level string
+	level, err := zapcore.ParseLevel(logLevel)
+	if err != nil {
+		log.Printf("invalid log level '%s', defaulting to 'info': %v", logLevel, err)
+		level = zapcore.InfoLevel
+	}
+	config.Level = zap.NewAtomicLevelAt(level)
 
 	zapLogger, err := config.Build()
 	if err != nil {
