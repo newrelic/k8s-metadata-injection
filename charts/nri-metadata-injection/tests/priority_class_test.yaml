@@ -8,7 +8,6 @@ tests:
   - it: should not set a priorityClassName when none is provided
     set:
       cluster: test-cluster
-      licenseKey: us-whatever
     asserts:
       - notExists:
           path: spec.template.spec.priorityClassName

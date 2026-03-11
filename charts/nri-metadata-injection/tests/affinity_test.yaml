@@ -8,7 +8,6 @@ tests:
   - it: sets affinity to default when no values provided
     set:
       cluster: my-cluster
-      licenseKey: us-whatever
     asserts:
       - notExists:
           path: spec.template.spec.affinity

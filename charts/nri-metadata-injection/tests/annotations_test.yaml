@@ -8,7 +8,6 @@ tests:
   - it: sets pod annotations to default when no values provided
     set:
       cluster: test-cluster
-      licenseKey: us-whatever
     asserts:
       - notExists:
           path: spec.template.metadata.annotations

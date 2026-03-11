@@ -5,10 +5,9 @@ release:
   name: my-release
   namespace: my-namespace
 tests:
-  - it: should have default hostnetwork if nothing set
+  - it: sets default hostnetwork when no values provided
     set:
       cluster: test-cluster
-      licenseKey: us-whatever
     asserts:
       - equal:
           path: spec.template.spec.hostNetwork
@@ -39,7 +38,6 @@ tests:
   - it: should have default dnsConfig if nothing set
     set:
       cluster: test-cluster
-      licenseKey: us-whatever
     asserts:
       - notExists:
           path: spec.template.spec.dnsPolicy
