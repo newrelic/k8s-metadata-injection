@@ -5,13 +5,13 @@ release:
   name: my-release
   namespace: my-namespace
 tests:
-  - it: sets affinity to default when no values provided
+  - it: has no affinity by default
     set:
       cluster: my-cluster
     asserts:
       - notExists:
           path: spec.template.spec.affinity
-  - it: should inherit global.affinity when local affinity not set
+  - it: inherits global.affinity when local affinity not set
     set:
       cluster: test-cluster
       global.affinity:
@@ -36,7 +36,7 @@ tests:
                         values:
                           - global-value
 
-  - it: should use local affinity over global.affinity
+  - it: uses local affinity over global.affinity
     set:
       cluster: test-cluster
       affinity:

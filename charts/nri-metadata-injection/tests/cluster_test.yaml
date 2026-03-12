@@ -18,7 +18,7 @@ tests:
     asserts:
       - failedTemplate:
           errorMessage: There is not cluster name definition set neither in `.global.cluster' nor `.cluster' in your values.yaml. Cluster name is required.
-  - it: should inherit global.cluster when local cluster not set
+  - it: inherits global.cluster when local cluster not set
     set:
       global.cluster: global-test-cluster
     asserts:
@@ -26,7 +26,7 @@ tests:
           path: spec.template.spec.containers[0].env[?(@.name=="clusterName")].value
           value: global-test-cluster
 
-  - it: should use local cluster over global.cluster
+  - it: uses local cluster over global.cluster
     set:
       cluster: local-cluster
       global.cluster: global-cluster

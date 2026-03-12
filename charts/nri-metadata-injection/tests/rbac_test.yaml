@@ -6,20 +6,18 @@ release:
   name: my-release
   namespace: my-namespace
 tests:
-  - it: RBAC points to the service account that is created by default
+  - it: uses default ServiceAccount
     set:
       cluster: test-cluster
-      rbac.create: true
       serviceAccount.create: true
     asserts:
       - equal:
           path: subjects[0].name
           value: my-release-nri-metadata-injection-admission
 
-  - it: RBAC points to the service account the user supplies when serviceAccount is disabled
+  - it: uses a custom ServiceAccount when serviceAccount.create is false and name provided
     set:
       cluster: test-cluster
-      rbac.create: true
       serviceAccount.create: false
       serviceAccount.name: sa-test
     asserts:
@@ -27,10 +25,9 @@ tests:
           path: subjects[0].name
           value: sa-test
 
-  - it: RBAC points to the service account the user supplies when serviceAccount is disabled
+  - it: uses default ServiceAccount name when serviceAccount.create is false but no name provided
     set:
       cluster: test-cluster
-      rbac.create: true
       serviceAccount.create: false
     asserts:
       - equal:

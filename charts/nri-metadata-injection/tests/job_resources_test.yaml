@@ -6,7 +6,7 @@ release:
   name: my-release
   namespace: my-namespace
 tests:
-  - it: should not set resources by default for admission-create job
+  - it: sets no resources by default for admission-create job
     template: templates/admission-webhooks/job-patch/job-createSecret.yaml
     set:
       cluster: test-cluster
@@ -14,7 +14,7 @@ tests:
       - isNull:
           path: spec.template.spec.containers[0].resources
 
-  - it: should not set resources by default for admission-patch job
+  - it: sets no resources by default for admission-patch job
     template: templates/admission-webhooks/job-patch/job-patchWebhook.yaml
     set:
       cluster: test-cluster
@@ -22,7 +22,7 @@ tests:
       - isNull:
           path: spec.template.spec.containers[0].resources
 
-  - it: should set resources for admission-create job when configured
+  - it: sets resources for admission-create job when provided
     template: templates/admission-webhooks/job-patch/job-createSecret.yaml
     set:
       cluster: test-cluster
@@ -46,7 +46,7 @@ tests:
               cpu: 200m
               memory: 128Mi
 
-  - it: should set resources for admission-patch job when configured
+  - it: sets resources for admission-patch job when provided
     template: templates/admission-webhooks/job-patch/job-patchWebhook.yaml
     set:
       cluster: test-cluster
@@ -70,7 +70,7 @@ tests:
               cpu: 100m
               memory: 64Mi
 
-  - it: should set different resources for admission-create and admission-patch jobs
+  - it: sets different resources for admission-create and admission-patch jobs
     set:
       cluster: test-cluster
       jobImage:
@@ -112,7 +112,7 @@ tests:
               cpu: 50m
               memory: 32Mi
 
-  - it: should set only requests when limits are not specified for admission-create
+  - it: sets only requests when limits are not specified for admission-create
     template: templates/admission-webhooks/job-patch/job-createSecret.yaml
     set:
       cluster: test-cluster
@@ -130,7 +130,7 @@ tests:
               cpu: 100m
               memory: 64Mi
 
-  - it: should set only limits when requests are not specified for admission-patch
+  - it: sets only limits when requests are not specified for admission-patch
     template: templates/admission-webhooks/job-patch/job-patchWebhook.yaml
     set:
       cluster: test-cluster

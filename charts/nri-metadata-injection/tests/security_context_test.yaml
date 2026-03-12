@@ -5,7 +5,7 @@ release:
   name: my-release
   namespace: my-namespace
 tests:
-  - it: should use default pod security context when no values are set
+  - it: uses default pod security context when not configured
     set:
       cluster: test-cluster
     asserts:
@@ -22,7 +22,7 @@ tests:
           path: spec.template.spec.securityContext.runAsNonRoot
           value: true
 
-  - it: should apply component-level podSecurityContext
+  - it: use local podSecurityContext
     set:
       cluster: test-cluster
       podSecurityContext:
@@ -49,7 +49,7 @@ tests:
           path: spec.template.spec.securityContext.seccompProfile.type
           value: RuntimeDefault
 
-  - it: should apply global podSecurityContext
+  - it: inherits global podSecurityContext when local podSecurityContext not set
     set:
       cluster: test-cluster
       global:
@@ -72,7 +72,7 @@ tests:
           path: spec.template.spec.securityContext.runAsNonRoot
           value: true
 
-  - it: component-level podSecurityContext should override global
+  - it: uses local podSecurityContext over global podSecurityContext
     set:
       cluster: test-cluster
       global:
@@ -94,7 +94,7 @@ tests:
           path: spec.template.spec.securityContext.runAsGroup
           value: 8000
 
-  - it: should fall back to defaults when empty podSecurityContext is set
+  - it: uses default podSecurityContext when empty podSecurityContext is set
     set:
       cluster: test-cluster
       global:
@@ -114,7 +114,7 @@ tests:
           path: spec.template.spec.securityContext.runAsNonRoot
           value: true
 
-  - it: should apply component-level containerSecurityContext
+  - it: uses containerSecurityContext
     set:
       cluster: test-cluster
       containerSecurityContext:
@@ -138,7 +138,7 @@ tests:
           path: spec.template.spec.containers[0].securityContext.capabilities.drop
           content: ALL
 
-  - it: should apply global containerSecurityContext
+  - it: uses global containerSecurityContext when local containerSecurityContext not set
     set:
       cluster: test-cluster
       global:
@@ -159,7 +159,7 @@ tests:
           path: spec.template.spec.containers[0].securityContext.capabilities.drop
           content: NET_RAW
 
-  - it: component-level containerSecurityContext should override global
+  - it: uses local containerSecurityContext over global containerSecurityContext
     set:
       cluster: test-cluster
       global:
@@ -181,7 +181,7 @@ tests:
           path: spec.template.spec.containers[0].securityContext.runAsUser
           value: 9000
 
-  - it: should handle empty containerSecurityContext (no container security context)
+  - it: sets no containerSecurityContext when empty containerSecurityContext is set
     set:
       cluster: test-cluster
       containerSecurityContext: {}
@@ -189,7 +189,7 @@ tests:
       - isNull:
           path: spec.template.spec.containers[0].securityContext
 
-  - it: should apply both pod and container security contexts together
+  - it: uses both pod and container security contexts together
     set:
       cluster: test-cluster
       podSecurityContext:
@@ -228,7 +228,7 @@ tests:
           path: spec.template.spec.containers[0].securityContext.capabilities.drop
           content: ALL
 
-  - it: should apply comprehensive security hardening configuration
+  - it: uses comprehensive security hardening configuration
     set:
       cluster: test-cluster
       podSecurityContext:

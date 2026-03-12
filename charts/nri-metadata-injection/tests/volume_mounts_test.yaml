@@ -6,7 +6,7 @@ release:
   name: release
   namespace: ns
 tests:
-  - it: sets volumeMounts and volumes from jobImage
+  - it: sets default volumeMounts and volumes
     set:
       cluster: my-cluster
       jobImage:

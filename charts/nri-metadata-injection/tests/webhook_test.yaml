@@ -5,7 +5,7 @@ release:
   name: release
   namespace: ns
 tests:
-  - it: sets default ignored namespaces
+  - it: sets default ignored namespaces when not configured
     set:
       cluster: my-cluster
     asserts:

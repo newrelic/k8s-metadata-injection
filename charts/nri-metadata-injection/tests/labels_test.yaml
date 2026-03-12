@@ -5,7 +5,7 @@ release:
   name: my-release
   namespace: my-namespace
 tests:
-  - it: should inherit global.labels when local labels not set
+  - it: inherits global.labels when local labels not set
     set:
       cluster: test-cluster
       global.labels:
@@ -19,7 +19,7 @@ tests:
           path: metadata.labels.globalLabel2
           value: globalValue2
 
-  - it: should merge local labels with global.labels (local takes precedence)
+  - it: merges local labels with global.labels (local takes precedence)
     set:
       cluster: test-cluster
       labels:
@@ -39,7 +39,7 @@ tests:
           path: metadata.labels.sharedLabel
           value: localValue
 
-  - it: should inherit global.podLabels when local podLabels not set
+  - it: inherits global.podLabels when local podLabels not set
     set:
       cluster: test-cluster
       global.podLabels:
@@ -53,7 +53,7 @@ tests:
           path: spec.template.metadata.labels.globalPodLabel2
           value: globalPodValue2
 
-  - it: should merge local podLabels with global.podLabels (local takes precedence)
+  - it: merges local podLabels with global.podLabels (local takes precedence)
     set:
       cluster: test-cluster
       podLabels:

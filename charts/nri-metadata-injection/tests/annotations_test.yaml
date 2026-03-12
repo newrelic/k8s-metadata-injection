@@ -5,14 +5,14 @@ release:
   name: my-release
   namespace: my-namespace
 tests:
-  - it: sets pod annotations to default when no values provided
+  - it: has no annotations by default
     set:
       cluster: test-cluster
     asserts:
       - notExists:
           path: spec.template.metadata.annotations
 
-  - it: should set pod annotations from values
+  - it: sets pod annotations from values
     set:
       cluster: test-cluster
       podAnnotations:

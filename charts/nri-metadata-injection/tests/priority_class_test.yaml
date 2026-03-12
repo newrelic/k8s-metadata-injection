@@ -5,13 +5,13 @@ release:
   name: my-release
   namespace: my-namespace
 tests:
-  - it: should not set a priorityClassName when none is provided
+  - it: does not set a priorityClassName by default
     set:
       cluster: test-cluster
     asserts:
       - notExists:
           path: spec.template.spec.priorityClassName
-  - it: should inherit global.priorityClassName when local priorityClassName not set
+  - it: inherits global.priorityClassName when local priorityClassName not set
     set:
       cluster: test-cluster
       global.priorityClassName: global-priority-class
@@ -20,7 +20,7 @@ tests:
           path: spec.template.spec.priorityClassName
           value: global-priority-class
 
-  - it: should use local priorityClassName over global.priorityClassName
+  - it: uses local priorityClassName over global.priorityClassName
     set:
       cluster: test-cluster
       priorityClassName: local-priority-class

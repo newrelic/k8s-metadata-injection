@@ -5,7 +5,7 @@ release:
   name: my-release
   namespace: my-namespace
 tests:
-  - it: should use default image registry when nothing is set
+  - it: uses default image registry when nothing is set
     set:
       cluster: test-cluster
     asserts:
@@ -13,7 +13,7 @@ tests:
           path: spec.template.spec.containers[0].image
           pattern: ^docker.io/newrelic/k8s-metadata-injection
 
-  - it: should inherit global.images.registry when local image.registry not set
+  - it: inherits global.images.registry when local image.registry not set
     set:
       cluster: test-cluster
       global.images.registry: global-registry.io
@@ -22,7 +22,7 @@ tests:
           path: spec.template.spec.containers[0].image
           pattern: ^global-registry\.io/
 
-  - it: should use local image.registry over global.images.registry
+  - it: uses local image.registry over global.images.registry
     set:
       cluster: test-cluster
       image.registry: local-registry.io
@@ -32,14 +32,14 @@ tests:
           path: spec.template.spec.containers[0].image
           pattern: ^local-registry\.io/
 
-  - it: should have no pullSecrets by default
+  - it: has no pullSecrets by default
     set:
       cluster: test-cluster
     asserts:
       - notExists:
           path: spec.template.spec.imagePullSecrets
 
-  - it: should inherit global.images.pullSecrets when local image.pullSecrets not set
+  - it: inherits global.images.pullSecrets when local image.pullSecrets not set
     set:
       cluster: test-cluster
       global.images.pullSecrets:
@@ -50,7 +50,7 @@ tests:
           content:
             name: global-pull-secret
 
-  - it: should merge local image.pullSecrets with global.images.pullSecrets
+  - it: merges local image.pullSecrets with global.images.pullSecrets
     set:
       cluster: test-cluster
       image.pullSecrets:
