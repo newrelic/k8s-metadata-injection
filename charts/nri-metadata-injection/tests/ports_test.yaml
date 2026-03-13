@@ -1,4 +1,4 @@
-suite: test port configuration
+suite: ports
 templates:
   - templates/deployment.yaml
   - templates/service.yaml
@@ -6,7 +6,7 @@ release:
   name: release
   namespace: ns
 tests:
-  - it: should use default ports when not specified
+  - it: uses default ports when not specified
     set:
       cluster: test-cluster
     asserts:
@@ -31,7 +31,7 @@ tests:
             value: "8080"
     template: templates/deployment.yaml
 
-  - it: should use custom ports when specified
+  - it: uses custom ports
     set:
       cluster: test-cluster
       ports:
@@ -59,7 +59,7 @@ tests:
             value: "9080"
     template: templates/deployment.yaml
 
-  - it: should use default service ports when not specified
+  - it: uses default service ports when not specified
     set:
       cluster: test-cluster
     asserts:
@@ -67,13 +67,13 @@ tests:
       - equal:
           path: spec.ports[0].port
           value: 443
-      # Check service target port (should default to webhook port)
+      # Check service target port (defaults to webhook port)
       - equal:
           path: spec.ports[0].targetPort
           value: 8443
     template: templates/service.yaml
 
-  - it: should use custom service ports when specified
+  - it: uses custom service ports
     set:
       cluster: test-cluster
       service:
@@ -92,7 +92,7 @@ tests:
           value: 9443
     template: templates/service.yaml
 
-  - it: should default service targetPort to webhook port when targetPort is empty
+  - it: uses default service targetPort to webhook port when targetPort is empty
     set:
       cluster: test-cluster
       service:

@@ -1,11 +1,19 @@
-suite: test global DNS and network configuration
+suite: hostNetwork and dnsConfig
 templates:
   - templates/deployment.yaml
 release:
   name: my-release
   namespace: my-namespace
 tests:
-  - it: should inherit global.hostNetwork when local hostNetwork not set
+  - it: sets hostnetwork to false by default
+    set:
+      cluster: test-cluster
+    asserts:
+      - equal:
+          path: spec.template.spec.hostNetwork
+          value: false
+
+  - it: inherits global.hostNetwork when local hostNetwork not set
     set:
       cluster: test-cluster
       global.hostNetwork: true
@@ -17,7 +25,7 @@ tests:
           path: spec.template.spec.dnsPolicy
           value: ClusterFirstWithHostNet
 
-  - it: should use local hostNetwork over global.hostNetwork
+  - it: uses local hostNetwork over global.hostNetwork
     set:
       cluster: test-cluster
       hostNetwork: false
@@ -26,10 +34,15 @@ tests:
       - equal:
           path: spec.template.spec.hostNetwork
           value: false
+
+  - it: has no dnsPolicy by default
+    set:
+      cluster: test-cluster
+    asserts:
       - notExists:
           path: spec.template.spec.dnsPolicy
 
-  - it: should inherit global.dnsConfig when local dnsConfig not set
+  - it: inherits global.dnsConfig when local dnsConfig not set
     set:
       cluster: test-cluster
       global.dnsConfig:
@@ -45,7 +58,7 @@ tests:
           path: spec.template.spec.dnsConfig.searches[0]
           value: ns1.svc.cluster-domain.example
 
-  - it: should use local dnsConfig over global.dnsConfig
+  - it: uses local dnsConfig over global.dnsConfig
     set:
       cluster: test-cluster
       dnsConfig:
@@ -56,8 +69,7 @@ tests:
           - 1.2.3.4
     asserts:
       - equal:
-          path: spec.template.spec.dnsConfig.nameservers[0]
-          value: 5.6.7.8
-      - notContains:
-          path: spec.template.spec.dnsConfig.nameservers
-          content: 1.2.3.4
+          path: spec.template.spec.dnsConfig
+          value:
+            nameservers:
+              - 5.6.7.8
