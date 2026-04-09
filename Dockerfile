@@ -7,6 +7,8 @@ FROM alpine:3.23.3
 ARG TARGETOS
 ARG TARGETARCH
 
+RUN apk upgrade --no-cache
+
 RUN mkdir /app
 WORKDIR /app
 
