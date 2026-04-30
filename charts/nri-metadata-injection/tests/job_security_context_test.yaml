@@ -1,4 +1,4 @@
-suite: test job security context configuration
+suite: job security context
 templates:
   - templates/admission-webhooks/job-patch/job-createSecret.yaml
   - templates/admission-webhooks/job-patch/job-patchWebhook.yaml
@@ -7,7 +7,7 @@ release:
   namespace: my-namespace
 tests:
   # Tests for job-createSecret.yaml
-  - it: job-createSecret should use default pod security context when no values are set
+  - it: uses default podSecurityContext for job-createSecret when no values are set
     template: templates/admission-webhooks/job-patch/job-createSecret.yaml
     set:
       cluster: test-cluster
@@ -27,7 +27,7 @@ tests:
           path: spec.template.spec.securityContext.runAsNonRoot
           value: true
 
-  - it: job-createSecret should apply component-level podSecurityContext
+  - it: uses local podSecurityContext for job-createSecret
     template: templates/admission-webhooks/job-patch/job-createSecret.yaml
     set:
       cluster: test-cluster
@@ -57,7 +57,7 @@ tests:
           path: spec.template.spec.securityContext.seccompProfile.type
           value: RuntimeDefault
 
-  - it: job-createSecret should apply global podSecurityContext
+  - it: inherits global podSecurityContext for job-createSecret when local is not set
     template: templates/admission-webhooks/job-patch/job-createSecret.yaml
     set:
       cluster: test-cluster
@@ -83,7 +83,7 @@ tests:
           path: spec.template.spec.securityContext.runAsNonRoot
           value: true
 
-  - it: job-createSecret component-level podSecurityContext should override global
+  - it: uses local podSecurityContext over global for job-createSecret
     template: templates/admission-webhooks/job-patch/job-createSecret.yaml
     set:
       cluster: test-cluster
@@ -108,7 +108,17 @@ tests:
           path: spec.template.spec.securityContext.runAsGroup
           value: 8000
 
-  - it: job-createSecret should apply component-level containerSecurityContext
+  - it: uses default containerSecurityContext for job-createSecret when no values are set
+    template: templates/admission-webhooks/job-patch/job-createSecret.yaml
+    set:
+      cluster: test-cluster
+      customTLSCertificate: false
+      certManager.enabled: false
+    asserts:
+      - notExists:
+          path: spec.template.spec.containers[0].securityContext
+
+  - it: uses local containerSecurityContext for job-createSecret
     template: templates/admission-webhooks/job-patch/job-createSecret.yaml
     set:
       cluster: test-cluster
@@ -135,7 +145,7 @@ tests:
           path: spec.template.spec.containers[0].securityContext.capabilities.drop
           content: ALL
 
-  - it: job-createSecret should apply global containerSecurityContext
+  - it: inherits global containerSecurityContext for job-createSecret when local is not set
     template: templates/admission-webhooks/job-patch/job-createSecret.yaml
     set:
       cluster: test-cluster
@@ -159,7 +169,7 @@ tests:
           path: spec.template.spec.containers[0].securityContext.capabilities.drop
           content: NET_RAW
 
-  - it: job-createSecret component-level containerSecurityContext should override global
+  - it: uses local containerSecurityContext over global for job-createSecret
     template: templates/admission-webhooks/job-patch/job-createSecret.yaml
     set:
       cluster: test-cluster
@@ -184,7 +194,7 @@ tests:
           path: spec.template.spec.containers[0].securityContext.runAsUser
           value: 9000
 
-  - it: job-createSecret should apply both pod and container security contexts together
+  - it: uses both pod and container local security contexts together for job-createSecret
     template: templates/admission-webhooks/job-patch/job-createSecret.yaml
     set:
       cluster: test-cluster
@@ -227,7 +237,7 @@ tests:
           content: ALL
 
   # Tests for job-patchWebhook.yaml
-  - it: job-patchWebhook should use default pod security context when no values are set
+  - it: uses default podSecurityContext for job-patchWebhook when no values are set
     template: templates/admission-webhooks/job-patch/job-patchWebhook.yaml
     set:
       cluster: test-cluster
@@ -247,7 +257,7 @@ tests:
           path: spec.template.spec.securityContext.runAsNonRoot
           value: true
 
-  - it: job-patchWebhook should apply component-level podSecurityContext
+  - it: uses local podSecurityContext for job-patchWebhook
     template: templates/admission-webhooks/job-patch/job-patchWebhook.yaml
     set:
       cluster: test-cluster
@@ -277,7 +287,7 @@ tests:
           path: spec.template.spec.securityContext.seccompProfile.type
           value: RuntimeDefault
 
-  - it: job-patchWebhook should apply global podSecurityContext
+  - it: inherits global podSecurityContext for job-patchWebhook when local is not set
     template: templates/admission-webhooks/job-patch/job-patchWebhook.yaml
     set:
       cluster: test-cluster
@@ -303,7 +313,7 @@ tests:
           path: spec.template.spec.securityContext.runAsNonRoot
           value: true
 
-  - it: job-patchWebhook component-level podSecurityContext should override global
+  - it: uses local pod podSecurityContext over global for job-patchWebhook
     template: templates/admission-webhooks/job-patch/job-patchWebhook.yaml
     set:
       cluster: test-cluster
@@ -328,7 +338,17 @@ tests:
           path: spec.template.spec.securityContext.runAsGroup
           value: 8000
 
-  - it: job-patchWebhook should apply component-level containerSecurityContext
+  - it: uses default containerSecurityContext for job-patchWebhook when no values are set
+    template: templates/admission-webhooks/job-patch/job-patchWebhook.yaml
+    set:
+      cluster: test-cluster
+      customTLSCertificate: false
+      certManager.enabled: false
+    asserts:
+      - notExists:
+          path: spec.template.spec.containers[0].securityContext
+
+  - it: uses local containerSecurityContext for job-patchWebhook
     template: templates/admission-webhooks/job-patch/job-patchWebhook.yaml
     set:
       cluster: test-cluster
@@ -355,7 +375,7 @@ tests:
           path: spec.template.spec.containers[0].securityContext.capabilities.drop
           content: ALL
 
-  - it: job-patchWebhook should apply global containerSecurityContext
+  - it: inherits global containerSecurityContext for job-patchWebhook when local is not set
     template: templates/admission-webhooks/job-patch/job-patchWebhook.yaml
     set:
       cluster: test-cluster
@@ -379,7 +399,7 @@ tests:
           path: spec.template.spec.containers[0].securityContext.capabilities.drop
           content: NET_RAW
 
-  - it: job-patchWebhook component-level containerSecurityContext should override global
+  - it: uses local containerSecurityContext over global for job-patchWebhook
     template: templates/admission-webhooks/job-patch/job-patchWebhook.yaml
     set:
       cluster: test-cluster
@@ -404,7 +424,7 @@ tests:
           path: spec.template.spec.containers[0].securityContext.runAsUser
           value: 9000
 
-  - it: job-patchWebhook should apply both pod and container security contexts together
+  - it: uses both pod and container security contexts for job-patchWebhook
     template: templates/admission-webhooks/job-patch/job-patchWebhook.yaml
     set:
       cluster: test-cluster
@@ -447,7 +467,7 @@ tests:
           content: ALL
 
   # Combined tests - verify both jobs honor the same values
-  - it: both jobs should honor the same global security context settings
+  - it: inherits global security context settings for both jobs when local values are not
     set:
       cluster: test-cluster
       customTLSCertificate: false
@@ -502,7 +522,7 @@ tests:
           value: true
         template: templates/admission-webhooks/job-patch/job-patchWebhook.yaml
 
-  - it: both jobs should apply comprehensive security hardening configuration
+  - it: sets comprehensive security hardening configuration for both jobs using local values
     set:
       cluster: test-cluster
       customTLSCertificate: false

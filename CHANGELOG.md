@@ -7,8 +7,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
-### 🚀 Enhancements
+### enhancement
 - Adding configuration for log level @pbeckwith [#704](https://github.com/newrelic/k8s-metadata-injection/pull/704)
+
+## v1.41.3 - 2026-04-20
+
+### ⛓️ Dependencies
+- Updated alpine to v3.23.4
+
+## v1.41.2 - 2026-04-13
+
+### ⛓️ Dependencies
+- Updated golang.org/x/crypto to v0.49.0
+- Updated kubernetes monorepo to v0.35.3
+- Updated go to v1.26.2
+
+## v1.41.1 - 2026-03-09
+
+### ⛓️ Dependencies
+- Updated go to v1.26.1
+- Updated golang.org/x/crypto to v0.48.0
+- Updated kubernetes packages to v0.35.2
 
 ## v1.41.0 - 2026-02-02
 
