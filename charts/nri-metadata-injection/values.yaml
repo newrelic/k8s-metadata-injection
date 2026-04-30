@@ -120,6 +120,9 @@ ports:
   # -- Port for health check endpoint (HTTP)
   health: 8080
 
+# -- Log level for the application. Valid values: debug, info, warn, error
+logLevel: info
+
 # -- Service configuration
 service:
   # -- External port exposed by the Kubernetes service
