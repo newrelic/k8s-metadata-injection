@@ -7,8 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
-### enhancement
+## v1.42.0 - 2026-05-04
+
+### 🚀 Enhancements
 - Adding configuration for log level @pbeckwith [#704](https://github.com/newrelic/k8s-metadata-injection/pull/704)
+
+### ⛓️ Dependencies
+- Updated go.uber.org/zap to v1.28.0
+- Updated github.com/fsnotify/fsnotify to v1.10.0 - [Changelog 🔗](https://github.com/fsnotify/fsnotify/releases/tag/v1.10.0)
+- Updated golang.org/x/crypto to v0.50.0
 
 ## v1.41.3 - 2026-04-20
 
