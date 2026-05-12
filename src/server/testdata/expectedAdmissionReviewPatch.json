@@ -71,6 +71,14 @@
   },
   {
     "op": "add",
+    "path": "/spec/containers/0/env/-",
+    "value": {
+      "name": "NEW_RELIC_METADATA_KUBERNETES_REPLICASET_NAME",
+      "value": "test-123"
+    }
+  },
+  {
+    "op": "add",
     "path": "/spec/containers/1/env",
     "value": [
       {
@@ -137,6 +145,14 @@
     "value": {
       "name": "NEW_RELIC_METADATA_KUBERNETES_DEPLOYMENT_NAME",
       "value": "test"
+    }
+  },
+  {
+    "op": "add",
+    "path": "/spec/containers/1/env/-",
+    "value": {
+      "name": "NEW_RELIC_METADATA_KUBERNETES_REPLICASET_NAME",
+      "value": "test-123"
     }
   }
 ]
