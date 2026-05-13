@@ -167,7 +167,7 @@ func makeTestData(t testing.TB, namespace string) []byte {
 			GenerateName:    "test-123-123", // required for creating metadata for deployment
 			Annotations:     map[string]string{},
 			Namespace:       namespace,
-			OwnerReferences: []metav1.OwnerReference{{Kind: "ReplicaSet"}}, // required for populating metadata for deployment
+			OwnerReferences: []metav1.OwnerReference{{Kind: "ReplicaSet", Name: "test-123"}}, // required for populating metadata for deployment and replicaset
 		},
 		Spec: corev1.PodSpec{
 			Volumes:          []corev1.Volume{{Name: "v0"}},
