@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## v1.42.3 - 2026-06-08
+
+### ⛓️ Dependencies
+- Updated kubernetes monorepo to v0.36.1
+- Updated golang version to v1.26.4
+
 ## v1.42.2 - 2026-05-18
 
 ### ⛓️ Dependencies
