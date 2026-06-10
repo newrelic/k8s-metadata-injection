@@ -9,7 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### dependency
 - Updated golang.org/x/net to v0.55.0
-
+- Updating Common library to 2.3.1 @philip-r-beckwith (#728)[https://github.com/newrelic/k8s-metadata-injection/pull/728]
+ 
 ## v1.42.3 - 2026-06-08
 
 ### ⛓️ Dependencies
