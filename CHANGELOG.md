@@ -7,6 +7,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## v1.42.4 - 2026-06-11
+
+### dependency
+- Updated golang.org/x/net to v0.55.0
+- Updating Common library to 2.3.1 @philip-r-beckwith (#728)[[https://github.com/newrelic/k8s-metadata-injection/pull/728](https://github.com/newrelic/k8s-metadata-injection/pull/728)\]
+
+### ⛓️ Dependencies
+- Updated alpine to v3.24.0
+
+## v1.42.3 - 2026-06-08
+
+### ⛓️ Dependencies
+- Updated kubernetes monorepo to v0.36.1
+- Updated golang version to v1.26.4
+
+## v1.42.2 - 2026-05-18
+
+### ⛓️ Dependencies
+- Updated go module directive to v1.26.3
+
 ## v1.42.1 - 2026-05-11
 
 ### ⛓️ Dependencies

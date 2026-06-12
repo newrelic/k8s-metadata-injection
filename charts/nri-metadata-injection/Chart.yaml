@@ -6,15 +6,15 @@ icon: https://newrelic.com/assets/newrelic/source/NewRelic-logo-square.svg
 sources:
   - https://github.com/newrelic/k8s-metadata-injection
   - https://github.com/newrelic/k8s-metadata-injection/tree/master/charts/nri-metadata-injection
-version: 4.34.1
-appVersion: 1.42.1
+version: 4.34.4
+appVersion: 1.42.4
 keywords:
   - infrastructure
   - newrelic
   - monitoring
 dependencies:
   - name: common-library
-    version: 1.4.0
+    version: 2.3.1
     repository: "https://helm-charts.newrelic.com"
 maintainers:
   - name: juanjjaramillo
