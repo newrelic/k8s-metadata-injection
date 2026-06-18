@@ -59,6 +59,9 @@ func (whsvr *Webhook) getEnvVarsToInject(pod *corev1.Pod, container *corev1.Cont
 			deployment := strings.Join(podParts[:len(podParts)-2], "-")
 			vars = append(vars, createEnvVarFromString("NEW_RELIC_METADATA_KUBERNETES_DEPLOYMENT_NAME", deployment))
 		}
+		if pod.OwnerReferences[0].Name != "" {
+			vars = append(vars, createEnvVarFromString("NEW_RELIC_METADATA_KUBERNETES_REPLICASET_NAME", pod.OwnerReferences[0].Name))
+		}
 	}
 
 	return vars
