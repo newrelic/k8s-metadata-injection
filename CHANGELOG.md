@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### enhancement
+- Add ReplicaSet support with the new `NEW_RELIC_METADATA_KUBERNETES_REPLICASET_NAME` environment variable @dbudziwojski [#735](https://github.com/newrelic/k8s-metadata-injection/pull/735)
+
 ## v1.42.4 - 2026-06-11
 
 ### dependency
