@@ -100,6 +100,9 @@ linters:
       - linters:
           - paralleltest
         text: does not use range value in test Run
+      - linters:
+          - goconst
+        path: src/server/webhook_test\.go
     paths:
       - third_party$
       - builtin$
