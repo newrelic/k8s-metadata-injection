@@ -10,6 +10,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### enhancement
 - Add ReplicaSet support with the new `NEW_RELIC_METADATA_KUBERNETES_REPLICASET_NAME` environment variable @dbudziwojski [#735](https://github.com/newrelic/k8s-metadata-injection/pull/735)
 
+## v1.42.5 - 2026-06-22
+
+### ⛓️ Dependencies
+- Updated kubernetes monorepo to v0.36.2
+- Updated alpine to v3.24.1
+
 ## v1.42.4 - 2026-06-11
 
 ### dependency
