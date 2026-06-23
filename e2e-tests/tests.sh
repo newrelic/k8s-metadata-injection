@@ -9,7 +9,7 @@ printf 'bootstrapping complete\n'
 HELM_RELEASE_NAME="nri-metadata-injection"
 WEBHOOK_LABEL="app.kubernetes.io/name=nri-metadata-injection,app.kubernetes.io/instance=${HELM_RELEASE_NAME}"
 DUMMY_DEPLOYMENT_NAME="dummy-deployment"
-DUMMY_POD_LABEL="app=${DUMMY_DEPLOYMENT_NAME}"
+DUMMY_DEPLOYMENT_LABEL="app=${DUMMY_DEPLOYMENT_NAME}"
 ENV_VARS_PREFIX="NEW_RELIC_METADATA_KUBERNETES"
 NAMESPACE_NAME="$(kubectl config view --minify --output 'jsonpath={..namespace}')"
 IMAGE_NAME="e2e/k8s-metadata-injection"
@@ -29,10 +29,10 @@ finish() {
 # build webhook docker image
 
 # Set GOOS and GOARCH explicitly since Dockerfile expects them in the binary name
-GOOS="linux" GOARCH="amd64" IMAGE_NAME="$IMAGE_NAME" DOCKER_IMAGE_TAG="$IMAGE_TAG" make -C .. compile build-container
+GOOS="linux" GOARCH="amd64" IMAGE_NAME="$IMAGE_NAME" DOCKER_IMAGE_TAG="$IMAGE_TAG" DOCKERARGS="--platform linux/amd64" make -C .. compile build-container
 
 trap finish EXIT
-chmod go-r /home/runner/.kube/config
+chmod go-r "${KUBECONFIG:-$HOME/.kube/config}"
 # install the metadata-injection webhook
 helm repo add newrelic https://helm-charts.newrelic.com
 helm dependency build ../charts/nri-metadata-injection
@@ -51,9 +51,10 @@ fi
 # deploy a pod
 kubectl create deployment "$DUMMY_DEPLOYMENT_NAME" --image=nginx:latest --dry-run=client -o yaml | kubectl apply -f-
 
-pod_name="$(get_pod_name_by_label "$DUMMY_POD_LABEL")"
-if [ "$pod_name" = "" ]; then
-    printf "not found any pod with label %s\n" "$DUMMY_POD_LABEL"
+pod_name="$(get_pod_name_by_label "$DUMMY_DEPLOYMENT_LABEL")"
+replicaset_name="$(get_replicaset_name_by_label "$DUMMY_DEPLOYMENT_LABEL")"
+if [ "$pod_name" = "" || "$replicaset_name" = "" ]; then
+    printf "did not find pod and replicaset with label %s\n" "$DUMMY_DEPLOYMENT_LABEL"
     kubectl describe deployment "$DUMMY_DEPLOYMENT_NAME"
     exit 1
 fi
@@ -78,7 +79,8 @@ for PAIR in \
            "POD_NAME                ${pod_name}" \
            "CONTAINER_NAME          nginx" \
            "CONTAINER_IMAGE_NAME    nginx:latest" \
-           "DEPLOYMENT_NAME         ${DUMMY_DEPLOYMENT_NAME}"
+           "DEPLOYMENT_NAME         ${DUMMY_DEPLOYMENT_NAME}" \
+           "REPLICASET_NAME         ${replicaset_name}"
 do
     k=$(echo "$PAIR" | awk '{ print $1 }')
     v=$(echo "$PAIR" | awk '{ print $2 }')

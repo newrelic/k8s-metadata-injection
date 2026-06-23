@@ -20,6 +20,8 @@ import (
 	"k8s.io/apimachinery/pkg/runtime/serializer"
 )
 
+const replicaSetKind = "ReplicaSet"
+
 var (
 	runtimeScheme = runtime.NewScheme()
 	codecs        = serializer.NewCodecFactory(runtimeScheme)
@@ -53,11 +55,14 @@ func (whsvr *Webhook) getEnvVarsToInject(pod *corev1.Pod, container *corev1.Cont
 	whsvr.Logger.Infow("creating env variables", "cluster_name", whsvr.ClusterName, "container_name", container.Name, "container_image", container.Image)
 	// Guess the name of the deployment. We check whether the Pod is Owned by a ReplicaSet and confirms with the
 	// naming convention for a Deployment. This can give a false positive if the user uses ReplicaSets directly.
-	if len(pod.OwnerReferences) == 1 && pod.OwnerReferences[0].Kind == "ReplicaSet" {
+	if len(pod.OwnerReferences) == 1 && pod.OwnerReferences[0].Kind == replicaSetKind {
 		podParts := strings.Split(pod.GenerateName, "-")
 		if len(podParts) >= 3 {
 			deployment := strings.Join(podParts[:len(podParts)-2], "-")
 			vars = append(vars, createEnvVarFromString("NEW_RELIC_METADATA_KUBERNETES_DEPLOYMENT_NAME", deployment))
+		}
+		if pod.OwnerReferences[0].Name != "" {
+			vars = append(vars, createEnvVarFromString("NEW_RELIC_METADATA_KUBERNETES_REPLICASET_NAME", pod.OwnerReferences[0].Name))
 		}
 	}
 

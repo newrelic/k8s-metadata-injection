@@ -31,6 +31,21 @@ get_pod_name_by_label() {
     printf "%s" "$pod_name"
 }
 
+get_replicaset_name_by_label() {
+    replicaset_name=""
+    i=1
+    while [ "$i" -ne 10 ]
+    do
+        replicaset_name=$(kubectl -n default get replicasets -l "$1" -o name | sed 's/replicaset\.apps\///g')
+        if [ "replicaset_name" != "" ]; then
+            break
+        fi
+        sleep 1
+        i=$((i + 1))
+    done
+    printf "%s" "$replicaset_name"
+}
+
 wait_for_pod() {
     set +e
     desired_status=${2:-'Running'}
