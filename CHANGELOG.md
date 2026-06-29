@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### enhancement
+- Support Kubernetes 1.35 @jamescripter [#738](https://github.com/newrelic/k8s-metadata-injection/pull/738)
+
 ## v1.43.0 - 2026-06-29
 
 ### 🚀 Enhancements
