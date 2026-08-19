@@ -1,6 +1,6 @@
 module github.com/newrelic/k8s-metadata-injection
 
-go 1.26.5
+go 1.27.0
 
 require (
 	github.com/fsnotify/fsnotify v1.10.1
