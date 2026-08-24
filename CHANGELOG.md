@@ -7,8 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## v1.44.2 - 2026-08-24
+
 ### dependency
 - Update `golang.org/x/net` and `golang.org/x/text` @dbudziwojski [#746](https://github.com/newrelic/k8s-metadata-injection/pull/746)
+
+### ⛓️ Dependencies
+- Updated kubernetes monorepo to v0.36.4
 
 ## v1.44.1 - 2026-07-20
 
