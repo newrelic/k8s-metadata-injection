@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### dependency
+- Updated go to v1.26.6 @dbudziwojski [#750](https://github.com/newrelic/k8s-metadata-injection/pull/750)
+
 ## v1.44.2 - 2026-08-24
 
 ### dependency
