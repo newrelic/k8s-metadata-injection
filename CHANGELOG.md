@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## v1.44.3 - 2026-09-07
+
+### ⛓️ Dependencies
+- Updated k8s.io/apimachinery to v0.37.0
+- Updated k8s.io/api to v0.37.0
+
 ## v1.44.2 - 2026-08-31
 
 ### dependency
