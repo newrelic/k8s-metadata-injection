@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### 🚀 Enhancements
+- Add support for Kubernetes 1.36, remove support for 1.31
+
 ## v1.44.3 - 2026-09-07
 
 ### ⛓️ Dependencies
