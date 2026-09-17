@@ -23,13 +23,13 @@ finish() {
     kubectl delete deployment ${DUMMY_DEPLOYMENT_NAME} || true
 }
 
-# ensure that we build docker image in minikube
-[ "$E2E_MINIKUBE_DRIVER" = "none" ] || eval "$(minikube docker-env --shell bash)"
+# Build for the host's architecture: the image is loaded straight into minikube's
+# containerd via `minikube image load`, which requires the image arch to match the node.
+GOOS="linux"
+GOARCH="$(go env GOARCH)"
+GOOS="$GOOS" GOARCH="$GOARCH" DOCKER_IMAGE_NAME="$IMAGE_NAME" DOCKER_IMAGE_TAG="$IMAGE_TAG" DOCKERARGS="--platform linux/${GOARCH}" make -C .. compile build-container
 
-# build webhook docker image
-
-# Set GOOS and GOARCH explicitly since Dockerfile expects them in the binary name
-GOOS="linux" GOARCH="amd64" IMAGE_NAME="$IMAGE_NAME" DOCKER_IMAGE_TAG="$IMAGE_TAG" DOCKERARGS="--platform linux/amd64" make -C .. compile build-container
+[ "$E2E_MINIKUBE_DRIVER" = "none" ] || minikube image load "${IMAGE_NAME}:${IMAGE_TAG}"
 
 trap finish EXIT
 chmod go-r "${KUBECONFIG:-$HOME/.kube/config}"
@@ -40,6 +40,7 @@ if ! helm upgrade --install "$HELM_RELEASE_NAME" ../charts/nri-metadata-injectio
                 --wait \
                 --set cluster=YOUR-CLUSTER-NAME \
                 --set image.pullPolicy=Never \
+                --set image.repository="$IMAGE_NAME" \
                 --set image.tag="$IMAGE_TAG"
 then
     printf "Helm failed to install this release\n"
@@ -53,7 +54,7 @@ kubectl create deployment "$DUMMY_DEPLOYMENT_NAME" --image=nginx:latest --dry-ru
 
 pod_name="$(get_pod_name_by_label "$DUMMY_DEPLOYMENT_LABEL")"
 replicaset_name="$(get_replicaset_name_by_label "$DUMMY_DEPLOYMENT_LABEL")"
-if [ "$pod_name" = "" || "$replicaset_name" = "" ]; then
+if [ "$pod_name" = "" ] || [ "$replicaset_name" = "" ]; then
     printf "did not find pod and replicaset with label %s\n" "$DUMMY_DEPLOYMENT_LABEL"
     kubectl describe deployment "$DUMMY_DEPLOYMENT_NAME"
     exit 1
