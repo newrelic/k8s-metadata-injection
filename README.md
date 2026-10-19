@@ -79,13 +79,11 @@ To run the webhook locally with Minikube:
    minikube start
    ```
 
-2. **Build the Docker image in Minikube's Docker environment**:
+2. **Build the Docker image and load into Minikube**:
    ```bash
-   # Configure shell to use Minikube's Docker daemon
-   eval $(minikube docker-env)
-
    # Build the image
    make compile build-container DOCKER_IMAGE_TAG=local-dev
+   minikube image load newrelic/k8s-metadata-injection:local-dev
    ```
 
 3. **Install the webhook using Helm**:
