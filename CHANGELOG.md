@@ -7,11 +7,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
-### bugfix
+### dependency
+- Update golang.org/x/net to v0.61.0 @dbudziwojski [#761](https://github.com/newrelic/k8s-metadata-injection/pull/761)
+
+## v1.45.1 - 2026-10-05
+
+### ⛓️ Dependencies
+- Updated kubernetes monorepo to v0.37.1
+
+## v1.45.0 - 2026-09-21
+
+### 🚀 Enhancements
+- Add support for Kubernetes 1.36, remove support for 1.31 [#755](https://github.com/newrelic/k8s-metadata-injection/pull/755)
+
+### 🐞 Bug fixes
 - Update E2E tests to work with Minikube v1.39 @dbudziwojski [#757](https://github.com/newrelic/k8s-metadata-injection/pull/757)
 
-### enhancement
-- Add support for Kubernetes 1.36, remove support for 1.31 [#755](https://github.com/newrelic/k8s-metadata-injection/pull/755)
+### ⛓️ Dependencies
+- Updated alpine to v3.24.2
 
 ## v1.44.3 - 2026-09-07
 
