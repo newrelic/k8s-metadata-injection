@@ -7,7 +7,8 @@ FROM alpine:3.24.4
 ARG TARGETOS
 ARG TARGETARCH
 
-RUN mkdir /app
+RUN apk upgrade --no-cache \
+    && mkdir /app
 WORKDIR /app
 
 ADD --chmod=755 entrypoint.sh ./
